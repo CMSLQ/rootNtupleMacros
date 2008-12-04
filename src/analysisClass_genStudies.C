@@ -10,7 +10,10 @@
 //############################################################################################
 // Plots to be done :
 // - take the energy of the second electron after the corrections 
-//  LQ --> e+q  ; e --> e+g
+//   LQ --> e+q  ; e --> e+g
+// - LQ invariant mass algorithm using 2 or 3 highest pT genJets not matched with electrons 
+// ( Make this algorithm more general for N jets in the combinatorics)
+// - understand spread in the EgenJet/EgenEle for both quarks and electrons
 //############################################################################################
 
 int LQ_pdgID = 42;
@@ -26,6 +29,7 @@ int QuarkT_pdgID = 6;
 float cut__deltaRmin_genJet_ele = 0.5;
 float cut__deltaRmin_genJet_quark = 0.5;
 float cut__genJetPtForMatch = 0;
+float cut__DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch=-200;
 
 analysisClass::analysisClass(string * inputList, string * treeName, TString * outputFileName)
   :baseClass(inputList, treeName, outputFileName)
@@ -119,6 +123,10 @@ void analysisClass::Loop()
    TH1F *h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch = new TH1F("h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch"
 									,"DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch"
 									,400,-2000,2000);
+
+   TH1F *h_LQmassAlgo_With2Jets = new TH1F("h_LQmassAlgo_With2Jets","LQmassAlgo_With2Jets",400,0,2000);
+   TH1F *h_LQmassAlgo_With3Jets = new TH1F("h_LQmassAlgo_With3Jets","LQmassAlgo_With3Jets",400,0,2000);
+
 
 
    //====================================================
@@ -272,6 +280,7 @@ void analysisClass::Loop()
      vector<int> v_idx_genJetMatchEleFromLQ;
      vector<int> v_idx_genJetMatchQuarkFromLQ;
      vector<int> v_idx_genJetNoMatchFromLQ;
+     vector<int> v_idx_genJetNoMatchEleFromLQ;
 
      //## match genJets with eleFromLQ 
  
@@ -457,19 +466,38 @@ void analysisClass::Loop()
 	   v_idx_genJetNoMatchFromLQ.push_back(genjet);
        }
 
+
+     //## genJets not matched with eleFromLQ
+     for(int genjet=0; genjet<genJetCount; genjet++)
+       {
+	 bool IsMatch=false;
+	 for(int eleMatch=0; eleMatch<v_idx_genJetMatchEleFromLQ.size() ; eleMatch++)
+	   {
+	     if( genjet == v_idx_genJetMatchEleFromLQ[eleMatch])
+	       {
+		 IsMatch=true;
+		 break;
+	       }
+	   }
+	 if(IsMatch==false)
+	   v_idx_genJetNoMatchEleFromLQ.push_back(genjet);
+       }
+
      //            //check
-     //            for(int genjet=0; genjet<genJetCount; genjet++)
-     //              cout << "all gen jets : " << genjet << endl; 
-     //            for(int anyMatch=0; anyMatch<v_idx_genJetMatchEleQuarkFromLQ.size() ; anyMatch++)
-     //              cout << "any match: " << v_idx_genJetMatchEleQuarkFromLQ[anyMatch] << endl; 
-     //            for(int eleMatch=0; eleMatch<v_idx_genJetMatchEleFromLQ.size() ; eleMatch++)
-     //              cout << "ele match: " << v_idx_genJetMatchEleFromLQ[eleMatch] << endl; 
-     //            for(int quarkMatch=0; quarkMatch<v_idx_genJetMatchQuarkFromLQ.size() ; quarkMatch++)
-     //              cout << "quark match: " << v_idx_genJetMatchQuarkFromLQ[quarkMatch] << endl; 
-     //            for(int noMatch=0; noMatch<v_idx_genJetNoMatchFromLQ.size() ; noMatch++)
-     //              cout << "gen jets no match: " << v_idx_genJetNoMatchFromLQ[noMatch] << endl; 
+     //      for(int genjet=0; genjet<genJetCount; genjet++)
+     //        cout << "all gen jets : " << genjet << endl; 
+     //      for(int anyMatch=0; anyMatch<v_idx_genJetMatchEleQuarkFromLQ.size() ; anyMatch++)
+     //        cout << "any match: " << v_idx_genJetMatchEleQuarkFromLQ[anyMatch] << endl; 
+     //      for(int eleMatch=0; eleMatch<v_idx_genJetMatchEleFromLQ.size() ; eleMatch++)
+     //        cout << "ele match: " << v_idx_genJetMatchEleFromLQ[eleMatch] << endl; 
+     //      for(int quarkMatch=0; quarkMatch<v_idx_genJetMatchQuarkFromLQ.size() ; quarkMatch++)
+     //        cout << "quark match: " << v_idx_genJetMatchQuarkFromLQ[quarkMatch] << endl; 
+     //      for(int noMatch=0; noMatch<v_idx_genJetNoMatchFromLQ.size() ; noMatch++)
+     //        cout << "gen jets no match: " << v_idx_genJetNoMatchFromLQ[noMatch] << endl; 
+     //      for(int noMatch=0; noMatch<v_idx_genJetNoMatchEleFromLQ.size() ; noMatch++)
+     //        cout << "gen jets no match from ele: " << v_idx_genJetNoMatchEleFromLQ[noMatch] << endl; 
 
-
+     
      //## EgenJetOverEgen(Ele/Quark) with genJets matched with gen Particles
 
      if( v_TLV_eleFromLQ.size() == v_idx_genJetMatchEleFromLQ.size() )
@@ -513,6 +541,7 @@ void analysisClass::Loop()
 
        }
 
+
      //## TLV for genjets matched with ele and quarks
      vector<TLorentzVector> v_TLV_genJetMatchEleFromLQ;
      vector<TLorentzVector> v_TLV_genJetMatchQuarkFromLQ;
@@ -528,22 +557,23 @@ void analysisClass::Loop()
 	 v_TLV_genJetMatchEleFromLQ.push_back(TLV_genJetTemp);
        }
 
-     for(int quark=0; quark<v_idx_genJetMatchEleFromLQ.size(); quark++)
+     for(int quark=0; quark<v_idx_genJetMatchQuarkFromLQ.size(); quark++)
        {
 	 TLorentzVector TLV_genJetTemp;
-	 TLV_genJetTemp.SetPtEtaPhiE(genJetPt[v_idx_genJetMatchEleFromLQ[quark]],
-				     genJetEta[v_idx_genJetMatchEleFromLQ[quark]],
-				     genJetPhi[v_idx_genJetMatchEleFromLQ[quark]],
-				     genJetEnergy[v_idx_genJetMatchEleFromLQ[quark]]);  
+	 TLV_genJetTemp.SetPtEtaPhiE(genJetPt[v_idx_genJetMatchQuarkFromLQ[quark]],
+				     genJetEta[v_idx_genJetMatchQuarkFromLQ[quark]],
+				     genJetPhi[v_idx_genJetMatchQuarkFromLQ[quark]],
+				     genJetEnergy[v_idx_genJetMatchQuarkFromLQ[quark]]);  
 	 
 	 v_TLV_genJetMatchQuarkFromLQ.push_back(TLV_genJetTemp);
        }
-     
+
 
      //## calculate LQ system
      TLorentzVector TLV_LQsystem;
      for(int LQ=0; LQ<v_TLV_LQ.size(); LQ++)
        TLV_LQsystem+=v_TLV_LQ[LQ];
+
 
      //## Compare Pt of mathced genJets from LQ quarks and un-matched ones
      float DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch;
@@ -559,6 +589,52 @@ void analysisClass::Loop()
 
 	 DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch 
 	   = minPt - v_TLV_genJetNoMatchFromLQ[0].Pt(); 
+       }
+
+
+     //## apply algorithm for invariant mass calculation
+
+     if(v_TLV_quarkFromLQ.size() == v_idx_genJetMatchQuarkFromLQ.size() 
+	&& v_TLV_eleFromLQ.size() == v_idx_genJetMatchEleFromLQ.size()
+	&& v_TLV_quarkFromLQ.size() == v_TLV_eleFromLQ.size() 
+	&& v_idx_genJetNoMatchFromLQ.size() >=1 )
+       {
+	 
+	 TLorentzVector TLV_3rdgenJet;
+	 TLV_3rdgenJet.SetPtEtaPhiE(genJetPt[v_idx_genJetNoMatchEleFromLQ[0]],
+				     genJetEta[v_idx_genJetNoMatchEleFromLQ[0]],
+				     genJetPhi[v_idx_genJetNoMatchEleFromLQ[0]],
+				     genJetEnergy[v_idx_genJetNoMatchEleFromLQ[0]]);  
+
+	 //#################################################################
+	 // Make this algorithm more general for N jets in the combinatorics
+	 //#################################################################
+
+	 //## 2 jets
+	 float mass_00 = ( v_TLV_genJetMatchQuarkFromLQ[0] + v_TLV_genJetMatchEleFromLQ[0] ).M();
+	 float mass_11 = ( v_TLV_genJetMatchQuarkFromLQ[1] + v_TLV_genJetMatchEleFromLQ[1] ).M();
+	 float deltaM_1st = fabs( mass_00 - mass_11 ); 
+
+	 float mass_01 = ( v_TLV_genJetMatchQuarkFromLQ[0] + v_TLV_genJetMatchEleFromLQ[1] ).M();
+	 float mass_10 = ( v_TLV_genJetMatchQuarkFromLQ[1] + v_TLV_genJetMatchEleFromLQ[0] ).M();
+	 float deltaM_2nd = fabs( mass_01 - mass_10 ); 
+
+	 if(deltaM_1st<deltaM_2nd)
+	   {
+	     h_LQmassAlgo_With2Jets->Fill(mass_00);
+	     h_LQmassAlgo_With2Jets->Fill(mass_11);
+	   }
+	 else
+	   {
+	     h_LQmassAlgo_With2Jets->Fill(mass_01);
+	     h_LQmassAlgo_With2Jets->Fill(mass_10);
+	   }
+
+	 //## 3 jets
+	 //...
+	 //...
+
+
        }
 
 
@@ -617,7 +693,7 @@ void analysisClass::Loop()
 	 h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch->Fill(DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch);
 
 	 //printout
-	 if(DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch<-200)
+	 if(DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch < cut__DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch)
 	   {
 	     for(int genjet=0; genjet<genJetCount; genjet++)
 	       {
@@ -631,41 +707,41 @@ void analysisClass::Loop()
 		 if(genjet == v_idx_genJetMatchQuarkFromLQ[0] || genjet == v_idx_genJetMatchQuarkFromLQ[1])
 		   IsMatchedWithQuark=1;
 
- 		 cout << "idx: " << genjet << " "  
- 		      << "genJetPt: " << genJetPt[genjet] << " "  
- 		      << "genJetEta: " << genJetEta[genjet] << " "  
- 		      << "genJetPhi: " << genJetPhi[genjet] << " " 
- 		      << "MatchedWithEleFromLQ?: " << IsMatchedWithEle << " "  
- 		      << "MatchedWithQuarkFromLQ?: " << IsMatchedWithQuark << " "  
- 		      << endl;
+//  		 cout << "idx: " << genjet << " "  
+//  		      << "genJetPt: " << genJetPt[genjet] << " "  
+//  		      << "genJetEta: " << genJetEta[genjet] << " "  
+//  		      << "genJetPhi: " << genJetPhi[genjet] << " " 
+//  		      << "MatchedWithEleFromLQ?: " << IsMatchedWithEle << " "  
+//  		      << "MatchedWithQuarkFromLQ?: " << IsMatchedWithQuark << " "  
+//  		      << endl;
 
 	       }
 
- 	     cout << "genEle1: " << " "  
- 		  << "genEle1Pt: " << v_TLV_eleFromLQ[0].Pt() << " "  
- 		  << "genEle1Eta: " << v_TLV_eleFromLQ[0].Eta() << " "  
- 		  << "genEle1Phi: " << v_TLV_eleFromLQ[0].Phi() << " " 
- 		  << endl;
+//  	     cout << "genEle1: " << " "  
+//  		  << "genEle1Pt: " << v_TLV_eleFromLQ[0].Pt() << " "  
+//  		  << "genEle1Eta: " << v_TLV_eleFromLQ[0].Eta() << " "  
+//  		  << "genEle1Phi: " << v_TLV_eleFromLQ[0].Phi() << " " 
+//  		  << endl;
 
- 	     cout << "genEle2: " << " "  
- 		  << "genEle2Pt: " << v_TLV_eleFromLQ[1].Pt() << " "  
- 		  << "genEle2Eta: " << v_TLV_eleFromLQ[1].Eta() << " "  
- 		  << "genEle2Phi: " << v_TLV_eleFromLQ[1].Phi() << " " 
- 		  << endl;
+//  	     cout << "genEle2: " << " "  
+//  		  << "genEle2Pt: " << v_TLV_eleFromLQ[1].Pt() << " "  
+//  		  << "genEle2Eta: " << v_TLV_eleFromLQ[1].Eta() << " "  
+//  		  << "genEle2Phi: " << v_TLV_eleFromLQ[1].Phi() << " " 
+//  		  << endl;
 
- 	     cout << "genQuark1: " << " "  
- 		  << "genQuark1Pt: " << v_TLV_quarkFromLQ[0].Pt() << " "  
- 		  << "genQuark1Eta: " << v_TLV_quarkFromLQ[0].Eta() << " "  
- 		  << "genQuark1Phi: " << v_TLV_quarkFromLQ[0].Phi() << " " 
- 		  << endl;
+//  	     cout << "genQuark1: " << " "  
+//  		  << "genQuark1Pt: " << v_TLV_quarkFromLQ[0].Pt() << " "  
+//  		  << "genQuark1Eta: " << v_TLV_quarkFromLQ[0].Eta() << " "  
+//  		  << "genQuark1Phi: " << v_TLV_quarkFromLQ[0].Phi() << " " 
+//  		  << endl;
 
- 	     cout << "genQuark2: " << " "  
- 		  << "genQuark2Pt: " << v_TLV_quarkFromLQ[1].Pt() << " "  
- 		  << "genQuark2Eta: " << v_TLV_quarkFromLQ[1].Eta() << " "  
- 		  << "genQuark2Phi: " << v_TLV_quarkFromLQ[1].Phi() << " " 
- 		  << endl;
+//  	     cout << "genQuark2: " << " "  
+//  		  << "genQuark2Pt: " << v_TLV_quarkFromLQ[1].Pt() << " "  
+//  		  << "genQuark2Eta: " << v_TLV_quarkFromLQ[1].Eta() << " "  
+//  		  << "genQuark2Phi: " << v_TLV_quarkFromLQ[1].Phi() << " " 
+//  		  << endl;
 
-	     cout << endl;
+// 	     cout << endl;
 
 	   }
 
@@ -735,5 +811,7 @@ void analysisClass::Loop()
    h_deltaRMin_genJet_genJetNearestQuark->Write();
 
    h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch->Write();
+
+   h_LQmassAlgo_With2Jets->Write();
 
 }
