@@ -11,9 +11,8 @@
 // Plots to be done :
 // - take the energy of the second electron after the corrections 
 //   LQ --> e+q  ; e --> e+g
-// - LQ invariant mass algorithm using 2 or 3 highest pT genJets not matched with electrons 
-// ( Make this algorithm more general for N jets in the combinatorics)
 // - understand spread in the EgenJet/EgenEle for both quarks and electrons
+// - plot 2d best, 2d bad for all the tree cases (12,3) (13,2) (32,1)
 //############################################################################################
 
 int LQ_pdgID = 42;
@@ -26,10 +25,43 @@ int QuarkC_pdgID = 4;
 int QuarkB_pdgID = 5;
 int QuarkT_pdgID = 6;
 
-float cut__deltaRmin_genJet_ele = 0.5;
-float cut__deltaRmin_genJet_quark = 0.5;
+int nElements = 3;  //number of jets to make permutations
+
+float cut__deltaRmin_genJet_ele = 0.1;
+float cut__deltaRmin_genJet_quark = 0.1;
 float cut__genJetPtForMatch = 0;
-float cut__DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch=-200;
+float cut__DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch=0;
+
+
+//## Extra code
+
+void permutations(int elements[], int index,int dim, vector<int> &v_AllPerm) { 
+
+  register int i,j; 
+  int app; 
+  
+  if(index >= 1) { 
+    for(i=index; i >= 0; i--) { 
+      app=elements[i]; 
+      elements[i]=elements[index]; 
+      elements[index] = app; 
+      permutations(elements, index-1, dim, v_AllPerm); 
+      app=elements[i]; 
+      elements[i]=elements[index]; 
+      elements[index] = app; 
+    } 
+  } 
+  else { 
+    for(j=0; j < dim; j++)
+      { 
+	//printf("%d", elements[j]);
+	v_AllPerm.push_back(elements[j]);
+      }
+    //printf("\n"); 
+
+  }
+
+}
 
 analysisClass::analysisClass(string * inputList, string * treeName, TString * outputFileName)
   :baseClass(inputList, treeName, outputFileName)
@@ -58,6 +90,12 @@ void analysisClass::Loop()
    TH1F *h_NumEleFromLQPerEvent = new TH1F("h_NumEleFromLQPerEvent","NumEleFromLQPerEvent",4,-0.5,3.5);
    TH1F *h_NumQuarkFromLQPerEvent = new TH1F("h_NumQuarkFromLQPerEvent","NumQuarkFromLQPerEvent",4,-0.5,3.5);
    TH1F *h_MassLQeqMinusMassLQ = new TH1F("h_MassLQeqMinusMassLQ","MassLQeqMinusMassLQ",2100,-10.5,10.5);
+
+
+   TH1F *h_DeltaE_Ele_PreVsPostRad = new TH1F("h_DeltaE_Ele_PreVsPostRad","DeltaE_Ele_PreVsPostRad",400,-2000,2000);
+   TH1F *h_DeltaEta_Ele_PreVsPostRad = new TH1F("h_DeltaEta_Ele_PreVsPostRad","DeltaEta_Ele_PreVsPostRad",100,-6,6);
+   TH1F *h_DeltaPhi_Ele_PreVsPostRad = new TH1F("h_DeltaPhi_Ele_PreVsPostRad","DeltaPhi_Ele_PreVsPostRad",100,-TMath::Pi(),TMath::Pi());
+
 
    TH1F *h_pTLQ = new TH1F("h_pTLQ","pTLQ",200,0,2000);
    TH1F *h_EnergyLQ = new TH1F("h_EnergyLQ","EnergyLQ",200,0,2000);
@@ -120,14 +158,36 @@ void analysisClass::Loop()
    TH2F *h_PzBalance2ndGenJetNoMatch = new TH2F("h_PzBalance2ndGenJetNoMatch","PzBalance2ndGenJetNoMatch"
 						,101,-500.5,500.5,101,-500.5,500.5);
 
+   TH2F *h_PxBalance1st2ndGenJetNoMatch = new TH2F("h_PxBalance1st2ndGenJetNoMatch","PxBalance1st2ndGenJetNoMatch"
+						   ,101,-500.5,500.5,101,-500.5,500.5);
+   TH2F *h_PyBalance1st2ndGenJetNoMatch = new TH2F("h_PyBalance1st2ndGenJetNoMatch","PyBalance1st2ndGenJetNoMatch"
+						   ,101,-500.5,500.5,101,-500.5,500.5);
+   TH2F *h_PzBalance1st2ndGenJetNoMatch = new TH2F("h_PzBalance1st2ndGenJetNoMatch","PzBalance1st2ndGenJetNoMatch"
+						   ,101,-500.5,500.5,101,-500.5,500.5);
+
    TH1F *h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch = new TH1F("h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch"
 									,"DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch"
 									,400,-2000,2000);
 
+   TH1F *h_Pt1stGenJetNoMatch = new TH1F("h_Pt1stGenJetNoMatch","Pt1stGenJetNoMatch",200,0,2000);
+   TH1F *h_Pt1stGenJetQuarkMatch = new TH1F("h_Pt1stGenJetQuarkMatch","Pt1stGenJetQuarkMatch",200,0,2000);
+   TH1F *h_Pt2ndGenJetQuarkMatch = new TH1F("h_Pt2ndGenJetQuarkMatch","Pt2ndGenJetQuarkMatch",200,0,2000);
+
+   TH1F *h_Pt1stGenJetNoMatchEle = new TH1F("h_Pt1stGenJetNoMatchEle","Pt1stGenJetNoMatchEle",200,0,2000);
+   TH1F *h_Pt2ndGenJetNoMatchEle = new TH1F("h_Pt2ndGenJetNoMatchEle","Pt2ndGenJetNoMatchEle",200,0,2000);
+   TH1F *h_Pt3rdGenJetNoMatchEle = new TH1F("h_Pt3rdGenJetNoMatchEle","Pt3rdGenJetNoMatchEle",200,0,2000);
+
    TH1F *h_LQmassAlgo_With2Jets = new TH1F("h_LQmassAlgo_With2Jets","LQmassAlgo_With2Jets",400,0,2000);
    TH1F *h_LQmassAlgo_With3Jets = new TH1F("h_LQmassAlgo_With3Jets","LQmassAlgo_With3Jets",400,0,2000);
+   //TH1F *h_LQmassAlgo_With3Jets_BAD = new TH1F("h_LQmassAlgo_With3Jets_BAD","LQmassAlgo_With3Jets_BAD",400,0,2000);
 
+   TH1F *h_LQmassAlgo2_With2Jets = new TH1F("h_LQmassAlgo2_With2Jets","LQmassAlgo2_With2Jets",400,0,2000);
+   TH1F *h_LQmassAlgo2_With3Jets = new TH1F("h_LQmassAlgo2_With3Jets","LQmassAlgo2_With3Jets",400,0,2000);
 
+   TH2F *h2_LQmass_2jets = new TH2F("h2_LQmass_2jets","LQmass_2jets",400,0,2000,400,0,2000);
+   TH2F *h2_LQmass_3jets_Not2jets = new TH2F("h2_LQmass_3jets_Not2jets","LQmass_3jets_Not2jets",400,0,2000,400,0,2000);
+   TH2F *h2_LQmass_2jetsNoMatch = new TH2F("h2_LQmass_2jetsNoMatch","LQmass_2jetsNoMatch",400,0,2000,400,0,2000);
+   TH2F *h2_LQmass_2jetsMatch = new TH2F("h2_LQmass_2jetsMatch","LQmass_2jetsMatch",400,0,2000,400,0,2000);
 
    //====================================================
 
@@ -171,8 +231,10 @@ void analysisClass::Loop()
 	 // 	 cout << "index: " << genPart <<  " , id: " << GenParticlePdgId[genPart] 
 	 // 	      << " , mother_index: " << GenParticleMotherIndex[genPart] 
 	 // 	      << " , mother_id: " << GenParticlePdgId[GenParticleMotherIndex[genPart]] 
-	 // 	      << " , energy: " << GenParticleE[genPart] << endl;
-
+	 // 	      << " , energy: " << GenParticleE[genPart] 
+	 // 	      << " , phi: " << GenParticlePhi[genPart] 
+	 // 	      << " , eta: " << GenParticleEta[genPart] << endl;
+	 
 	 bool IsLQ=false;
 	 bool IsEleFromLQ=false;
 	 bool IsQuarkFromLQ=false;
@@ -200,6 +262,39 @@ void analysisClass::Loop()
 	   {
 	     IsQuarkFromLQ=true;
 	     v_idx_quarkfromLQ.push_back(genPart);
+	   }
+
+	 if(abs( GenParticlePdgId[genPart] ) == Ele_pdgID && 
+	    abs( GenParticlePdgId[GenParticleMotherIndex[genPart]] ) == LQ_pdgID  
+	    )
+	   {
+
+	     TLorentzVector TLV_Ele;
+	     TLV_Ele.SetPtEtaPhiE(GenParticlePt[genPart],
+				  GenParticleEta[genPart],
+				  GenParticlePhi[genPart],
+				  GenParticleE[genPart]);  
+	     
+	     for(int genPart1=0; genPart1<GenParticleCount; genPart1++)
+	       {
+		 
+		 if(abs( GenParticlePdgId[genPart1] ) == Ele_pdgID && 
+		    abs( GenParticlePdgId[GenParticleMotherIndex[genPart1]] ) == Ele_pdgID 
+		    )
+		   {
+
+		     TLorentzVector TLV_ElePostRad;
+		     TLV_ElePostRad.SetPtEtaPhiE(GenParticlePt[genPart1],
+					  GenParticleEta[genPart1],
+					  GenParticlePhi[genPart1],
+					  GenParticleE[genPart1]);  
+
+		     h_DeltaE_Ele_PreVsPostRad->Fill( GenParticleE[genPart] - GenParticleE[genPart1] );
+		     h_DeltaEta_Ele_PreVsPostRad->Fill( GenParticleEta[genPart] - GenParticleEta[genPart1] );
+		     h_DeltaPhi_Ele_PreVsPostRad->Fill( TLV_Ele.DeltaPhi(TLV_ElePostRad) );
+		   }
+	       }
+
 	   }
 
 
@@ -320,7 +415,7 @@ void analysisClass::Loop()
 	     v_idx_genJetMatchEleFromLQ.push_back(idx_deltaRmin_genJet_ele);
 	   }
 
-	 //DeltaR between the 1st and 2nd jet more distant to the gen electron
+	 //## DeltaR between the 1st and 2nd jet more distant to the gen electron
 
 	 float deltaRMin_genJet_genJetNearest=99999.;
 	 int idx_deltaRMin_genJet_genJetNearest=-1;
@@ -521,30 +616,10 @@ void analysisClass::Loop()
        }
 
 
-     //## calculate TLV event recoil using gen jets 
-     //## and TLV for not matched genjets
-
-     TLorentzVector TLV_EventRecoil;
-     vector<TLorentzVector> v_TLV_genJetNoMatchFromLQ;
-
-     for(int noMatch=0; noMatch<v_idx_genJetNoMatchFromLQ.size(); noMatch++)
-       {
-	 TLorentzVector TLV_genJetTemp;
-	 TLV_genJetTemp.SetPtEtaPhiE(genJetPt[v_idx_genJetNoMatchFromLQ[noMatch]],
-				     genJetEta[v_idx_genJetNoMatchFromLQ[noMatch]],
-				     genJetPhi[v_idx_genJetNoMatchFromLQ[noMatch]],
-				     genJetEnergy[v_idx_genJetNoMatchFromLQ[noMatch]]);  
-	 
-	 v_TLV_genJetNoMatchFromLQ.push_back(TLV_genJetTemp);
-
-	 TLV_EventRecoil+=TLV_genJetTemp;
-
-       }
-
-
-     //## TLV for genjets matched with ele and quarks
+     //## TLV for genjets matched (and not) with ele and quarks
      vector<TLorentzVector> v_TLV_genJetMatchEleFromLQ;
      vector<TLorentzVector> v_TLV_genJetMatchQuarkFromLQ;
+     vector<TLorentzVector> v_TLV_genJetNoMatchEleFromLQ;
 
      for(int ele=0; ele<v_idx_genJetMatchEleFromLQ.size(); ele++)
        {
@@ -568,8 +643,39 @@ void analysisClass::Loop()
 	 v_TLV_genJetMatchQuarkFromLQ.push_back(TLV_genJetTemp);
        }
 
+     for(int quark=0; quark<v_idx_genJetNoMatchEleFromLQ.size(); quark++)
+       {
+	 TLorentzVector TLV_genJetTemp;
+	 TLV_genJetTemp.SetPtEtaPhiE(genJetPt[v_idx_genJetNoMatchEleFromLQ[quark]],
+				     genJetEta[v_idx_genJetNoMatchEleFromLQ[quark]],
+				     genJetPhi[v_idx_genJetNoMatchEleFromLQ[quark]],
+				     genJetEnergy[v_idx_genJetNoMatchEleFromLQ[quark]]);  
+	 
+	 v_TLV_genJetNoMatchEleFromLQ.push_back(TLV_genJetTemp);
+       }
 
-     //## calculate LQ system
+
+     //## calculate TLV event recoil using gen jets 
+     //## and TLV for not matched genjets
+
+     TLorentzVector TLV_EventRecoil;
+     vector<TLorentzVector> v_TLV_genJetNoMatchFromLQ;
+
+     for(int noMatch=0; noMatch<v_idx_genJetNoMatchFromLQ.size(); noMatch++)
+       {
+	 TLorentzVector TLV_genJetTemp;
+	 TLV_genJetTemp.SetPtEtaPhiE(genJetPt[v_idx_genJetNoMatchFromLQ[noMatch]],
+				     genJetEta[v_idx_genJetNoMatchFromLQ[noMatch]],
+				     genJetPhi[v_idx_genJetNoMatchFromLQ[noMatch]],
+				     genJetEnergy[v_idx_genJetNoMatchFromLQ[noMatch]]);  
+	 
+	 v_TLV_genJetNoMatchFromLQ.push_back(TLV_genJetTemp);
+
+	 TLV_EventRecoil+=TLV_genJetTemp;
+       }
+
+
+     //## calculate LQ system at gen level
      TLorentzVector TLV_LQsystem;
      for(int LQ=0; LQ<v_TLV_LQ.size(); LQ++)
        TLV_LQsystem+=v_TLV_LQ[LQ];
@@ -592,48 +698,298 @@ void analysisClass::Loop()
        }
 
 
-     //## apply algorithm for invariant mass calculation
-
+     //## LQ invariant mass calculation
      if(v_TLV_quarkFromLQ.size() == v_idx_genJetMatchQuarkFromLQ.size() 
 	&& v_TLV_eleFromLQ.size() == v_idx_genJetMatchEleFromLQ.size()
 	&& v_TLV_quarkFromLQ.size() == v_TLV_eleFromLQ.size() 
-	&& v_idx_genJetNoMatchFromLQ.size() >=1 )
+	&& v_idx_genJetNoMatchFromLQ.size() >=nElements-2 )
        {
 	 
-	 TLorentzVector TLV_3rdgenJet;
-	 TLV_3rdgenJet.SetPtEtaPhiE(genJetPt[v_idx_genJetNoMatchEleFromLQ[0]],
-				     genJetEta[v_idx_genJetNoMatchEleFromLQ[0]],
-				     genJetPhi[v_idx_genJetNoMatchEleFromLQ[0]],
-				     genJetEnergy[v_idx_genJetNoMatchEleFromLQ[0]]);  
-
+	 /*
+	   
 	 //#################################################################
 	 // Make this algorithm more general for N jets in the combinatorics
 	 //#################################################################
+	 
+	 // 	 cout << v_idx_genJetNoMatchEleFromLQ[0] << " " 
+	 // 	      << v_idx_genJetNoMatchEleFromLQ[1] << " " 
+	 // 	      << v_idx_genJetNoMatchEleFromLQ[2] << endl;
+	 
+	 int* elements; 
+	 vector<int> v_allJetPerm;
+	 register int i; 
 
-	 //## 2 jets
-	 float mass_00 = ( v_TLV_genJetMatchQuarkFromLQ[0] + v_TLV_genJetMatchEleFromLQ[0] ).M();
-	 float mass_11 = ( v_TLV_genJetMatchQuarkFromLQ[1] + v_TLV_genJetMatchEleFromLQ[1] ).M();
-	 float deltaM_1st = fabs( mass_00 - mass_11 ); 
+	 elements = (int*) malloc(sizeof(int) * nElements); 
+	 
+	 for(i=0; i < nElements; i++)
+	   elements[i] = v_idx_genJetNoMatchEleFromLQ[i];
 
-	 float mass_01 = ( v_TLV_genJetMatchQuarkFromLQ[0] + v_TLV_genJetMatchEleFromLQ[1] ).M();
-	 float mass_10 = ( v_TLV_genJetMatchQuarkFromLQ[1] + v_TLV_genJetMatchEleFromLQ[0] ).M();
-	 float deltaM_2nd = fabs( mass_01 - mass_10 ); 
+	 permutations(elements, nElements-1, nElements, v_allJetPerm);
 
-	 if(deltaM_1st<deltaM_2nd)
+	 // 	 for(int idx=0;idx<v_allJetPerm.size();idx++)
+	 // 	   {
+	 // 	     cout << v_allJetPerm[idx] << endl;
+	 // 	   }
+	 //cout << "v_allJetPerm.size: " << v_allJetPerm.size() << endl;
+	 //cout << "NEXT EVENT" << endl;
+	 //cout << endl;
+
+	 vector<float> allLQMasses;
+	 vector<float> allDeltaLQMasses;
+	 float minDeltaLQMasses=9999999;
+	 int idx_minDeltaLQMasses=-1;
+
+	 for(int perm=0; perm<v_allJetPerm.size(); perm+=nElements)
+	   {
+
+	     int index1stJet = perm+nElements-2;
+	     int index2ndJet = index1stJet+1;
+
+	     TLorentzVector TLV_1stGenJet;
+	     TLV_1stGenJet.SetPtEtaPhiE(genJetPt[v_allJetPerm[index1stJet]],
+					genJetEta[v_allJetPerm[index1stJet]],
+					genJetPhi[v_allJetPerm[index1stJet]],
+					genJetEnergy[v_allJetPerm[index1stJet]]);  
+
+	     TLorentzVector TLV_2ndGenJet;
+	     TLV_2ndGenJet.SetPtEtaPhiE(genJetPt[v_allJetPerm[index2ndJet]],
+					genJetEta[v_allJetPerm[index2ndJet]],
+					genJetPhi[v_allJetPerm[index2ndJet]],
+					genJetEnergy[v_allJetPerm[index2ndJet]]);  
+
+	     float massWithEle1 = ( v_TLV_genJetMatchEleFromLQ[0] + TLV_1stGenJet ).M();
+	     float massWithEle2 = ( v_TLV_genJetMatchEleFromLQ[1] + TLV_2ndGenJet ).M();
+
+	     allLQMasses.push_back(massWithEle1);
+	     allLQMasses.push_back(massWithEle2);
+
+	     //allDeltaLQMasses.push_back( fabs( massWithEle1 - massWithEle2 ) /  ( (massWithEle1 + massWithEle2) / 2 ) );
+	     allDeltaLQMasses.push_back( fabs( massWithEle1 - massWithEle2 ) );
+	     // 	     allDeltaLQMasses.push_back( fabs (massWithEle1 - 250) 
+	     // 					 + fabs (massWithEle2 - 250) );
+
+	   }
+
+	 // 	 cout << "allLQMasses" << endl;
+	 // 	 for(int mass=0;mass<allLQMasses.size();mass++)
+	 // 	   cout << mass+1 << " " << allLQMasses[mass] << endl;
+	 
+	 //cout << "allDeltaLQMasses" << endl;
+	 for(int Dmass=0;Dmass<allDeltaLQMasses.size();Dmass++)
+	   {
+	     //cout << Dmass+1 << " " << allDeltaLQMasses[Dmass] << endl;
+	     if(allDeltaLQMasses[Dmass]<minDeltaLQMasses)
+	       {
+		 minDeltaLQMasses=allDeltaLQMasses[Dmass];
+		 idx_minDeltaLQMasses=Dmass;
+	       }
+	   }
+
+	 int indexMass1 = idx_minDeltaLQMasses*2;
+	 int indexMass2 = indexMass1 + 1;
+	 //cout << "BestLQMasses" << endl;
+	 // 	 cout << indexMass1+1 << " " << allLQMasses[indexMass1] << endl;
+	 // 	 cout << indexMass2+1 << " " << allLQMasses[indexMass2] << endl;
+
+	 h_LQmassAlgo_With3Jets->Fill(allLQMasses[indexMass1]);
+	 h_LQmassAlgo_With3Jets->Fill(allLQMasses[indexMass2]);
+
+	 for(int mass=0; mass<allLQMasses.size(); mass++)
+	   {
+	 
+	     if(mass==indexMass1 || mass==indexMass2)
+	       continue;
+
+	     h_LQmassAlgo_With3Jets_BAD->Fill(allLQMasses[mass]);
+
+	   }
+
+	 */
+
+
+	 //## mass calculation
+
+	 //genJets
+	 // 	 vector<TLorentzVector> v_TLV_genJetMatchEleFromLQ;
+	 // 	 vector<TLorentzVector> v_TLV_genJetMatchQuarkFromLQ;
+	 // 	 vector<TLorentzVector> v_TLV_genJetNoMatchEleFromLQ;
+	 //      vector<TLorentzVector> v_TLV_genJetNoMatchFromLQ;
+
+	 //genParticles
+	 // 	 vector<TLorentzVector> v_TLV_LQ;
+	 // 	 vector<TLorentzVector> v_TLV_eleFromLQ;
+	 // 	 vector<TLorentzVector> v_TLV_quarkFromLQ;
+
+	 //# using only 2jets with highest pT
+	 float mass_00 = ( v_TLV_genJetNoMatchEleFromLQ[0] + v_TLV_eleFromLQ[0] ).M();
+	 float mass_11 = ( v_TLV_genJetNoMatchEleFromLQ[1] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_00_11 = fabs( mass_00 - mass_11 ); 
+	 float deltaMrel_00_11 = 2 * fabs( mass_00 - mass_11 ) / (mass_00 + mass_11) ; 
+
+	 float mass_10 = ( v_TLV_genJetNoMatchEleFromLQ[1] + v_TLV_eleFromLQ[0] ).M();
+	 float mass_01 = ( v_TLV_genJetNoMatchEleFromLQ[0] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_10_01 = fabs( mass_10 - mass_01 ); 
+	 float deltaMrel_10_01 = 2 * fabs( mass_10 - mass_01 ) / (mass_10 + mass_01) ; 
+
+	 //# using 3 jets with highest pT (only the additional mass combinations)
+	 //float mass_10 = ( v_TLV_genJetNoMatchEleFromLQ[1] + v_TLV_eleFromLQ[0] ).M();
+	 float mass_21 = ( v_TLV_genJetNoMatchEleFromLQ[2] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_10_21 = fabs( mass_10 - mass_21 ); 
+	 float deltaMrel_10_21 = 2 * fabs( mass_10 - mass_21 ) / (mass_10 + mass_21) ; 
+
+	 float mass_20 = ( v_TLV_genJetNoMatchEleFromLQ[2] + v_TLV_eleFromLQ[0] ).M();
+	 //float mass_11 = ( v_TLV_genJetNoMatchEleFromLQ[1] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_20_11 = fabs( mass_20 - mass_11 ); 
+	 float deltaMrel_20_11 = 2 * fabs( mass_20 - mass_11 ) / (mass_20 + mass_11) ; 
+
+	 //float mass_00 = ( v_TLV_genJetNoMatchEleFromLQ[0] + v_TLV_eleFromLQ[0] ).M();
+	 //float mass_21 = ( v_TLV_genJetNoMatchEleFromLQ[2] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_00_21 = fabs( mass_00 - mass_21 ); 
+	 float deltaMrel_00_21 = 2 * fabs( mass_00 - mass_21 ) / (mass_00 + mass_21) ; 
+
+	 //float mass_20 = ( v_TLV_genJetNoMatchEleFromLQ[2] + v_TLV_eleFromLQ[0] ).M();
+	 //float mass_01 = ( v_TLV_genJetNoMatchEleFromLQ[0] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_20_01 = fabs( mass_20 - mass_01 ); 
+	 float deltaMrel_20_01 = 2 * fabs( mass_20 - mass_01 ) / (mass_20 + mass_01) ; 
+
+	 //# 2jets not matched with quarks from LQ (cross check)
+	 float mass_00_b = ( v_TLV_genJetNoMatchFromLQ[0] + v_TLV_eleFromLQ[0] ).M();
+	 float mass_11_b = ( v_TLV_genJetNoMatchFromLQ[1] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_00_11_b = fabs( mass_00_b - mass_11_b ); 
+
+	 float mass_10_b = ( v_TLV_genJetNoMatchFromLQ[1] + v_TLV_eleFromLQ[0] ).M();
+	 float mass_01_b = ( v_TLV_genJetNoMatchFromLQ[0] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_10_01_b = fabs( mass_10_b - mass_01_b ); 
+
+	 //# 2jets matched with quarks from LQ (cross check)
+	 float mass_00_m = ( v_TLV_genJetMatchQuarkFromLQ[0] + v_TLV_eleFromLQ[0] ).M();
+	 float mass_11_m = ( v_TLV_genJetMatchQuarkFromLQ[1] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_00_11_m = fabs( mass_00_m - mass_11_m ); 
+
+	 float mass_10_m = ( v_TLV_genJetMatchQuarkFromLQ[1] + v_TLV_eleFromLQ[0] ).M();
+	 float mass_01_m = ( v_TLV_genJetMatchQuarkFromLQ[0] + v_TLV_eleFromLQ[1] ).M();
+	 float deltaM_10_01_m = fabs( mass_10_m - mass_01_m ); 
+
+	 //# mass scatter plots
+	 h2_LQmass_2jets->Fill(mass_00,mass_11);
+	 h2_LQmass_2jets->Fill(mass_10,mass_01);
+
+	 h2_LQmass_3jets_Not2jets->Fill(mass_10,mass_21);
+	 h2_LQmass_3jets_Not2jets->Fill(mass_20,mass_10);
+	 h2_LQmass_3jets_Not2jets->Fill(mass_00,mass_21);
+	 h2_LQmass_3jets_Not2jets->Fill(mass_20,mass_01);
+
+	 h2_LQmass_2jetsNoMatch->Fill(mass_00_b,mass_11_b);
+	 h2_LQmass_2jetsNoMatch->Fill(mass_10_b,mass_01_b);
+
+	 h2_LQmass_2jetsMatch->Fill(mass_00_m,mass_11_m);
+	 h2_LQmass_2jetsMatch->Fill(mass_10_m,mass_01_m);
+
+	 //# Apply algorithm to find the best mass
+
+	 //with 2jets with highest pT
+
+	 if(deltaM_00_11<deltaM_10_01)
 	   {
 	     h_LQmassAlgo_With2Jets->Fill(mass_00);
 	     h_LQmassAlgo_With2Jets->Fill(mass_11);
 	   }
-	 else
+	 else if(deltaM_00_11>=deltaM_10_01)
 	   {
-	     h_LQmassAlgo_With2Jets->Fill(mass_01);
 	     h_LQmassAlgo_With2Jets->Fill(mass_10);
+	     h_LQmassAlgo_With2Jets->Fill(mass_01);
 	   }
 
-	 //## 3 jets
-	 //...
-	 //...
 
+	 if(deltaMrel_00_11<deltaMrel_10_01)
+	   {
+	     h_LQmassAlgo2_With2Jets->Fill(mass_00);
+	     h_LQmassAlgo2_With2Jets->Fill(mass_11);
+	   }
+	 else if(deltaMrel_00_11>=deltaMrel_10_01)
+	   {
+	     h_LQmassAlgo2_With2Jets->Fill(mass_10);
+	     h_LQmassAlgo2_With2Jets->Fill(mass_01);
+	   }
+
+	 //with 3jets with highest pT
+	 vector<float> v_AllDeltaMass;
+	 v_AllDeltaMass.push_back(deltaM_00_11);
+	 v_AllDeltaMass.push_back(deltaM_10_01);
+	 v_AllDeltaMass.push_back(deltaM_10_21);
+	 v_AllDeltaMass.push_back(deltaM_20_11);
+	 v_AllDeltaMass.push_back(deltaM_00_21);
+	 v_AllDeltaMass.push_back(deltaM_20_01);
+
+	 vector<float> v_AllDeltaMassRel;
+	 v_AllDeltaMassRel.push_back(deltaMrel_00_11);
+	 v_AllDeltaMassRel.push_back(deltaMrel_10_01);
+	 v_AllDeltaMassRel.push_back(deltaMrel_10_21);
+	 v_AllDeltaMassRel.push_back(deltaMrel_20_11);
+	 v_AllDeltaMassRel.push_back(deltaMrel_00_21);
+	 v_AllDeltaMassRel.push_back(deltaMrel_20_01);
+
+
+	 vector<float> v_AllMass;
+	 v_AllMass.push_back(mass_00);
+	 v_AllMass.push_back(mass_11);
+
+	 v_AllMass.push_back(mass_10);
+	 v_AllMass.push_back(mass_01);
+
+	 v_AllMass.push_back(mass_10);
+	 v_AllMass.push_back(mass_21);
+
+	 v_AllMass.push_back(mass_20);
+	 v_AllMass.push_back(mass_10);
+
+	 v_AllMass.push_back(mass_00);
+	 v_AllMass.push_back(mass_21);
+
+	 v_AllMass.push_back(mass_20);
+	 v_AllMass.push_back(mass_01);
+
+	 float DeltaMassMin=99999999;
+	 int idx_DeltaMassMin=-1;
+
+	 for(int Dmass=0; Dmass<v_AllDeltaMass.size(); Dmass++)
+	   {
+	     if(v_AllDeltaMass[Dmass]<DeltaMassMin)
+	       {
+		 DeltaMassMin=v_AllDeltaMass[Dmass];
+		 idx_DeltaMassMin=Dmass;
+	       }
+	   }
+	 
+	 int idx_mass = int(idx_DeltaMassMin)*2;
+
+	 h_LQmassAlgo_With3Jets->Fill(v_AllMass[idx_mass]);
+	 h_LQmassAlgo_With3Jets->Fill(v_AllMass[idx_mass+1]);
+
+
+	 float DeltaMassRelMin=99999999;
+	 int idx_DeltaMassRelMin=-1;
+
+	 for(int Dmass=0; Dmass<v_AllDeltaMassRel.size(); Dmass++)
+	   {
+	     if(v_AllDeltaMassRel[Dmass]<DeltaMassRelMin)
+	       {
+		 DeltaMassRelMin=v_AllDeltaMassRel[Dmass];
+		 idx_DeltaMassRelMin=Dmass;
+	       }
+	   }
+	 
+	 int idx_massRel = int(idx_DeltaMassRelMin)*2;
+
+	 h_LQmassAlgo2_With3Jets->Fill(v_AllMass[idx_massRel]);
+	 h_LQmassAlgo2_With3Jets->Fill(v_AllMass[idx_massRel+1]);
+
+
+	 // 	 cout << DeltaMassMin << endl;
+	 // 	 cout << v_AllMass[idx_mass] 
+	 // 	      << " " 
+	 // 	      << v_AllMass[idx_mass+1] 
+	 // 	      << endl;
 
        }
 
@@ -682,6 +1038,21 @@ void analysisClass::Loop()
 	 h_PyBalance2ndGenJetNoMatch->Fill( TLV_LQsystem.Py() , v_TLV_genJetNoMatchFromLQ[1].Py() );
 	 h_PzBalance2ndGenJetNoMatch->Fill( TLV_LQsystem.Pz() , v_TLV_genJetNoMatchFromLQ[1].Pz() );
 
+	 h_PxBalance1st2ndGenJetNoMatch->Fill( TLV_LQsystem.Px() , 
+					       (v_TLV_genJetNoMatchFromLQ[0] + v_TLV_genJetNoMatchFromLQ[1]).Px() );
+	 h_PyBalance1st2ndGenJetNoMatch->Fill( TLV_LQsystem.Py() , 
+					       (v_TLV_genJetNoMatchFromLQ[0] + v_TLV_genJetNoMatchFromLQ[1]).Py() );
+	 h_PzBalance1st2ndGenJetNoMatch->Fill( TLV_LQsystem.Pz() , 
+					       (v_TLV_genJetNoMatchFromLQ[0] + v_TLV_genJetNoMatchFromLQ[1]).Pz() );
+
+       }
+
+     if(v_TLV_eleFromLQ.size() == v_idx_genJetMatchEleFromLQ.size()
+	&& v_TLV_genJetNoMatchEleFromLQ.size()>=3)
+       {
+	 h_Pt1stGenJetNoMatchEle->Fill(v_TLV_genJetNoMatchEleFromLQ[0].Pt());
+	 h_Pt2ndGenJetNoMatchEle->Fill(v_TLV_genJetNoMatchEleFromLQ[1].Pt());
+	 h_Pt3rdGenJetNoMatchEle->Fill(v_TLV_genJetNoMatchEleFromLQ[2].Pt());
        }
 
      if(v_TLV_quarkFromLQ.size() == v_idx_genJetMatchQuarkFromLQ.size() 
@@ -692,9 +1063,24 @@ void analysisClass::Loop()
 
 	 h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch->Fill(DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch);
 
+	 h_Pt1stGenJetNoMatch->Fill(v_TLV_genJetNoMatchFromLQ[0].Pt());
+
+	 if( v_TLV_quarkFromLQ[0].Pt() < v_TLV_quarkFromLQ[1].Pt() )
+	   {
+	     h_Pt1stGenJetQuarkMatch->Fill(v_TLV_quarkFromLQ[1].Pt());
+	     h_Pt2ndGenJetQuarkMatch->Fill(v_TLV_quarkFromLQ[0].Pt());
+	   }
+	 else
+	   {
+	     h_Pt1stGenJetQuarkMatch->Fill(v_TLV_quarkFromLQ[0].Pt());
+	     h_Pt2ndGenJetQuarkMatch->Fill(v_TLV_quarkFromLQ[1].Pt());
+	   }
+
 	 //printout
 	 if(DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch < cut__DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch)
 	   {
+	     //cout << "DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch: " << DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch << endl;
+
 	     for(int genjet=0; genjet<genJetCount; genjet++)
 	       {
 
@@ -707,41 +1093,53 @@ void analysisClass::Loop()
 		 if(genjet == v_idx_genJetMatchQuarkFromLQ[0] || genjet == v_idx_genJetMatchQuarkFromLQ[1])
 		   IsMatchedWithQuark=1;
 
-//  		 cout << "idx: " << genjet << " "  
-//  		      << "genJetPt: " << genJetPt[genjet] << " "  
-//  		      << "genJetEta: " << genJetEta[genjet] << " "  
-//  		      << "genJetPhi: " << genJetPhi[genjet] << " " 
-//  		      << "MatchedWithEleFromLQ?: " << IsMatchedWithEle << " "  
-//  		      << "MatchedWithQuarkFromLQ?: " << IsMatchedWithQuark << " "  
-//  		      << endl;
+//   		 cout << "idx: " << genjet << " "  
+//   		      << "genJetPt: " << genJetPt[genjet] << " "  
+//   		      << "genJetEta: " << genJetEta[genjet] << " "  
+//   		      << "genJetPhi: " << genJetPhi[genjet] << " " 
+//   		      << "MatchedWithEleFromLQ?: " << IsMatchedWithEle << " "  
+//   		      << "MatchedWithQuarkFromLQ?: " << IsMatchedWithQuark << " "  
+//   		      << endl;
 
 	       }
 
-//  	     cout << "genEle1: " << " "  
-//  		  << "genEle1Pt: " << v_TLV_eleFromLQ[0].Pt() << " "  
-//  		  << "genEle1Eta: " << v_TLV_eleFromLQ[0].Eta() << " "  
-//  		  << "genEle1Phi: " << v_TLV_eleFromLQ[0].Phi() << " " 
-//  		  << endl;
+	     //	     cout << endl;
 
-//  	     cout << "genEle2: " << " "  
-//  		  << "genEle2Pt: " << v_TLV_eleFromLQ[1].Pt() << " "  
-//  		  << "genEle2Eta: " << v_TLV_eleFromLQ[1].Eta() << " "  
-//  		  << "genEle2Phi: " << v_TLV_eleFromLQ[1].Phi() << " " 
-//  		  << endl;
+// 	     for(int genjet=0; genjet<v_idx_genJetNoMatchEleFromLQ.size(); genjet++)
+// 	       {
 
-//  	     cout << "genQuark1: " << " "  
-//  		  << "genQuark1Pt: " << v_TLV_quarkFromLQ[0].Pt() << " "  
-//  		  << "genQuark1Eta: " << v_TLV_quarkFromLQ[0].Eta() << " "  
-//  		  << "genQuark1Phi: " << v_TLV_quarkFromLQ[0].Phi() << " " 
-//  		  << endl;
+//   		 cout << "idx: " << v_idx_genJetNoMatchEleFromLQ[genjet] << " "  
+//   		      << "genJetPt: " << genJetPt[v_idx_genJetNoMatchEleFromLQ[genjet]] << " "  
+//   		      << "genJetEta: " << genJetEta[v_idx_genJetNoMatchEleFromLQ[genjet]] << " "  
+//   		      << "genJetPhi: " << genJetPhi[v_idx_genJetNoMatchEleFromLQ[genjet]] << " " 
+//   		      << endl;
+// 	       }
 
-//  	     cout << "genQuark2: " << " "  
-//  		  << "genQuark2Pt: " << v_TLV_quarkFromLQ[1].Pt() << " "  
-//  		  << "genQuark2Eta: " << v_TLV_quarkFromLQ[1].Eta() << " "  
-//  		  << "genQuark2Phi: " << v_TLV_quarkFromLQ[1].Phi() << " " 
-//  		  << endl;
+//   	     cout << "genEle1: " << " "  
+//   		  << "genEle1Pt: " << v_TLV_eleFromLQ[0].Pt() << " "  
+//   		  << "genEle1Eta: " << v_TLV_eleFromLQ[0].Eta() << " "  
+//   		  << "genEle1Phi: " << v_TLV_eleFromLQ[0].Phi() << " " 
+//   		  << endl;
 
-// 	     cout << endl;
+//   	     cout << "genEle2: " << " "  
+//   		  << "genEle2Pt: " << v_TLV_eleFromLQ[1].Pt() << " "  
+//   		  << "genEle2Eta: " << v_TLV_eleFromLQ[1].Eta() << " "  
+//   		  << "genEle2Phi: " << v_TLV_eleFromLQ[1].Phi() << " " 
+//   		  << endl;
+
+//   	     cout << "genQuark1: " << " "  
+//   		  << "genQuark1Pt: " << v_TLV_quarkFromLQ[0].Pt() << " "  
+//   		  << "genQuark1Eta: " << v_TLV_quarkFromLQ[0].Eta() << " "  
+//   		  << "genQuark1Phi: " << v_TLV_quarkFromLQ[0].Phi() << " " 
+//   		  << endl;
+
+//   	     cout << "genQuark2: " << " "  
+//   		  << "genQuark2Pt: " << v_TLV_quarkFromLQ[1].Pt() << " "  
+//   		  << "genQuark2Eta: " << v_TLV_quarkFromLQ[1].Eta() << " "  
+//   		  << "genQuark2Phi: " << v_TLV_quarkFromLQ[1].Phi() << " " 
+//   		  << endl;
+
+//  	     cout << endl;
 
 	   }
 
@@ -762,6 +1160,10 @@ void analysisClass::Loop()
    h_NumQuarkFromLQPerEvent->Write();
    h_MassLQeqMinusMassLQ->Write();
 
+   h_DeltaE_Ele_PreVsPostRad->Write();
+   h_DeltaEta_Ele_PreVsPostRad->Write();
+   h_DeltaPhi_Ele_PreVsPostRad->Write();
+
    h_NumGenJetMatchEleFromLQ->Write();
    h_NumGenJetMatchQuarkFromLQ->Write();
    h_NumGenJetNoMatchFromLQ->Write();
@@ -781,6 +1183,10 @@ void analysisClass::Loop()
    h_PxBalance2ndGenJetNoMatch->Write();
    h_PyBalance2ndGenJetNoMatch->Write();
    h_PzBalance2ndGenJetNoMatch->Write();
+   h_PxBalance1st2ndGenJetNoMatch->Write();
+   h_PyBalance1st2ndGenJetNoMatch->Write();
+   h_PzBalance1st2ndGenJetNoMatch->Write();
+
 
    h_pTLQ->Write();
    h_EnergyLQ->Write();
@@ -811,7 +1217,24 @@ void analysisClass::Loop()
    h_deltaRMin_genJet_genJetNearestQuark->Write();
 
    h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch->Write();
+   h_Pt1stGenJetNoMatch->Write();
+   h_Pt1stGenJetQuarkMatch->Write();
+   h_Pt2ndGenJetQuarkMatch->Write();
+
+   h_Pt1stGenJetNoMatchEle->Write();
+   h_Pt2ndGenJetNoMatchEle->Write();
+   h_Pt3rdGenJetNoMatchEle->Write();
 
    h_LQmassAlgo_With2Jets->Write();
+   h_LQmassAlgo_With3Jets->Write();
+   //h_LQmassAlgo_With3Jets_BAD->Write();
+
+   h_LQmassAlgo2_With2Jets->Write();
+   h_LQmassAlgo2_With3Jets->Write();
+
+   h2_LQmass_2jets->Write();
+   h2_LQmass_3jets_Not2jets->Write();
+   h2_LQmass_2jetsNoMatch->Write();
+   h2_LQmass_2jetsMatch->Write();
 
 }
