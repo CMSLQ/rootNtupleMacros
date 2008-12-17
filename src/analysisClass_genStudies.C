@@ -24,6 +24,8 @@ int QuarkS_pdgID = 3;
 int QuarkC_pdgID = 4;
 int QuarkB_pdgID = 5;
 int QuarkT_pdgID = 6;
+int Gluon_pdgID = 21;
+int Photon_pdgID = 22;
 
 int nElements = 3;  //number of jets to make permutations
 
@@ -92,10 +94,17 @@ void analysisClass::Loop()
    TH1F *h_MassLQeqMinusMassLQ = new TH1F("h_MassLQeqMinusMassLQ","MassLQeqMinusMassLQ",2100,-10.5,10.5);
 
 
-   TH1F *h_DeltaE_Ele_PreVsPostRad = new TH1F("h_DeltaE_Ele_PreVsPostRad","DeltaE_Ele_PreVsPostRad",400,-2000,2000);
+   TH1F *h_DeltaE_Ele_PreVsPostRad = new TH1F("h_DeltaE_Ele_PreVsPostRad","DeltaE_Ele_PreVsPostRad",4000,-2000,2000);
    TH1F *h_DeltaEta_Ele_PreVsPostRad = new TH1F("h_DeltaEta_Ele_PreVsPostRad","DeltaEta_Ele_PreVsPostRad",100,-6,6);
    TH1F *h_DeltaPhi_Ele_PreVsPostRad = new TH1F("h_DeltaPhi_Ele_PreVsPostRad","DeltaPhi_Ele_PreVsPostRad",100,-TMath::Pi(),TMath::Pi());
 
+   TH1F *h_DeltaE_ElePreVsEleGammaPostRad = new TH1F("h_DeltaE_ElePreVsEleGammaPostRad",
+						     "DeltaE_ElePreVsEleGammaPostRad",4000,-2000,2000);
+   TH1F *h_DeltaEta_ElePreVsEleGammaPostRad = new TH1F("h_DeltaEta_ElePreVsEleGammaPostRad",
+						       "DeltaEta_ElePreVsEleGammaPostRad",100,-6,6);
+   TH1F *h_DeltaPhi_ElePreVsEleGammaPostRad = new TH1F("h_DeltaPhi_ElePreVsEleGammaPostRad",
+						       "DeltaPhi_ElePreVsEleGammaPostRad",
+						       100,-TMath::Pi(),TMath::Pi());
 
    TH1F *h_pTLQ = new TH1F("h_pTLQ","pTLQ",200,0,2000);
    TH1F *h_EnergyLQ = new TH1F("h_EnergyLQ","EnergyLQ",200,0,2000);
@@ -169,6 +178,10 @@ void analysisClass::Loop()
 									,"DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch"
 									,400,-2000,2000);
 
+   TH1F *h_DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch = new TH1F("h_DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch"
+									     ,"DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch"
+									     ,400,-2000,2000);
+
    TH1F *h_Pt1stGenJetNoMatch = new TH1F("h_Pt1stGenJetNoMatch","Pt1stGenJetNoMatch",200,0,2000);
    TH1F *h_Pt1stGenJetQuarkMatch = new TH1F("h_Pt1stGenJetQuarkMatch","Pt1stGenJetQuarkMatch",200,0,2000);
    TH1F *h_Pt2ndGenJetQuarkMatch = new TH1F("h_Pt2ndGenJetQuarkMatch","Pt2ndGenJetQuarkMatch",200,0,2000);
@@ -183,6 +196,11 @@ void analysisClass::Loop()
 
    TH1F *h_LQmassAlgo2_With2Jets = new TH1F("h_LQmassAlgo2_With2Jets","LQmassAlgo2_With2Jets",400,0,2000);
    TH1F *h_LQmassAlgo2_With3Jets = new TH1F("h_LQmassAlgo2_With3Jets","LQmassAlgo2_With3Jets",400,0,2000);
+   TH1F *h_LQmassAlgo2_With3JetsJet1In = new TH1F("h_LQmassAlgo2_With3JetsJet1In","LQmassAlgo2_With3JetsJet1In",400,0,2000);
+
+   TH1F *h_idx_mass = new TH1F("h_idx_mass","h_idx_mass",13,-0.5,12.5);
+   TH1F *h_idx_massRel = new TH1F("h_idx_massRel","h_idx_massRel",13,-0.5,12.5);
+   TH1F *h_idx_massRelJet1In = new TH1F("h_idx_massRelJet1In","h_idx_massRelJet1In",13,-0.5,12.5);
 
    TH2F *h2_LQmass_2jets = new TH2F("h2_LQmass_2jets","LQmass_2jets",400,0,2000,400,0,2000);
    TH2F *h2_LQmass_3jets_Not2jets = new TH2F("h2_LQmass_3jets_Not2jets","LQmass_3jets_Not2jets",400,0,2000,400,0,2000);
@@ -274,26 +292,65 @@ void analysisClass::Loop()
 				  GenParticleEta[genPart],
 				  GenParticlePhi[genPart],
 				  GenParticleE[genPart]);  
+
+	     TLorentzVector TLV_ElePostRad;
+	     TLorentzVector TLV_PhotonPostRad;
+	     bool EleRadFound=false;
+	     bool PhotonRadFound=false;
 	     
 	     for(int genPart1=0; genPart1<GenParticleCount; genPart1++)
 	       {
-		 
-		 if(abs( GenParticlePdgId[genPart1] ) == Ele_pdgID && 
-		    abs( GenParticlePdgId[GenParticleMotherIndex[genPart1]] ) == Ele_pdgID 
+
+		 if(abs( GenParticlePdgId[genPart1] ) == Ele_pdgID 
+		    && abs( GenParticlePdgId[GenParticleMotherIndex[genPart1]] ) == Ele_pdgID
+		    && GenParticleMotherIndex[genPart1] == genPart 
 		    )
 		   {
+		     TLorentzVector TLV_ElePostRadTemp;
+		     TLV_ElePostRadTemp.SetPtEtaPhiE(GenParticlePt[genPart1],
+						     GenParticleEta[genPart1],
+						     GenParticlePhi[genPart1],
+						     GenParticleE[genPart1]);  
 
-		     TLorentzVector TLV_ElePostRad;
-		     TLV_ElePostRad.SetPtEtaPhiE(GenParticlePt[genPart1],
-					  GenParticleEta[genPart1],
-					  GenParticlePhi[genPart1],
-					  GenParticleE[genPart1]);  
-
-		     h_DeltaE_Ele_PreVsPostRad->Fill( GenParticleE[genPart] - GenParticleE[genPart1] );
-		     h_DeltaEta_Ele_PreVsPostRad->Fill( GenParticleEta[genPart] - GenParticleEta[genPart1] );
-		     h_DeltaPhi_Ele_PreVsPostRad->Fill( TLV_Ele.DeltaPhi(TLV_ElePostRad) );
+		     TLV_ElePostRad+=TLV_ElePostRadTemp;
+		     EleRadFound=true;
 		   }
+
+		 if(abs( GenParticlePdgId[genPart1] ) == Photon_pdgID  
+		    && abs( GenParticlePdgId[GenParticleMotherIndex[genPart1]] ) == Ele_pdgID
+		    && GenParticleMotherIndex[genPart1] == genPart  
+		    )
+		   {
+		     TLorentzVector TLV_PhotonPostRadTemp;
+
+		     TLV_PhotonPostRadTemp.SetPtEtaPhiE(GenParticlePt[genPart1],
+							GenParticleEta[genPart1],
+							GenParticlePhi[genPart1],
+							GenParticleE[genPart1]);  
+		     
+		     TLV_PhotonPostRad+=TLV_PhotonPostRadTemp;
+		     PhotonRadFound=true;
+		   }
+
 	       }
+
+	     if(EleRadFound && PhotonRadFound==false)
+	       {
+		 h_DeltaE_Ele_PreVsPostRad->Fill( TLV_Ele.E() - TLV_ElePostRad.E() );
+		 h_DeltaEta_Ele_PreVsPostRad->Fill( TLV_Ele.Eta() - TLV_ElePostRad.Eta() );
+		 h_DeltaPhi_Ele_PreVsPostRad->Fill( TLV_Ele.DeltaPhi(TLV_ElePostRad) );
+	       }
+
+
+	     if(EleRadFound && PhotonRadFound)
+	       {
+		 h_DeltaE_ElePreVsEleGammaPostRad->Fill(TLV_Ele.E() - 
+							(TLV_ElePostRad + TLV_PhotonPostRad).E() );
+		 h_DeltaEta_ElePreVsEleGammaPostRad->Fill(TLV_Ele.Eta() - 
+							  (TLV_ElePostRad + TLV_PhotonPostRad).Eta() );
+		 h_DeltaPhi_ElePreVsEleGammaPostRad->Fill( TLV_Ele.DeltaPhi(TLV_ElePostRad + TLV_PhotonPostRad) );
+	       }
+
 
 	   }
 
@@ -683,6 +740,7 @@ void analysisClass::Loop()
 
      //## Compare Pt of mathced genJets from LQ quarks and un-matched ones
      float DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch;
+     float DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch;
 
      if(v_TLV_genJetNoMatchFromLQ.size() >=1 )
        {
@@ -693,8 +751,20 @@ void analysisClass::Loop()
 	       minPt=v_TLV_genJetMatchQuarkFromLQ[quark].Pt();
 	   }
 
+	 float maxPt=-999;
+	 for(int quark=0; quark < v_TLV_genJetMatchQuarkFromLQ.size(); quark++)
+	   {
+	     if(v_TLV_genJetMatchQuarkFromLQ[quark].Pt()>maxPt)
+	       maxPt=v_TLV_genJetMatchQuarkFromLQ[quark].Pt();
+	   }
+
+
 	 DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch 
 	   = minPt - v_TLV_genJetNoMatchFromLQ[0].Pt(); 
+
+	 DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch 
+	   = maxPt - v_TLV_genJetNoMatchFromLQ[0].Pt(); 
+
        }
 
 
@@ -916,18 +986,19 @@ void analysisClass::Loop()
 	 vector<float> v_AllDeltaMass;
 	 v_AllDeltaMass.push_back(deltaM_00_11);
 	 v_AllDeltaMass.push_back(deltaM_10_01);
-	 v_AllDeltaMass.push_back(deltaM_10_21);
-	 v_AllDeltaMass.push_back(deltaM_20_11);
 	 v_AllDeltaMass.push_back(deltaM_00_21);
 	 v_AllDeltaMass.push_back(deltaM_20_01);
+	 v_AllDeltaMass.push_back(deltaM_10_21);
+	 v_AllDeltaMass.push_back(deltaM_20_11);
+
 
 	 vector<float> v_AllDeltaMassRel;
 	 v_AllDeltaMassRel.push_back(deltaMrel_00_11);
 	 v_AllDeltaMassRel.push_back(deltaMrel_10_01);
-	 v_AllDeltaMassRel.push_back(deltaMrel_10_21);
-	 v_AllDeltaMassRel.push_back(deltaMrel_20_11);
 	 v_AllDeltaMassRel.push_back(deltaMrel_00_21);
 	 v_AllDeltaMassRel.push_back(deltaMrel_20_01);
+	 v_AllDeltaMassRel.push_back(deltaMrel_10_21);
+	 v_AllDeltaMassRel.push_back(deltaMrel_20_11);
 
 
 	 vector<float> v_AllMass;
@@ -937,17 +1008,18 @@ void analysisClass::Loop()
 	 v_AllMass.push_back(mass_10);
 	 v_AllMass.push_back(mass_01);
 
-	 v_AllMass.push_back(mass_10);
-	 v_AllMass.push_back(mass_21);
-
-	 v_AllMass.push_back(mass_20);
-	 v_AllMass.push_back(mass_10);
-
 	 v_AllMass.push_back(mass_00);
 	 v_AllMass.push_back(mass_21);
 
 	 v_AllMass.push_back(mass_20);
 	 v_AllMass.push_back(mass_01);
+
+	 v_AllMass.push_back(mass_10);
+	 v_AllMass.push_back(mass_21);
+
+	 v_AllMass.push_back(mass_20);
+	 v_AllMass.push_back(mass_10);
+
 
 	 float DeltaMassMin=99999999;
 	 int idx_DeltaMassMin=-1;
@@ -963,9 +1035,9 @@ void analysisClass::Loop()
 	 
 	 int idx_mass = int(idx_DeltaMassMin)*2;
 
+	 h_idx_mass->Fill(idx_mass);
 	 h_LQmassAlgo_With3Jets->Fill(v_AllMass[idx_mass]);
 	 h_LQmassAlgo_With3Jets->Fill(v_AllMass[idx_mass+1]);
-
 
 	 float DeltaMassRelMin=99999999;
 	 int idx_DeltaMassRelMin=-1;
@@ -981,8 +1053,28 @@ void analysisClass::Loop()
 	 
 	 int idx_massRel = int(idx_DeltaMassRelMin)*2;
 
+	 h_idx_massRel->Fill(idx_massRel);
 	 h_LQmassAlgo2_With3Jets->Fill(v_AllMass[idx_massRel]);
 	 h_LQmassAlgo2_With3Jets->Fill(v_AllMass[idx_massRel+1]);
+
+	 float DeltaMassRelMinJet1In=99999999;
+	 int idx_DeltaMassRelMinJet1In=-1;
+
+	 //do not consider the two combinations with the 1st jet not included
+	 for(int Dmass=0; Dmass<v_AllDeltaMassRel.size()-2; Dmass++)
+	   {
+	     if(v_AllDeltaMassRel[Dmass]<DeltaMassRelMinJet1In)
+	       {
+		 DeltaMassRelMinJet1In=v_AllDeltaMassRel[Dmass];
+		 idx_DeltaMassRelMinJet1In=Dmass;
+	       }
+	   }
+	 
+	 int idx_massRelJet1In = int(idx_DeltaMassRelMinJet1In)*2;
+
+	 h_idx_massRelJet1In->Fill(idx_massRelJet1In);
+	 h_LQmassAlgo2_With3JetsJet1In->Fill(v_AllMass[idx_massRelJet1In]);
+	 h_LQmassAlgo2_With3JetsJet1In->Fill(v_AllMass[idx_massRelJet1In+1]);
 
 
 	 // 	 cout << DeltaMassMin << endl;
@@ -1062,6 +1154,7 @@ void analysisClass::Loop()
        {
 
 	 h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch->Fill(DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch);
+	 h_DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch->Fill(DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch);
 
 	 h_Pt1stGenJetNoMatch->Fill(v_TLV_genJetNoMatchFromLQ[0].Pt());
 
@@ -1164,6 +1257,10 @@ void analysisClass::Loop()
    h_DeltaEta_Ele_PreVsPostRad->Write();
    h_DeltaPhi_Ele_PreVsPostRad->Write();
 
+   h_DeltaE_ElePreVsEleGammaPostRad->Write();
+   h_DeltaEta_ElePreVsEleGammaPostRad->Write();
+   h_DeltaPhi_ElePreVsEleGammaPostRad->Write();
+
    h_NumGenJetMatchEleFromLQ->Write();
    h_NumGenJetMatchQuarkFromLQ->Write();
    h_NumGenJetNoMatchFromLQ->Write();
@@ -1217,6 +1314,7 @@ void analysisClass::Loop()
    h_deltaRMin_genJet_genJetNearestQuark->Write();
 
    h_DeltaPt_genJetMinPtQuarkMatchFromLQ_genJet1stPtNoMatch->Write();
+   h_DeltaPt_genJetMaxPtQuarkMatchFromLQ_genJet1stPtNoMatch->Write();
    h_Pt1stGenJetNoMatch->Write();
    h_Pt1stGenJetQuarkMatch->Write();
    h_Pt2ndGenJetQuarkMatch->Write();
@@ -1231,6 +1329,11 @@ void analysisClass::Loop()
 
    h_LQmassAlgo2_With2Jets->Write();
    h_LQmassAlgo2_With3Jets->Write();
+   h_LQmassAlgo2_With3JetsJet1In->Write();
+
+   h_idx_mass->Write();
+   h_idx_massRel->Write();
+   h_idx_massRelJet1In->Write();
 
    h2_LQmass_2jets->Write();
    h2_LQmass_3jets_Not2jets->Write();
