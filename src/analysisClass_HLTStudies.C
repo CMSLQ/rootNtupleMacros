@@ -7,11 +7,9 @@
 #include <TLorentzVector.h>
 #include <TVector2.h>
 #include <TVector3.h>
-#include <vector>
-#include <string.h>
 
-analysisClass::analysisClass(string * inputList, string * treeName, TString * outputFileName)
-  :baseClass(inputList, treeName, outputFileName)
+analysisClass::analysisClass(string * inputList, string * cutFile, string * treeName, TString * outputFileName, string * cutEfficFile)
+  :baseClass(inputList, cutFile, treeName, outputFileName, cutEfficFile)
 {
   std::cout << "analysisClass::analysisClass(): begins " << std::endl;
 
@@ -32,6 +30,7 @@ void analysisClass::Loop()
    if (fChain == 0) return;
    
    //////////book histos here
+
    TH1F *h_ele_E_80 = new TH1F ("ele_E_80","ele_E_80",100,0,1000);
    TH1F *h_ele_Pt_80  = new TH1F ("ele_Pt_80","ele_Pt_80",100,0,1000);
    TH1F *h_ele_Phi_80  = new TH1F ("ele_Phi_80","ele_Phi_80",71,-3.55,3.55);
@@ -63,7 +62,7 @@ void analysisClass::Loop()
    //int LQ_PID=23; //PdgID for Z
    float elePt_cut=30.;
    float eleEta_cut=2.6;
- 
+
    Long64_t nentries = fChain->GetEntriesFast();
    std::cout << "analysisClass::Loop(): nentries = " << nentries << std::endl;   
 
@@ -72,7 +71,6 @@ void analysisClass::Loop()
    ////// these lines may need to be updated.                                 /////    
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-   //for (Long64_t jentry=0; jentry<1;jentry++) {
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -81,6 +79,7 @@ void analysisClass::Loop()
 
      ////////////////////// User's code starts here ///////////////////////
 
+     ///Stuff to be done every event
      string Trig1="HLT_EM80";
      string Trig2="HLT_EM200";
      string Trig3="HLT_Photon25"; 
@@ -146,10 +145,12 @@ void analysisClass::Loop()
      } //end of loop through trigger names
 
      n_Events++;
-     ////////////////////// User's code ends here ///////////////////////
-   }   
+
+
+   } // End loop over events
 
    //////////write histos 
+
    h_ele_E_80->Write();
    h_ele_Pt_80->Write();
    h_ele_Phi_80->Write();
