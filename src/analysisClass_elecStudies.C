@@ -7,10 +7,9 @@
 #include <TLorentzVector.h>
 #include <TVector2.h>
 #include <TVector3.h>
-#include <vector>
 
-analysisClass::analysisClass(string * inputList, string * treeName, TString * outputFileName)
-  :baseClass(inputList, treeName, outputFileName)
+analysisClass::analysisClass(string * inputList, string * cutFile, string * treeName, TString * outputFileName, string * cutEfficFile)
+  :baseClass(inputList, cutFile, treeName, outputFileName, cutEfficFile)
 {
   std::cout << "analysisClass::analysisClass(): begins " << std::endl;
 
@@ -157,7 +156,6 @@ void analysisClass::Loop()
    float eleEta_cut=2.6;
    int n_ele_doubleMatched = 0;
 
-
    Long64_t nentries = fChain->GetEntriesFast();
    std::cout << "analysisClass::Loop(): nentries = " << nentries << std::endl;   
 
@@ -169,7 +167,7 @@ void analysisClass::Loop()
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
-     if(jentry < 10 || jentry%100 == 0) std::cout << "analysisClass::Loop(): jentry = " << jentry << std::endl;   
+     if(jentry < 10 || jentry%1000 == 0) std::cout << "analysisClass::Loop(): jentry = " << jentry << std::endl;   
      // if (Cut(ientry) < 0) continue;
 
      ////////////////////// User's code starts here ///////////////////////
@@ -426,28 +424,10 @@ void analysisClass::Loop()
  
    h_N_ele_matched->Fill(nEleMatched);
    h_N_ele_Gen->Fill(nGenEle);
-     //cout << "///////////////////////////////// Next Event /////////////////" << endl;
-   }
-
-     /////////////Loop to fill ID and ISO variable histos /////////////////
-//      for (int iele=0; iele<eleCount; iele++) {
-//        if (elePt[iele]<elePt_cut) continue;
-//        bool EleIsMatched = false;
-
-//        ///////////do matching 
-//        TVector3 ele;
-//        ele.SetPtEtaPhi(elePt[iele],
-//  		       eleEta[iele],
-//  		       elePhi[iele]);	
- 
-//        float DeltaR_ele_elegen = elegen.DeltaR(ele);
-//        if(DeltaR_ele_elegen<ConeSizeMCmatch_cut) EleIsMatched = true;
- 
-
-//      } // end ele loop
 
      ////////////////////// User's code ends here ///////////////////////
-   
+
+   } // End loop over events
 
    //////////write histos 
    h_ele_E->Write();
@@ -549,5 +529,6 @@ void analysisClass::Loop()
    h_eleEff_Eta_ID_ISO->Write();
 
    cout << "Number of events where recoEle matches BOTH genEle: " << n_ele_doubleMatched << endl;
+
    std::cout << "analysisClass::Loop() ends" <<std::endl;   
 }
