@@ -72,7 +72,7 @@ void analysisClass::Loop()
    ////// these lines may need to be updated.                                 /////    
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-     //for (Long64_t jentry=0; jentry<10;jentry++) {
+   //for (Long64_t jentry=0; jentry<1;jentry++) {
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -84,45 +84,123 @@ void analysisClass::Loop()
      ///Stuff to be done every event
 
      //HLT
-     string Trig1="HLT_EM80";
-     string Trig2="HLT_EM200";
-     string Trig3="HLT_Photon25"; 
-
-     string tmp="";
      bool PassTrig=false;
-     int results_index=0;
-     for (int itrig=0;itrig<hltNamesLen;itrig++){
-       //for (int itrig=0;itrig<100;itrig++){
-       if (HLTNames[itrig]==':') {
-	 //cout << tmp << "   " << HLTResults[results_index] << endl;
-	 bool IsEM80 =  !strncmp(Trig1.c_str(),tmp.c_str(),8); // returns zero if first 8 characters in 2 strings are same
-	 bool IsEM200 = !strncmp(Trig2.c_str(),tmp.c_str(),9);
-	 bool IsPhoton = !strncmp(Trig3.c_str(),tmp.c_str(),11);
-	 //if ((IsEM80)||(IsEM200)) cout << "Trigger:  " << tmp << "  HLTResults " << HLTResults[results_index] << endl;
-	 //if (IsPhoton) cout << "Trigger:  " << tmp << "  HLTResults " << HLTResults[results_index] << endl;
-	 if ((IsEM80)&&(HLTResults[results_index]==true)) PassTrig=true;
-	 tmp.clear(); //reset temporary string of HLT name
-	 results_index++; //move to next HLT result
+     int TrigBit1=getPreCutValue1("FirstTrigBit");
+     int TrigBit2=getPreCutValue1("SecondTrigBit");
+     if ((HLTResults[TrigBit1])||(HLTResults[TrigBit2]))
+	 PassTrig=true;
+
+     /////To print out list of trigger names:
+//      int results_index=0;
+//      string tmp="";
+//      for (int itrig=0;itrig<hltNamesLen;itrig++){
+//        if (HLTNames[itrig]==':') {
+// 	 cout << tmp << "   " << HLTResults[results_index] << endl;
+// 	 tmp.clear(); //reset temporary string of HLT name
+// 	 results_index++; //move to next HLT result
+//        }
+//        else tmp.push_back(HLTNames[itrig]) ;  //build up HLT name until ":" is reached, indicating end of name
+//      }
+
+
+     //GenPart Match
+     int electron_PID=11;
+     int LQ_PID=42;
+     //int LQ_PID=23;
+     float ConeSizeMCmatch_cut=0.07;
+     int nEleMatched = 0;
+     int nGenEle = 0;
+     int from_LQ_idx[2]={99,99};
+     int matched_reco_idx[2]={99,99};
+
+     //////////Finding elec from LQ
+     for(int igen=0;igen<GenParticleCount;igen++)
+       {
+ 
+	 //select electrons from LQ decay
+	 if(abs(GenParticlePdgId[igen])==electron_PID
+	    && abs(GenParticlePdgId[GenParticleMotherIndex[igen]])==LQ_PID)
+	   {
+	     nGenEle++;
+	     if (from_LQ_idx[0]==99) from_LQ_idx[0]=igen;
+	     else from_LQ_idx[1]=igen;
+	   }
        }
-       else tmp.push_back(HLTNames[itrig]) ;  //build up HLT name until ":" is reached, indicating end of name
+
+     TVector3 ele1gen, ele2gen;
+     ele1gen.SetPtEtaPhi(GenParticlePt[from_LQ_idx[0]],
+ 			   GenParticleEta[from_LQ_idx[0]],
+ 			   GenParticlePhi[from_LQ_idx[0]]);	
+ 	
+     ele2gen.SetPtEtaPhi(GenParticlePt[from_LQ_idx[1]],
+ 			   GenParticleEta[from_LQ_idx[1]],
+ 			   GenParticlePhi[from_LQ_idx[1]]);	
+ 	
+     ///////Calculating DeltaR and matching
+     float minDeltaR1 = 99;
+     float minDeltaR2 = 99;
+     float min2ndDeltaR1 = 99;
+     float min2ndDeltaR2 = 99;
+     int RecoIndex1 = 99;
+     int RecoIndex2 = 99;
+
+     for (int iele=0; iele<eleCount; iele++) {
+       //       if (elePt[iele]<elePt_cut) continue;
+       TVector3 ele;
+       ele.SetPtEtaPhi(elePt[iele],
+ 	       eleEta[iele],
+ 	       elePhi[iele]);	
+ 
+       float DeltaR_ele_ele1gen = ele1gen.DeltaR(ele);
+       float DeltaR_ele_ele2gen = ele2gen.DeltaR(ele);
+
+       if (DeltaR_ele_ele1gen < minDeltaR1) {
+	 min2ndDeltaR1=minDeltaR1;
+	 minDeltaR1=DeltaR_ele_ele1gen;
+	 RecoIndex1 = iele;
+       }
+       else if (DeltaR_ele_ele1gen < min2ndDeltaR1){
+	 min2ndDeltaR1=DeltaR_ele_ele1gen;
+       }
+       if (DeltaR_ele_ele2gen < minDeltaR2) {
+	 min2ndDeltaR2=minDeltaR2;
+	 minDeltaR2=DeltaR_ele_ele2gen;
+	 RecoIndex2 = iele;
+       }
+       else if (DeltaR_ele_ele2gen < min2ndDeltaR2){
+	 min2ndDeltaR2=DeltaR_ele_ele2gen;
+       }
+     }
+     if (minDeltaR1< ConeSizeMCmatch_cut) {
+       matched_reco_idx[0]=RecoIndex1;
+       nEleMatched++;
+     }
+     if (minDeltaR2< ConeSizeMCmatch_cut) {
+       matched_reco_idx[1]=RecoIndex2;
+       nEleMatched++;
      }
 
-
      // Electrons
+     vector<int> v_idx_ele_FR;
+     vector<int> v_idx_ele_HoE;
+     vector<int> v_idx_ele_sigEta;
+     vector<int> v_idx_ele_deltaEta;
+     vector<int> v_idx_ele_deltaPhi;
      vector<int> v_idx_ele_ID;
      vector<int> v_idx_ele_ISO;
      vector<int> v_idx_ele_final;
-     bool pass_ISO=false;
-     bool pass_ID=false;
-     double ele_pt_cut = 30;
 
      for(int iele=0;iele<eleCount;iele++)
        {
-	 if (elePt[iele]<ele_pt_cut) continue;
+	 if (elePt[iele]< getPreCutValue1("ele_pt_cut")) continue;
+
+	 bool pass_ISO=false;
+	 bool pass_ID=false;
 
 	 // ECAL barrel fiducial region
 	 bool pass_ECAL_FR=false;
 	 if( fabs(eleEta[iele]) < getPreCutValue1("eleFidRegion") )  pass_ECAL_FR=true;
+	 if (pass_ECAL_FR) v_idx_ele_FR.push_back(iele);
 
 	 bool in_Barrel=false;
          bool in_Endcap=false;
@@ -133,15 +211,19 @@ void analysisClass::Loop()
 	 bool pass_HoE=false;
 	 if( (in_Barrel)&&((eleHoE[iele]) < getPreCutValue1("ID_HoE_bar")) )  pass_HoE=true;
 	 if( (in_Endcap)&&((eleHoE[iele]) < getPreCutValue1("ID_HoE_end")) )  pass_HoE=true;
+	 if (pass_HoE) v_idx_ele_HoE.push_back(iele);
 	 bool pass_sigEtaEta=false;
 	 if( (in_Barrel)&&((eleSigmaEE[iele]) < getPreCutValue1("ID_sigEtaEta_bar")) )  pass_sigEtaEta=true;
 	 if( (in_Endcap)&&((eleSigmaEE[iele]) < getPreCutValue1("ID_sigEtaEta_end")) )  pass_sigEtaEta=true;
+	 if (pass_sigEtaEta) v_idx_ele_sigEta.push_back(iele);
 	 bool pass_deltaEta=false;
 	 if( (in_Barrel)&&((eleDeltaEtaTrkSC[iele]) < getPreCutValue1("ID_deltaEta_bar")) )  pass_deltaEta=true;
 	 if( (in_Endcap)&&((eleDeltaEtaTrkSC[iele]) < getPreCutValue1("ID_deltaEta_end")) )  pass_deltaEta=true;
+	 if (pass_deltaEta) v_idx_ele_deltaEta.push_back(iele);
 	 bool pass_deltaPhi=false;
 	 if( (in_Barrel)&&((eleDeltaPhiTrkSC[iele]) < getPreCutValue1("ID_deltaPhi_bar")) )  pass_deltaPhi=true;
 	 if( (in_Endcap)&&((eleDeltaPhiTrkSC[iele]) < getPreCutValue1("ID_deltaPhi_end")) )  pass_deltaPhi=true;
+	 if (pass_deltaPhi) v_idx_ele_deltaPhi.push_back(iele);
 
 	 if ((pass_ECAL_FR)&&(pass_HoE)&&(pass_sigEtaEta)&&(pass_deltaEta)&&(pass_deltaPhi)) {
 	   v_idx_ele_ID.push_back(iele);
@@ -162,6 +244,12 @@ void analysisClass::Loop()
 	 if( (in_Barrel)&&((eleHcalTowerIso[iele]) < (getPreCutValue1("ISO_HcalIso_bar")+(0.005*elePt[iele]))) )  pass_HcalIso=true;
 	 if( (in_Endcap)&&((eleHcalTowerIso[iele]) < (getPreCutValue1("ISO_HcalIso_end")+(0.005*elePt[iele]))) )  pass_HcalIso=true;
 
+	 ///////For OLD RootTuples comment out Ecal and Hcal Iso above and add these lines in instead:
+// 	 bool pass_EcalIso=false;
+// 	 if( (in_Barrel)&&((eleEcalIso[iele]) < (getPreCutValue1("ISO_EcalIso_bar")+(0.01*elePt[iele]))) )  pass_EcalIso=true;
+// 	 if( (in_Endcap)&&((eleEcalIso[iele]) < (getPreCutValue1("ISO_EcalIso_end")+(0.01*elePt[iele]))) )  pass_EcalIso=true;
+//  	 bool pass_HcalIso=true;
+
 	 if ((pass_ECAL_FR)&&(pass_NumTrack)&&( pass_TrackIso)&&(pass_EcalIso)&&(pass_HcalIso)) {
 	   v_idx_ele_ISO.push_back(iele);
 	   pass_ISO=true;
@@ -175,10 +263,9 @@ void analysisClass::Loop()
      // Jets
      vector<int> v_idx_jet_final;
      float deltaR_minCut = 0.5;
-     float jet_pt_cut = 50;
      for(int ijet=0;ijet<caloJetIC5Count;ijet++)
        {
-	 if (caloJetIC5Pt[ijet]<jet_pt_cut) continue;
+	 if (caloJetIC5Pt[ijet]< getPreCutValue1("jet_pt_cut")) continue;
 	 // HCAL barrel fiducial region
 	 bool pass_HCAL_FR=false;
 	 if( fabs(caloJetIC5Eta[ijet]) < getPreCutValue1("jetFidRegion") ) pass_HCAL_FR=true ;
@@ -204,8 +291,14 @@ void analysisClass::Loop()
      
      // Set the value of the variableNames listed in the cutFile to their current value
      if (PassTrig) fillVariableWithValue("HLT",1) ;
+     fillVariableWithValue("nEle_HoE", v_idx_ele_HoE.size()) ;
+     fillVariableWithValue("nEle_sigEtaEta", v_idx_ele_sigEta.size()) ;
+     fillVariableWithValue("nEle_deltaEta", v_idx_ele_deltaEta.size()) ;
+     fillVariableWithValue("nEle_deltaPhi", v_idx_ele_deltaPhi.size()) ;
      fillVariableWithValue("nEleID_30GeV", v_idx_ele_ID.size()) ;
      fillVariableWithValue("nEleISO_30GeV", v_idx_ele_ISO.size()) ;
+//      fillVariableWithValue("nEle_FR", v_idx_ele_FR.size()) ;
+//      fillVariableWithValue("nEle_mcMatch", nEleMatched) ;
      //fillVariableWithValue("nJet_50GeV", v_idx_jet_final.size()) ;
      bool TwoEles=false;
      bool TwoJets=false;
@@ -272,6 +365,11 @@ void analysisClass::Loop()
      h_Mej->Fill(M22);
      //if( v_idx_ele_ID.size()>=1 ) h_pT1stEle->Fill(elePt[v_idx_ele_ID[0]]);
      //if( v_idx_ele_ID.size()>=2 && (elePt[v_idx_ele_ID[0]])>85 ) h_pT2ndEle->Fill(elePt[v_idx_ele_ID[1]]);
+
+     if (passedCut("nEleID_30GeV")){
+//        cout << "First Electron: " << elePt[v_idx_ele_ID[0]] << "\t" << eleEta[v_idx_ele_ID[0]] << endl;
+//        cout << "Second Electron: " << elePt[v_idx_ele_ID[1]] << "\t" << eleEta[v_idx_ele_ID[1]] << endl;
+     }
      
      // reject events that did not pass level 0 cuts
      if( !passedCut("0") ) continue;
