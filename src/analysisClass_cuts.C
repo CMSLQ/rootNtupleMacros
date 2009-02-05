@@ -270,14 +270,12 @@ void analysisClass::Loop()
 	 bool pass_HCAL_FR=false;
 	 if( fabs(caloJetIC5Eta[ijet]) < getPreCutValue1("jetFidRegion") ) pass_HCAL_FR=true ;
 	 if (caloJetIC5Pt[ijet]<1) continue;
-// 	 cout << "Jet " << ijet << ":  " << caloJetIC5Pt[ijet] << "\t" << caloJetIC5Eta[ijet] << "\t" << caloJetIC5Phi[ijet] << endl;
-// 	 cout << "#######################" << endl;
+
 	 ///Disambiguation of electrons from jets
 	 float minDeltaR=99;
 	 TVector3 jet_vec;
 	 jet_vec.SetPtEtaPhi(caloJetIC5Pt[ijet],caloJetIC5Eta[ijet],caloJetIC5Phi[ijet]);
 	 for (int i=0; i<v_idx_ele_final.size();i++){
-// 	   cout << "Elec:  " << elePt[v_idx_ele_final[i]] << "\t" << eleEta[v_idx_ele_final[i]] << "\t" << elePhi[v_idx_ele_final[i]] << endl;
 	   TVector3 ele_vec;
 	   ele_vec.SetPtEtaPhi(elePt[v_idx_ele_final[i]],eleEta[v_idx_ele_final[i]],elePhi[v_idx_ele_final[i]]);
 	   double distance=jet_vec.DeltaR(ele_vec);
@@ -297,9 +295,7 @@ void analysisClass::Loop()
      fillVariableWithValue("nEle_deltaPhi", v_idx_ele_deltaPhi.size()) ;
      fillVariableWithValue("nEleID_30GeV", v_idx_ele_ID.size()) ;
      fillVariableWithValue("nEleISO_30GeV", v_idx_ele_ISO.size()) ;
-//      fillVariableWithValue("nEle_FR", v_idx_ele_FR.size()) ;
-//      fillVariableWithValue("nEle_mcMatch", nEleMatched) ;
-     //fillVariableWithValue("nJet_50GeV", v_idx_jet_final.size()) ;
+
      bool TwoEles=false;
      bool TwoJets=false;
      if( v_idx_ele_final.size() >= 1 ) 
@@ -324,6 +320,7 @@ void analysisClass::Loop()
      }
      ///Calculate ej mass and take closer pair (old way)
      double M11, M12, M21, M22=-100;
+     double diff_11_22, diff_12_21;
      if ((TwoEles)&&(TwoJets)){
  	 TLorentzVector jet1, jet2, ele1, ele2;
 	 ele1.SetPtEtaPhiM(elePt[v_idx_ele_final[0]],eleEta[v_idx_ele_final[0]],elePhi[v_idx_ele_final[0]],0);
@@ -340,36 +337,33 @@ void analysisClass::Loop()
 	 M21=jet2ele1.M();
 	 M22=jet2ele2.M();
 	 //cout << "M11:  " << M11 << "  M12:  " << M12 << "  M21:  " << M21 << "  M22:  " << M22 << endl;
-	 double diff_11_22, diff_12_21;
 	 diff_11_22=fabs(M11-M22);
 	 diff_12_21=fabs(M12-M21);
-	 if ((M11>50)&&(diff_11_22<diff_12_21)) {
+	 if (diff_11_22<diff_12_21) {
 	   fillVariableWithValue("Mej",M11);
-	   fillVariableWithValue("Mej",M22);
 	 }
 	 else {
 	   fillVariableWithValue("Mej",M12);
-	   fillVariableWithValue("Mej",M21);
 	 }
      }
      // Evaluate cuts (but do not apply them)
      evaluateCuts();
      
+     if( passedCut("all") ){
+	 if (diff_11_22<diff_12_21) {
+	   h_Mej->Fill(M11);
+	   h_Mej->Fill(M22);
+	 }
+	 else {
+	   h_Mej->Fill(M12);
+	   h_Mej->Fill(M21);
+	 }
+
+     }
      // Fill histograms and do analysis based on cut evaluation
      h_nEleID_30GeV->Fill(v_idx_ele_ID.size());
      h_nEleISO_30GeV->Fill(v_idx_ele_ISO.size());
      h_nEleFinal->Fill(v_idx_ele_final.size());
-     h_Mej->Fill(M11);
-     h_Mej->Fill(M12);
-     h_Mej->Fill(M21);
-     h_Mej->Fill(M22);
-     //if( v_idx_ele_ID.size()>=1 ) h_pT1stEle->Fill(elePt[v_idx_ele_ID[0]]);
-     //if( v_idx_ele_ID.size()>=2 && (elePt[v_idx_ele_ID[0]])>85 ) h_pT2ndEle->Fill(elePt[v_idx_ele_ID[1]]);
-
-     if (passedCut("nEleID_30GeV")){
-//        cout << "First Electron: " << elePt[v_idx_ele_ID[0]] << "\t" << eleEta[v_idx_ele_ID[0]] << endl;
-//        cout << "Second Electron: " << elePt[v_idx_ele_ID[1]] << "\t" << eleEta[v_idx_ele_ID[1]] << endl;
-     }
      
      // reject events that did not pass level 0 cuts
      if( !passedCut("0") ) continue;
