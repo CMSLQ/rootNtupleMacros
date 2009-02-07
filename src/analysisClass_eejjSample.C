@@ -286,6 +286,7 @@ void analysisClass::Loop()
      float deltaR_minCut = 0.5;
      for(int ijet=0;ijet<caloJetIC5Count;ijet++)
        {
+	 if (caloJetIC5Pt[ijet]> 5) h_jet_Eta->Fill(caloJetIC5Eta[ijet]);
 	 if (caloJetIC5Pt[ijet]< getPreCutValue1("jet_pt_cut")) continue;
 	 // HCAL barrel fiducial region
 	 bool pass_HCAL_FR=false;
@@ -430,6 +431,7 @@ void analysisClass::Loop()
 
    h_jet_pT_1st->Write();
    h_jet_pT_2nd->Write();
+   h_jet_Eta->Write();
 
    h_Mej->Write();
 
