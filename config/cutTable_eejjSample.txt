@@ -32,10 +32,10 @@ ISO_NumTrack_bar      4 	   -			-		-		-1
 ISO_NumTrack_end      4 	   -			-		-		-1
 ISO_TrackIso_bar      7.5 	   -			-		-		-1
 ISO_TrackIso_end      15 	   -			-		-		-1
-ISO_EcalIso_bar	      6 	   -			-		-		-1
-ISO_EcalIso_end	      6 	   -			-		-		-1
-ISO_HcalIso_bar	      4 	   -			-		-		-1
-ISO_HcalIso_end	      4 	   -			-		-		-1
+ISO_EcalIso_bar	      6 	   0.01			-		-		-1
+ISO_EcalIso_end	      6 	   0.01			-		-		-1
+ISO_HcalIso_bar	      4 	   0.005		-		-		-1
+ISO_HcalIso_end	      4 	   0.005		-		-		-1
 #
 #
 #--------------------------------- Cuts (level 0,1,2,3 ... n) below --------------------------------------------
@@ -56,16 +56,16 @@ ISO_HcalIso_end	      4 	   -			-		-		-1
 #VariableName	      minValue1(<) maxValue1(>=)	minValue2(<)	maxValue2(>=)	level	histoNbinsMinMax
 #------------	      ------------ -------------	------------	-------------	-----	----------------
 HLT		      0		   +inf			-		-		0	3 -0.5 2.5
-#nEle_FR	      1		   +inf			-		-		0	11 -0.5 10.5
-#nEle_mcMatch	      1		   +inf			-		-		0	11 -0.5 10.5
-nEle_HoE	      1		   +inf			-		-		0	11 -0.5 10.5
-nEle_sigEtaEta	      1		   +inf			-		-		0	11 -0.5 10.5
-nEle_deltaEta	      1		   +inf			-		-		0	11 -0.5 10.5
-nEle_deltaPhi	      1		   +inf			-		-		0	11 -0.5 10.5
-nEleID_30GeV	      1		   +inf			-		-		0	11 -0.5 10.5
-nEleISO_30GeV         1		   +inf			-		-		0	11 -0.5 10.5
-2e30_2j50	      0		   +inf			-		-		1	11 -0.5 10.5
-pT1stEle	      85	   +inf			-	        -	        1	100 0 1000
-invMass_ee	      100	   +inf	                -		-               2       100 0 1000
-sT		      400	   +inf			-		-		2	400 0 4000                   
-Mej                   0		   +inf			-		-		2	100 0 1000
+nEle_FR		      1		   +inf			-		-		0	6 -0.5 5.5
+#nEle_mcMatch	      1		   +inf			-		-		0	6 -0.5 5.5
+nEle_HoE	      1		   +inf			-		-		0	6 -0.5 5.5
+nEle_sigEtaEta	      1		   +inf			-		-		0	6 -0.5 5.5
+nEle_deltaEta	      1		   +inf			-		-		0	6 -0.5 5.5
+nEle_deltaPhi	      1		   +inf			-		-		0	6 -0.5 5.5
+nEleID_30GeV	      1		   +inf			-		-		0	6 -0.5 5.5
+nEleISO_30GeV         1		   +inf			-		-		0	6 -0.5 5.5
+2e30_2j50	      0		   +inf			-		-		1	6 -0.5 5.5
+elec_pT_1st	      85	   +inf			-	        -	        1	100 0 500
+invMass_ee	      100	   +inf	                -		-               2       100 0 500
+sT		      400	   +inf			-		-		2	200 0 2000                   
+Mej                   0		   +inf			-		-		3	100 0 1000
