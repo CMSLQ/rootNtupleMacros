@@ -36,12 +36,19 @@ void analysisClass::Loop()
    TH1F *h_GenPart_elePt = new TH1F ("GenPart_elePt","GenPart_elePt",100,0,1000); h_GenPart_elePt->Sumw2();
    TH1F *h_GenPart_quarkEta = new TH1F ("GenPart_quarkEta","GenPart_quarkEta",101,-5.05,5.05); h_GenPart_quarkEta->Sumw2();
    TH1F *h_GenPart_quarkPt = new TH1F ("GenPart_quarkPt","GenPart_quarkPt",100,0,1000); h_GenPart_quarkPt->Sumw2();
+   TH1F *h_GenPart_LQEta = new TH1F ("GenPart_LQEta","GenPart_LQEta",101,-5.05,5.05); h_GenPart_LQEta->Sumw2();
+   TH1F *h_GenPart_LQPt = new TH1F ("GenPart_LQPt","GenPart_LQPt",100,0,1000); h_GenPart_LQPt->Sumw2();
+   TH1F *h_GenJet_pT_1st = new TH1F ("GenJet_pT_1st","GenJet_pT_1st",100,0,1000); h_GenJet_pT_1st->Sumw2();
+   TH1F *h_GenJet_eta_1st = new TH1F ("GenJet_eta_1st","GenJet_eta_1st",101,-5.05,5.05); h_GenJet_eta_1st->Sumw2();
+   TH1F *h_GenJet_pT_2nd = new TH1F ("GenJet_pT_2nd","GenJet_pT_2nd",100,0,1000); h_GenJet_pT_2nd->Sumw2();
+   TH1F *h_GenJet_eta_2nd = new TH1F ("GenJet_eta_2nd","GenJet_eta_2nd",101,-5.05,5.05); h_GenJet_eta_2nd->Sumw2();
 
    //electrons
-   TH1F *h_elec_sigEtaEta_barrel = new TH1F ("elec_sigEtaEta_barrel","Sigma Eta Eta (ID var) Barrel",200,0,0.2); h_elec_sigEtaEta_barrel->Sumw2();
-   TH1F *h_elec_sigEtaEta_endcap = new TH1F ("elec_sigEtaEta_endcap","Sigma Eta Eta (ID var) Endcap",200,0,0.2); h_elec_sigEtaEta_endcap->Sumw2();
+   TH1F *h_elec_sigEtaEta_barrel = new TH1F ("elec_sigEtaEta_barrel","Sigma Eta Eta (ID var) Barrel",60,0,0.06); h_elec_sigEtaEta_barrel->Sumw2();
+   TH1F *h_elec_sigEtaEta_endcap = new TH1F ("elec_sigEtaEta_endcap","Sigma Eta Eta (ID var) Endcap",60,0,0.06); h_elec_sigEtaEta_endcap->Sumw2();
    TH1F *h_elec_HoE_barrel = new TH1F ("elec_HoE_barrel","H over E (ID var) Barrel",200,0,0.2); h_elec_HoE_barrel->Sumw2();
    TH1F *h_elec_HoE_endcap = new TH1F ("elec_HoE_endcap","H over E (ID var) Endcap",200,0,0.2); h_elec_HoE_endcap->Sumw2();
+   TH1F *h_nEle_ptCut = new TH1F ("nEle_ptCut","Number elecs passing pt cut",6,-0.5,5.5); h_nEle_ptCut->Sumw2();
    TH1F *h_nEleID_30GeV = new TH1F ("nEleID_30GeV","Number of IDed elecs",11,-0.5,10.5); h_nEleID_30GeV->Sumw2();
    TH1F *h_nEleISO_30GeV = new TH1F ("nEleISO_30GeV","Number of Isolated elecs",11,-0.5,10.5); h_nEleISO_30GeV->Sumw2();
    TH1F *h_nEleFinal = new TH1F ("nEleFinal","Number of elecs passing ID+ISO",11,-0.5,10.5);  h_nEleFinal->Sumw2();
@@ -50,11 +57,16 @@ void analysisClass::Loop()
    TH1F *h_elec_pT_1st_ID_ISO = new TH1F ("elec_pT_1st_ID_ISO","pT of highest Reco Electron",100,0,1000); h_elec_pT_1st_ID_ISO->Sumw2();
    TH1F *h_elec_pT_2nd_ID_ISO = new TH1F ("elec_pT_2nd_ID_ISO","pT of second highest Reco Elec",100,0,1000);  h_elec_pT_2nd_ID_ISO->Sumw2();
    TH1F *h_elec_Eta = new TH1F ("elec_Eta","elec_Eta",61,-3.05, 3.05); h_elec_Eta->Sumw2();
+   TH1F *h_elec_Eta_1st = new TH1F ("elec_Eta_1st","elec_Eta_1st",61,-3.05, 3.05); h_elec_Eta_1st->Sumw2();
+   TH1F *h_elec_Eta_2nd = new TH1F ("elec_Eta_2nd","elec_Eta_2nd",61,-3.05, 3.05); h_elec_Eta->Sumw2();
 
    // Jets
-   TH1F *h_nJet_50GeV = new TH1F ("nJet_50GeV","nJet_50GeV",11,-0.5,10.5);  h_nJet_50GeV->Sumw2();
+   TH1F *h_nJet = new TH1F ("nJet","nJet",21,-0.5,20.5);  h_nJet->Sumw2();
+   TH1F *h_nJet_ptCut = new TH1F ("nJet_ptCut","nJet_ptCut",11,-0.5,10.5);  h_nJet_ptCut->Sumw2();
    TH1F *h_jet_pT_1st = new TH1F ("jet_pT_1st","jet_pT_1st",100,0,1000); h_jet_pT_1st->Sumw2();
    TH1F *h_jet_pT_2nd = new TH1F ("jet_pT_2nd","jet_pT_2nd",100,0,1000);  h_jet_pT_2nd->Sumw2();
+   TH1F *h_jet_Eta_1st = new TH1F ("jet_Eta_1st","jet_Eta_1st",61,-3.05, 3.05);  h_jet_Eta_1st->Sumw2();
+   TH1F *h_jet_Eta_2nd = new TH1F ("jet_Eta_2nd","jet_Eta_2nd",61,-3.05, 3.05);  h_jet_Eta_2nd->Sumw2();
    TH1F *h_jet_Eta = new TH1F ("jet_Eta","jet_Eta",61,-3.05, 3.05);  h_jet_Eta->Sumw2();
 
    //Combinations
@@ -134,6 +146,11 @@ void analysisClass::Loop()
 	     h_GenPart_quarkEta->Fill(GenParticleEta[igen]);
 	     h_GenPart_quarkPt->Fill(GenParticlePt[igen]);
 	   }
+	 if(abs(GenParticlePdgId[igen])==LQ_PID)
+	   {
+	     h_GenPart_LQEta->Fill(GenParticleEta[igen]);
+	     h_GenPart_LQPt->Fill(GenParticlePt[igen]);
+	   }
        }
 
      TVector3 ele1gen, ele2gen;
@@ -189,6 +206,16 @@ void analysisClass::Loop()
        nEleMatched++;
      }
 
+     //GenJets
+     if(genJetCount>0) {
+       h_GenJet_pT_1st->Fill(genJetPt[0]);
+       h_GenJet_eta_1st->Fill(genJetEta[0]);
+     }
+     if(genJetCount>1) {
+       h_GenJet_pT_2nd->Fill(genJetPt[1]);
+       h_GenJet_eta_2nd->Fill(genJetEta[1]);
+     }
+
      // Electrons
      vector<int> v_idx_ele_FR;
      vector<int> v_idx_ele_HoE;
@@ -198,20 +225,22 @@ void analysisClass::Loop()
      vector<int> v_idx_ele_ID;
      vector<int> v_idx_ele_ISO;
      vector<int> v_idx_ele_final;
+     int nElePtCut=0;
 
      for(int iele=0;iele<eleCount;iele++)
        {
 	 if (elePt[iele]>10) h_elec_Eta->Fill(eleEta[iele]);
 
-	 if (elePt[iele]< getPreCutValue1("ele_pt_cut")) continue;
-
-	 bool pass_ISO=false;
-	 bool pass_ID=false;
-
 	 // ECAL barrel fiducial region
 	 bool pass_ECAL_FR=false;
 	 if( fabs(eleEta[iele]) < getPreCutValue1("eleFidRegion") )  pass_ECAL_FR=true;
 	 if (pass_ECAL_FR) v_idx_ele_FR.push_back(iele);
+
+	 if (elePt[iele]< getPreCutValue1("ele_pt_cut")) continue;
+	 nElePtCut++;
+
+	 bool pass_ISO=false;
+	 bool pass_ID=false;
 
 	 bool in_Barrel=false;
          bool in_Endcap=false;
@@ -279,15 +308,18 @@ void analysisClass::Loop()
 	 if ((pass_ID)&&(pass_ISO)) v_idx_ele_final.push_back(iele);
 
        } //loop over electrons     
-
+     h_nEle_ptCut->Fill(nElePtCut);
 
      // Jets
      vector<int> v_idx_jet_final;
      float deltaR_minCut = 0.5;
+     int nJet=0;
+     int nJetPtCut=0;
      for(int ijet=0;ijet<caloJetIC5Count;ijet++)
        {
 	 if (caloJetIC5Pt[ijet]> 5) h_jet_Eta->Fill(caloJetIC5Eta[ijet]);
 	 if (caloJetIC5Pt[ijet]< getPreCutValue1("jet_pt_cut")) continue;
+	 nJetPtCut++;
 	 // HCAL barrel fiducial region
 	 bool pass_HCAL_FR=false;
 	 if( fabs(caloJetIC5Eta[ijet]) < getPreCutValue1("jetFidRegion") ) pass_HCAL_FR=true ;
@@ -305,6 +337,7 @@ void analysisClass::Loop()
  	 }
 	 if ((pass_HCAL_FR)&&(minDeltaR>deltaR_minCut)) v_idx_jet_final.push_back(ijet);
        }     
+     h_nJet_ptCut->Fill(nJetPtCut);
 
       // Set the evaluation of the cuts to false and clear the variable values and filled status
      resetCuts();
@@ -384,15 +417,28 @@ void analysisClass::Loop()
 
      }
      // Fill histograms and do analysis based on cut evaluation
-     if (eleCount>0) h_elec_pT_1st->Fill(elePt[0]);
-     if (eleCount>1) h_elec_pT_2nd->Fill(elePt[1]);
+     if (eleCount>0) {
+       h_elec_pT_1st->Fill(elePt[0]);
+       h_elec_Eta_1st->Fill(eleEta[0]);
+     }
+     if (eleCount>1) {
+       h_elec_pT_2nd->Fill(elePt[1]);
+       h_elec_Eta_2nd->Fill(eleEta[1]);
+     }
      if (v_idx_ele_final.size()>0) h_elec_pT_1st_ID_ISO->Fill(elePt[v_idx_ele_final[0]]);
      if (v_idx_ele_final.size()>1)h_elec_pT_2nd_ID_ISO->Fill(elePt[v_idx_ele_final[1]]);
-     if (caloJetIC5Count>0) h_jet_pT_1st->Fill(caloJetIC5Pt[0]);
-     if (caloJetIC5Count>1) h_jet_pT_2nd->Fill(caloJetIC5Pt[1]);
+     if (caloJetIC5Count>0) {
+       h_jet_pT_1st->Fill(caloJetIC5Pt[0]);
+       h_jet_Eta_1st->Fill(caloJetIC5Eta[0]);
+     }
+     if (caloJetIC5Count>1){
+       h_jet_pT_2nd->Fill(caloJetIC5Pt[1]);
+       h_jet_Eta_2nd->Fill(caloJetIC5Eta[1]);
+     }
      h_nEleID_30GeV->Fill(v_idx_ele_ID.size());
      h_nEleISO_30GeV->Fill(v_idx_ele_ISO.size());
      h_nEleFinal->Fill(v_idx_ele_final.size());
+     h_nJet->Fill(caloJetIC5Count);
      
      // reject events that did not pass level 0 cuts
      if( !passedCut("0") ) continue;
@@ -417,21 +463,34 @@ void analysisClass::Loop()
    h_GenPart_elePt->Write();
    h_GenPart_quarkEta->Write();
    h_GenPart_quarkPt->Write();
+   h_GenPart_LQEta->Write();
+   h_GenPart_LQPt->Write();
+   h_GenJet_pT_1st->Write();
+   h_GenJet_eta_1st->Write();
+   h_GenJet_pT_2nd->Write();
+   h_GenJet_eta_2nd->Write();
 
    h_elec_Eta->Write();
    h_elec_sigEtaEta_barrel->Write();
    h_elec_sigEtaEta_endcap->Write();
    h_elec_HoE_barrel->Write();
    h_elec_HoE_endcap->Write();
+   h_nEle_ptCut->Write();
    h_nEleID_30GeV->Write();
    h_elec_pT_1st->Write();
    h_elec_pT_2nd->Write();
+   h_elec_Eta_1st->Write();
+   h_elec_Eta_2nd->Write();
    h_elec_pT_1st_ID_ISO->Write();
    h_elec_pT_2nd_ID_ISO->Write();
 
+   h_nJet->Write();
+   h_nJet_ptCut->Write();
    h_jet_pT_1st->Write();
    h_jet_pT_2nd->Write();
    h_jet_Eta->Write();
+   h_jet_Eta_1st->Write();
+   h_jet_Eta_2nd->Write();
 
    h_Mej->Write();
 
