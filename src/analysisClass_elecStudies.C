@@ -134,7 +134,7 @@ void analysisClass::Loop()
    
   /////////initialize variables
   int electron_PID=int(getPreCutValue1("electronPID"));
-  int LQ_PID=int(getPreCutValue1("leptoquarkPID"));
+  int MotherPID=int(getPreCutValue1("motherPID"));
   float ConeSizeMCmatch_cut=getPreCutValue1("coneSizeMCmatchCut");
 
   /////////////Barrel Cuts ////////////////
@@ -213,7 +213,7 @@ void analysisClass::Loop()
  
 	//select electrons from LQ decay
 	if(abs(GenParticlePdgId[igen])==electron_PID
-	   && abs(GenParticlePdgId[GenParticleMotherIndex[igen]])==LQ_PID)
+	   && abs(GenParticlePdgId[GenParticleMotherIndex[igen]])==MotherPID)
 	  {
 	    nGenEle++;
 	    h_ele_Pt_Gen->Fill(GenParticlePt[igen]);
