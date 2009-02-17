@@ -13,13 +13,11 @@
 #
 #VariableName	      value1	   value2		value3		value4		level
 #------------	      ------------ -------------	------------	-------------	-----
-eleFidRegion	      2.5	   -			-		-		-1	
-ele_pt_cut	      30	   -			-		-		-1
-jetFidRegion	      2.5	   -			-		-		-1	
-jet_pt_cut	      50	   -			-		-		-1
-FirstTrigBit	      51	   -			-		-		-1
-SecondTrigBit	      52	   -			-		-		-1
-#EM80=51, EM200=52, HLTPhoton15=67, HLTPhoton25=68, HLT1EMHightEtb=40, HLT1EMVeryHightEt=41 
+ele_PtPreCut	      20	   -			-		-		-1
+jet_PtPreCut	      20	   -			-		-		-1
+jet_ele_DeltaRcut     0.5	   -			-		-		-1
+TriggerBits1	      51	   52			67		68		-1
+## EM80=51, EM200=52, HLTPhoton15=67, HLTPhoton25=68 (HLT1EMHightEtb=40, HLT1EMVeryHightEt=41 old??) ##
 ID_HoE_bar	      0.05	   -			-		-		-1	
 ID_HoE_end	      0.1	   -			-		-		-1	
 ID_sigEtaEta_bar      0.011	   -			-		-		-1
@@ -28,6 +26,9 @@ ID_deltaEta_bar       0.005	   -			-		-		-1
 ID_deltaEta_end	      0.007	   -			-		-		-1
 ID_deltaPhi_bar	      0.09	   -			-		-		-1
 ID_deltaPhi_end	      0.09	   -			-		-		-1
+ID_eleClass_bar	      41	   -			-		-		-1
+## check the cut: ID_eleClass_bar ##
+ID_eleClass_end	      100	   -			-		-		-1
 ISO_NumTrack_bar      4 	   -			-		-		-1
 ISO_NumTrack_end      4 	   -			-		-		-1
 ISO_TrackIso_bar      7.5 	   -			-		-		-1
@@ -36,6 +37,8 @@ ISO_EcalIso_bar	      6 	   0.01			-		-		-1
 ISO_EcalIso_end	      6 	   0.01			-		-		-1
 ISO_HcalIso_bar	      4 	   0.005		-		-		-1
 ISO_HcalIso_end	      4 	   0.005		-		-		-1
+eleEta_bar	      1.422	   -			-		-		-1
+eleEta_end	      1.560	   2.5			-		-		-1
 #
 #
 #--------------------------------- Cuts (level 0,1,2,3 ... n) below --------------------------------------------
@@ -55,17 +58,30 @@ ISO_HcalIso_end	      4 	   0.005		-		-		-1
 #
 #VariableName	      minValue1(<) maxValue1(>=)	minValue2(<)	maxValue2(>=)	level	histoNbinsMinMax
 #------------	      ------------ -------------	------------	-------------	-----	----------------
-HLT		      0		   +inf			-		-		0	3 -0.5 2.5
-nEle_FR		      1		   +inf			-		-		0	6 -0.5 5.5
-#nEle_mcMatch	      1		   +inf			-		-		0	6 -0.5 5.5
-nEle_HoE	      1		   +inf			-		-		0	6 -0.5 5.5
-nEle_sigEtaEta	      1		   +inf			-		-		0	6 -0.5 5.5
-nEle_deltaEta	      1		   +inf			-		-		0	6 -0.5 5.5
-nEle_deltaPhi	      1		   +inf			-		-		0	6 -0.5 5.5
-nEleID_30GeV	      1		   +inf			-		-		0	6 -0.5 5.5
-nEleISO_30GeV         1		   +inf			-		-		0	6 -0.5 5.5
-2e30_2j50	      0		   +inf			-		-		1	6 -0.5 5.5
-elec_pT_1st	      85	   +inf			-	        -	        1	100 0 500
-invMass_ee	      100	   +inf	                -		-               2       100 0 500
-sT		      400	   +inf			-		-		2	200 0 2000                   
-Mej                   0		   +inf			-		-		3	100 0 1000
+HLT		      0		   +inf			-		-		0	2 -0.5 1.5
+nEle_noCut	      -1	   +inf			-		-		0	16 -0.5 15.5
+nEle_PtPreCut	      1		   +inf			-		-		1	16 -0.5 15.5
+nEle_PtPreCut_ID      1		   +inf			-		-		2	16 -0.5 15.5
+nEle_PtPreCut_ISO     1		   +inf			-		-		3	16 -0.5 15.5
+nEle_PtPreCut_IDISO   -1	   +inf			-		-		0	16 -0.5 15.5
+Pt1stEle	      80	   +inf			-		-		1	100 0 1000
+Pt1stEleID	      80	   +inf			-		-		2	100 0 1000
+Pt1stEleISO	      80	   +inf			-		-		3	100 0 1000
+Pt1stEleIDISO	      -1	   +inf			-		-		0	100 0 1000
+Pt2ndEle	      30	   +inf			-		-		1	100 0 1000
+Pt2ndEleID	      30	   +inf			-		-		2	100 0 1000
+Pt2ndEleISO	      30	   +inf			-		-		3	100 0 1000
+Pt2ndEleIDISO	      -1	   +inf			-		-		0	100 0 1000
+Eta1stEleIDISO	      -inf	   2.5			-		-		1	100 -5 5	   
+Eta2ndEleIDISO	      -inf	   2.5			-		-		1	100 -5 5	   
+nJet_noCut	      -1	   +inf			-		-		0	16 -0.5 15.5
+nJet_PtPreCut	      1		   +inf			-		-		0	16 -0.5 15.5
+nJet_PtPreCut_DIS     1		   +inf			-		-		4	16 -0.5 15.5
+Pt1stJet_DIS	      50	   +inf			-		-		4	100 0 1000
+Pt2ndJet_DIS	      50	   +inf			-		-		4	100 0 1000
+Eta1stJet_DIS	      -inf	   2.5			-		-		4	100 -5 5	   
+Eta2ndJet_DIS	      -inf	   2.5			-		-		4	100 -5 5	   
+invMass_ee	      100	   +inf	                -		-               5       200 0 2000
+sT		      400	   +inf			-		-		5	200 0 2000                   
+MejMax		      -inf	   +inf			-		-		5	200 0 2000
+MejMin                -inf	   +inf			-		-		5	200 0 2000
