@@ -225,7 +225,6 @@ void analysisClass::Loop()
 
     int nEleMatched = 0;
     int nGenEle = 0;
-    bool FirstLoop = true;
     int nEle_pre = 0;
     int nEle_post_ID = 0;
     int nEle_post_ID_ISO = 0;
