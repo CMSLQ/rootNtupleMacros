@@ -275,14 +275,12 @@ void analysisClass::Loop()
 		  if ( muonTrkD0[idx_minDeltaR]<muonTrkD0_barrel_cut
 		       // && (muonGlobalChi2[idx_minDeltaR]<muonGlobalChi2_barrel_cut) 
 		       && (muonTrkHits[idx_minDeltaR]>=muonTrkHits_barrel_cut)
-		       && (muonTrkHits[idx_minDeltaR]>=muonTrkHits_barrel_cut)
 		       )
 		    PassID=true;
 		
 		if (InEndCap)
 		  if ((muonTrkD0[idx_minDeltaR]<muonTrkD0_endcap_cut) 
 		      //&& (muonGlobalChi2[idx_minDeltaR]<muonGlobalChi2_endcap_cut)
-		      && (muonTrkHits[idx_minDeltaR]>=muonTrkHits_endcap_cut)
 		      && (muonTrkHits[idx_minDeltaR]>=muonTrkHits_endcap_cut)
 		      )
 		    PassID=true;
@@ -340,14 +338,12 @@ void analysisClass::Loop()
 	if ((muonTrkD0[imuon]<muonTrkD0_barrel_cut) 
 	    //&& (muonGlobalChi2[imuon]<muonGlobalChi2_barrel_cut)
 	    && (muonTrkHits[imuon]>=muonTrkHits_barrel_cut)
-	    && (muonTrkHits[imuon]>=muonTrkHits_barrel_cut)
 	    )
 	  PassID=true;
       
       if (InEndCap)
 	if ((muonTrkD0[imuon]<muonTrkD0_endcap_cut) 
 	    //&& (muonGlobalChi2[imuon]<muonGlobalChi2_endcap_cut)
-	    && (muonTrkHits[imuon]>=muonTrkHits_endcap_cut)
 	    && (muonTrkHits[imuon]>=muonTrkHits_endcap_cut)
 	    )
 	  PassID=true;
