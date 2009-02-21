@@ -314,12 +314,9 @@ void analysisClass::Loop()
      vector<int> v_idx_jet_final;
      float deltaR_minCut = 0.5;
      int nJet=0;
-     int nJetPtCut=0;
      for(int ijet=0;ijet<caloJetIC5Count;ijet++)
        {
-	 if (caloJetIC5Pt[ijet]> 5) h_jet_Eta->Fill(caloJetIC5Eta[ijet]);
-	 if (caloJetIC5Pt[ijet]< getPreCutValue1("jet_pt_cut")) continue;
-	 nJetPtCut++;
+
 	 // HCAL barrel fiducial region
 	 bool pass_HCAL_FR=false;
 	 if( fabs(caloJetIC5Eta[ijet]) < getPreCutValue1("jetFidRegion") ) pass_HCAL_FR=true ;
@@ -335,9 +332,14 @@ void analysisClass::Loop()
 	   double distance=jet_vec.DeltaR(ele_vec);
 	   if (distance<minDeltaR) minDeltaR=distance;
  	 }
+	 if (minDeltaR>deltaR_minCut) {
+	   h_jet_Eta->Fill(caloJetIC5Eta[ijet]);
+	   nJet++;
+	 }
+	 if (caloJetIC5Pt[ijet]< getPreCutValue1("jet_pt_cut")) continue;
 	 if ((pass_HCAL_FR)&&(minDeltaR>deltaR_minCut)) v_idx_jet_final.push_back(ijet);
        }     
-     h_nJet_ptCut->Fill(nJetPtCut);
+     h_nJet_ptCut->Fill(v_idx_jet_final.size());
 
       // Set the evaluation of the cuts to false and clear the variable values and filled status
      resetCuts();
@@ -427,18 +429,18 @@ void analysisClass::Loop()
      }
      if (v_idx_ele_final.size()>0) h_elec_pT_1st_ID_ISO->Fill(elePt[v_idx_ele_final[0]]);
      if (v_idx_ele_final.size()>1)h_elec_pT_2nd_ID_ISO->Fill(elePt[v_idx_ele_final[1]]);
-     if (caloJetIC5Count>0) {
-       h_jet_pT_1st->Fill(caloJetIC5Pt[0]);
-       h_jet_Eta_1st->Fill(caloJetIC5Eta[0]);
+     if (v_idx_jet_final.size()>0) {
+       h_jet_pT_1st->Fill(caloJetIC5Pt[v_idx_jet_final[0]]);
+       h_jet_Eta_1st->Fill(caloJetIC5Eta[v_idx_jet_final[0]]);
      }
-     if (caloJetIC5Count>1){
-       h_jet_pT_2nd->Fill(caloJetIC5Pt[1]);
-       h_jet_Eta_2nd->Fill(caloJetIC5Eta[1]);
+     if (v_idx_jet_final.size()>1){
+       h_jet_pT_2nd->Fill(caloJetIC5Pt[v_idx_jet_final[1]]);
+       h_jet_Eta_2nd->Fill(caloJetIC5Eta[v_idx_jet_final[1]]);
      }
      h_nEleID_30GeV->Fill(v_idx_ele_ID.size());
      h_nEleISO_30GeV->Fill(v_idx_ele_ISO.size());
      h_nEleFinal->Fill(v_idx_ele_final.size());
-     h_nJet->Fill(caloJetIC5Count);
+     h_nJet->Fill(nJet);
      
      // reject events that did not pass level 0 cuts
      if( !passedCut("0") ) continue;
