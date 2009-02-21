@@ -31,20 +31,22 @@ void analysisClass::Loop()
    
    //////////book histos here
 
-   TH1F *h_Nevent = new TH1F ("Nevent","N events passing",10001,-0.5,10000.5);
+   TH1F *h_Nevent = new TH1F ("Nevent","N events passing",100001,-0.5,100000.5);
    h_Nevent->Sumw2();
 
 
    /////////initialize variables
 
    ////initialize optimization multi-dimensional array
-   int opt[10][10][10][10];
+   int opt[10][10][10][10][10];
 
      for (int i=0;i<10;i++){
 	 for (int j=0;j<10;j++){
 	     for (int k=0;k<10;k++){
 		 for (int l=0;l<10;l++){
-		   opt[i][j][k][l]=0;
+		   for (int m=0;m<10;m++){
+		     opt[i][j][k][l][m]=0;
+		   }
 		 }
 	     }
 	 }
@@ -240,6 +242,7 @@ void analysisClass::Loop()
      double ele2pTvec[10] = {15,20,25,30,35,40,45,50,55,60};
      double jet1pTvec[10] = {30,35,40,45,50,55,60,65,70,75};
      double jet2pTvec[10] = {30,35,40,45,50,55,60,65,70,75};
+     double MeeLowvec[10] = {90,95,100,105,110,115,120,125,130,135};
 
      ////get Jet Energy Factor from cut file (for systematic error estimate)
      float PtScale = getPreCutValue1("EnergyFactor");
@@ -251,6 +254,17 @@ void analysisClass::Loop()
      double jet2pT = PtScale * caloJetIC5Pt[Sec_Pair_jet_idx];
      //     cout << jet1pT << "\t" << jet2pT << endl;
 
+     TLorentzVector v_ee, ele1, ele2;
+     ele1.SetPtEtaPhiM(elePt[pair_1_ele_idx],
+  		   eleEta[pair_1_ele_idx],
+  		   elePhi[pair_1_ele_idx],0);
+     ele2.SetPtEtaPhiM(elePt[pair_2_ele_idx],
+  		   eleEta[pair_2_ele_idx],
+  		   elePhi[pair_2_ele_idx],0);
+     v_ee = ele1 + ele2;
+     double Mee = v_ee.M();
+     
+
      ///increment array value if this event passes
      for (int i=0;i<10;i++){
        if (ele1pT>ele1pTvec[i]){ //check that the first electron is above the threshold
@@ -260,7 +274,11 @@ void analysisClass::Loop()
 	       if (jet1pT>jet1pTvec[k]){
 		 for (int l=0;l<10;l++){
 		   if (jet2pT>jet2pTvec[l]){
-		     ++opt[i][j][k][l];
+		     for (int m=0;m<10;m++){
+		       if (Mee>MeeLowvec[m]){
+			 ++opt[i][j][k][l][m];
+		       }
+		     }
 		   }
 		 }
 	       }
@@ -279,8 +297,10 @@ void analysisClass::Loop()
 	 for (int j=0;j<10;j++){
 	     for (int k=0;k<10;k++){
 		 for (int l=0;l<10;l++){
-		   int bin = (1000*i)+(100*j)+(10*k)+l+1; 
-		   h_Nevent->SetBinContent(bin,opt[i][j][k][l]);
+		     for (int m=0;m<10;m++){
+		       int bin = (10000*i)+(1000*j)+(100*k)+(10*l)+m+1; 
+		       h_Nevent->SetBinContent(bin,opt[i][j][k][l][m]);
+		     }
 		 }
 	     }
 	 }
