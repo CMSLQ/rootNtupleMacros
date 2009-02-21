@@ -31,36 +31,41 @@ void analysisClass::Loop()
    
    //////////book histos here
 
-   TH1F *h_ele_E_80 = new TH1F ("ele_E_80","ele_E_80",100,0,1000);
-   TH1F *h_ele_Pt_80  = new TH1F ("ele_Pt_80","ele_Pt_80",100,0,1000);
-   TH1F *h_ele_Phi_80  = new TH1F ("ele_Phi_80","ele_Phi_80",71,-3.55,3.55);
-   TH1F *h_ele_Eta_80  = new TH1F ("ele_Eta_80","ele_Eta_80",121,-6.05,6.05);
-   TH1F *h_ele_CaloEnergy_80  = new TH1F ("ele_CaloEnergy_80","ele_CaloEnergy_80",100,0,1000);
+   TH1F *h_ele_E_bit1 = new TH1F ("ele_E_bit1","ele_E_bit1",100,0,1000);
+   TH1F *h_ele_Pt_bit1  = new TH1F ("ele_Pt_bit1","ele_Pt_bit1",100,0,1000);
+   TH1F *h_ele_Phi_bit1  = new TH1F ("ele_Phi_bit1","ele_Phi_bit1",71,-3.55,3.55);
+   TH1F *h_ele_Eta_bit1  = new TH1F ("ele_Eta_bit1","ele_Eta_bit1",121,-6.05,6.05);
+   TH1F *h_ele_CaloEnergy_bit1  = new TH1F ("ele_CaloEnergy_bit1","ele_CaloEnergy_bit1",100,0,1000);
 
-   TH1F *h_ele_E_200 = new TH1F ("ele_E_200","ele_E_200",100,0,1000);
-   TH1F *h_ele_Pt_200  = new TH1F ("ele_Pt_200","ele_Pt_200",100,0,1000);
-   TH1F *h_ele_Phi_200  = new TH1F ("ele_Phi_200","ele_Phi_200",71,-3.55,3.55);
-   TH1F *h_ele_Eta_200  = new TH1F ("ele_Eta_200","ele_Eta_200",121,-6.05,6.05);
-   TH1F *h_ele_CaloEnergy_200  = new TH1F ("ele_CaloEnergy_200","ele_CaloEnergy_200",100,0,1000);
+   TH1F *h_ele_E_bit2 = new TH1F ("ele_E_bit2","ele_E_bit2",100,0,1000);
+   TH1F *h_ele_Pt_bit2  = new TH1F ("ele_Pt_bit2","ele_Pt_bit2",100,0,1000);
+   TH1F *h_ele_Phi_bit2  = new TH1F ("ele_Phi_bit2","ele_Phi_bit2",71,-3.55,3.55);
+   TH1F *h_ele_Eta_bit2  = new TH1F ("ele_Eta_bit2","ele_Eta_bit2",121,-6.05,6.05);
+   TH1F *h_ele_CaloEnergy_bit2  = new TH1F ("ele_CaloEnergy_bit2","ele_CaloEnergy_bit2",100,0,1000);
 
-   TH1F *h_ele_E_Photon = new TH1F ("ele_E_Photon","ele_E_Photon",100,0,1000);
-   TH1F *h_ele_Pt_Photon  = new TH1F ("ele_Pt_Photon","ele_Pt_Photon",100,0,1000);
-   TH1F *h_ele_Phi_Photon  = new TH1F ("ele_Phi_Photon","ele_Phi_Photon",71,-3.55,3.55);
-   TH1F *h_ele_Eta_Photon  = new TH1F ("ele_Eta_Photon","ele_Eta_Photon",121,-6.05,6.05);
-   TH1F *h_ele_CaloEnergy_Photon  = new TH1F ("ele_CaloEnergy_Photon","ele_CaloEnergy_Photon",100,0,1000);
+   TH1F *h_ele_E_bit3 = new TH1F ("ele_E_bit3","ele_E_bit3",100,0,1000);
+   TH1F *h_ele_Pt_bit3  = new TH1F ("ele_Pt_bit3","ele_Pt_bit3",100,0,1000);
+   TH1F *h_ele_Phi_bit3  = new TH1F ("ele_Phi_bit3","ele_Phi_bit3",71,-3.55,3.55);
+   TH1F *h_ele_Eta_bit3  = new TH1F ("ele_Eta_bit3","ele_Eta_bit3",121,-6.05,6.05);
+   TH1F *h_ele_CaloEnergy_bit3  = new TH1F ("ele_CaloEnergy_bit3","ele_CaloEnergy_bit3",100,0,1000);
 
+   TH1F *h_ele_E_bit4 = new TH1F ("ele_E_bit4","ele_E_bit4",100,0,1000);
+   TH1F *h_ele_Pt_bit4  = new TH1F ("ele_Pt_bit4","ele_Pt_bit4",100,0,1000);
+   TH1F *h_ele_Phi_bit4  = new TH1F ("ele_Phi_bit4","ele_Phi_bit4",71,-3.55,3.55);
+   TH1F *h_ele_Eta_bit4  = new TH1F ("ele_Eta_bit4","ele_Eta_bit4",121,-6.05,6.05);
+   TH1F *h_ele_CaloEnergy_bit4  = new TH1F ("ele_CaloEnergy_bit4","ele_CaloEnergy_bit4",100,0,1000);
 
    /////////initialize variables
-   double EventsPassed_80=0;
-   double EventsPassed_200=0;
-   double EventsPassed_80_OR_200=0;
-   double EventsPassed_Photon=0;
+   double EventsPassed_bit1=0;
+   double EventsPassed_bit2=0;
+   double EventsPassed_bit3=0;
+   double EventsPassed_bit4=0;
    double n_Events=0;
 
    int electron_PID=11;
    int LQ_PID=42;
    //int LQ_PID=23; //PdgID for Z
-   float elePt_cut=30.;
+   float elePt_cut=10.;
    float eleEta_cut=2.6;
 
    Long64_t nentries = fChain->GetEntriesFast();
@@ -79,101 +84,114 @@ void analysisClass::Loop()
 
      ////////////////////// User's code starts here ///////////////////////
 
-     ///Stuff to be done every event
-     string Trig1="HLT_EM80";
-     string Trig2="HLT_EM200";
-     string Trig3="HLT_Photon25"; 
+     //HLT
+     int TrigBit1=getPreCutValue1("TriggerBits1");
+     int TrigBit2=getPreCutValue1("TriggerBits2");
+     int TrigBit3=getPreCutValue1("TriggerBits3");
+     int TrigBit4=getPreCutValue1("TriggerBits4");
 
-     string tmp="";
-     int results_index=0;
-     for (int itrig=0;itrig<hltNamesLen;itrig++){
-     //for (int itrig=0;itrig<100;itrig++){
-       //cout << HLTNames[itrig];
-       if (HLTNames[itrig]==':') {
-	 //cout << tmp << "   " << HLTResults[results_index] << endl;
-	 bool IsEM80 =  !strncmp(Trig1.c_str(),tmp.c_str(),8); // returns zero if first 8 characters in 2 strings are same
-	 bool IsEM200 = !strncmp(Trig2.c_str(),tmp.c_str(),9);
-	 bool IsPhoton = !strncmp(Trig3.c_str(),tmp.c_str(),11);
-	 //if ((IsEM80)||(IsEM200)) cout << "Trigger:  " << tmp << "  HLTResults " << HLTResults[results_index] << endl;
-	 //if (IsPhoton) cout << "Trigger:  " << tmp << "  HLTResults " << HLTResults[results_index] << endl;
+     /////To print out list of trigger names:
+//      int results_index=0;
+//      string tmp="";
+//      for (int itrig=0;itrig<hltNamesLen;itrig++){
+//        if (HLTNames[itrig]==':') {
+// 	 cout << tmp << "   " << HLTResults[results_index] << endl;
+// 	 tmp.clear(); //reset temporary string of HLT name
+// 	 results_index++; //move to next HLT result
+//        }
+//        else tmp.push_back(HLTNames[itrig]) ;  //build up HLT name until ":" is reached, indicating end of name
+//      }
 
-	 if ((IsEM80)&&(HLTResults[results_index]==true)) {
-	   EventsPassed_80++;
+	 if (HLTResults[TrigBit1]) {
+	   EventsPassed_bit1++;
 	   for (int iele=0; iele<eleCount; iele++) {
 	     if (elePt[iele]<elePt_cut) continue;
-	     h_ele_E_80->Fill(eleEnergy[iele]);
-	     h_ele_Pt_80->Fill(elePt[iele]);
-	     h_ele_Phi_80->Fill(elePhi[iele]);
-	     h_ele_Eta_80->Fill(eleEta[iele]);
-	     h_ele_CaloEnergy_80->Fill(eleCaloEnergy[iele]);
+	     h_ele_E_bit1->Fill(eleEnergy[iele]);
+	     h_ele_Pt_bit1->Fill(elePt[iele]);
+	     h_ele_Phi_bit1->Fill(elePhi[iele]);
+	     h_ele_Eta_bit1->Fill(eleEta[iele]);
+	     h_ele_CaloEnergy_bit1->Fill(eleCaloEnergy[iele]);
 	   } //for iele	   
 	 }
 
 
-	 if ((IsEM200)&&(HLTResults[results_index]==true)) {
-	   EventsPassed_200++;
+	 if (HLTResults[TrigBit2]) {
+	   EventsPassed_bit2++;
 	   for (int iele=0; iele<eleCount; iele++) {
 	     if (elePt[iele]<elePt_cut) continue;
-	     h_ele_E_200->Fill(eleEnergy[iele]);
-	     h_ele_Pt_200->Fill(elePt[iele]);
-	     h_ele_Phi_200->Fill(elePhi[iele]);
-	     h_ele_Eta_200->Fill(eleEta[iele]);
-	     h_ele_CaloEnergy_200->Fill(eleCaloEnergy[iele]);
+	     h_ele_E_bit2->Fill(eleEnergy[iele]);
+	     h_ele_Pt_bit2->Fill(elePt[iele]);
+	     h_ele_Phi_bit2->Fill(elePhi[iele]);
+	     h_ele_Eta_bit2->Fill(eleEta[iele]);
+	     h_ele_CaloEnergy_bit2->Fill(eleCaloEnergy[iele]);
 	   } //for iele	   
 	 }
 
-	 if ((IsPhoton)&&(HLTResults[results_index]==true)) {
-	   EventsPassed_Photon++;
+	 if (HLTResults[TrigBit3]) {
+	   EventsPassed_bit3++;
 	   for (int iele=0; iele<eleCount; iele++) {
 	     if (elePt[iele]<elePt_cut) continue;
-	     h_ele_E_Photon->Fill(eleEnergy[iele]);
-	     h_ele_Pt_Photon->Fill(elePt[iele]);
-	     h_ele_Phi_Photon->Fill(elePhi[iele]);
-	     h_ele_Eta_Photon->Fill(eleEta[iele]);
-	     h_ele_CaloEnergy_Photon->Fill(eleCaloEnergy[iele]);
+	     h_ele_E_bit3->Fill(eleEnergy[iele]);
+	     h_ele_Pt_bit3->Fill(elePt[iele]);
+	     h_ele_Phi_bit3->Fill(elePhi[iele]);
+	     h_ele_Eta_bit3->Fill(eleEta[iele]);
+	     h_ele_CaloEnergy_bit3->Fill(eleCaloEnergy[iele]);
 	   } //for iele	   
 	 }
 
-	 if (((IsEM80)&&(HLTResults[results_index]==true))||((IsEM80)&&(HLTResults[results_index]==true))) {
-	   EventsPassed_80_OR_200++;
+	 if (HLTResults[TrigBit4]) {
+	   EventsPassed_bit4++;
+	   for (int iele=0; iele<eleCount; iele++) {
+	     if (elePt[iele]<elePt_cut) continue;
+	     h_ele_E_bit4->Fill(eleEnergy[iele]);
+	     h_ele_Pt_bit4->Fill(elePt[iele]);
+	     h_ele_Phi_bit4->Fill(elePhi[iele]);
+	     h_ele_Eta_bit4->Fill(eleEta[iele]);
+	     h_ele_CaloEnergy_bit4->Fill(eleCaloEnergy[iele]);
+	   } //for iele	   
 	 }
 
-	 tmp.clear(); //reset temporary string of HLT name
-	 results_index++; //move to next HLT result
-       }
-       else tmp.push_back(HLTNames[itrig]) ;  //build up HLT name until ":" is reached, indicating end of name
-     } //end of loop through trigger names
+     resetCuts();
+     if (HLTResults[TrigBit1]) fillVariableWithValue("HLT_bit1",1) ;
+     if (HLTResults[TrigBit2]) fillVariableWithValue("HLT_bit2",1) ;
+     if (HLTResults[TrigBit3]) fillVariableWithValue("HLT_bit3",1) ;
+     if (HLTResults[TrigBit4]) fillVariableWithValue("HLT_bit4",1) ;
+     evaluateCuts();
 
-     n_Events++;
-
+    n_Events++;
 
    } // End loop over events
 
    //////////write histos 
 
-   h_ele_E_80->Write();
-   h_ele_Pt_80->Write();
-   h_ele_Phi_80->Write();
-   h_ele_Eta_80->Write();
-   h_ele_CaloEnergy_80->Write();
+   h_ele_E_bit1->Write();
+   h_ele_Pt_bit1->Write();
+   h_ele_Phi_bit1->Write();
+   h_ele_Eta_bit1->Write();
+   h_ele_CaloEnergy_bit1->Write();
 
-   h_ele_E_200->Write();
-   h_ele_Pt_200->Write();
-   h_ele_Phi_200->Write();
-   h_ele_Eta_200->Write();
-   h_ele_CaloEnergy_200->Write();
+   h_ele_E_bit2->Write();
+   h_ele_Pt_bit2->Write();
+   h_ele_Phi_bit2->Write();
+   h_ele_Eta_bit2->Write();
+   h_ele_CaloEnergy_bit2->Write();
 
-   h_ele_E_Photon->Write();
-   h_ele_Pt_Photon->Write();
-   h_ele_Phi_Photon->Write();
-   h_ele_Eta_Photon->Write();
-   h_ele_CaloEnergy_Photon->Write();
+   h_ele_E_bit3->Write();
+   h_ele_Pt_bit3->Write();
+   h_ele_Phi_bit3->Write();
+   h_ele_Eta_bit3->Write();
+   h_ele_CaloEnergy_bit3->Write();
 
+   h_ele_E_bit4->Write();
+   h_ele_Pt_bit4->Write();
+   h_ele_Phi_bit4->Write();
+   h_ele_Eta_bit4->Write();
+   h_ele_CaloEnergy_bit4->Write();
 
-   cout << "Events Passed Trigger EM_80: " << EventsPassed_80 << "  Fraction: " << EventsPassed_80/n_Events << endl;
-   cout << "Events Passed Trigger EM_200: " << EventsPassed_200 << "  Fraction: " << EventsPassed_200/n_Events <<endl;
-   cout << "Events Passed Trigger EM_80 OR EM_200: " << EventsPassed_80_OR_200 << "  Fraction: " << EventsPassed_80_OR_200/n_Events << endl;
-   cout << "Events Passed Trigger Photon: " << EventsPassed_Photon << "  Fraction: " << EventsPassed_Photon/n_Events <<endl;
+   cout << "Events Passed Trigger EM_bit1: " << EventsPassed_bit1 << "  Fraction: " << EventsPassed_bit1/n_Events << endl;
+   cout << "Events Passed Trigger EM_bit2: " << EventsPassed_bit2 << "  Fraction: " << EventsPassed_bit2/n_Events <<endl;
+   cout << "Events Passed Trigger EM_bit3: " << EventsPassed_bit3 << "  Fraction: " << EventsPassed_bit3/n_Events << endl;
+   cout << "Events Passed Trigger EM_bit4: " << EventsPassed_bit4 << "  Fraction: " << EventsPassed_bit4/n_Events <<endl;
 
    std::cout << "analysisClass::Loop() ends" <<std::endl;   
 }
