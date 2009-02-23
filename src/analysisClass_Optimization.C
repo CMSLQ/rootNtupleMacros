@@ -31,21 +31,23 @@ void analysisClass::Loop()
    
    //////////book histos here
 
-   TH1F *h_Nevent = new TH1F ("Nevent","N events passing",100001,-0.5,100000.5);
+   TH1F *h_Nevent = new TH1F ("Nevent","N events passing",1000000,0,1000000);
    h_Nevent->Sumw2();
 
 
    /////////initialize variables
 
    ////initialize optimization multi-dimensional array
-   int opt[10][10][10][10][10];
+   int opt[10][10][10][10][10][10];
 
      for (int i=0;i<10;i++){
 	 for (int j=0;j<10;j++){
 	     for (int k=0;k<10;k++){
 		 for (int l=0;l<10;l++){
 		   for (int m=0;m<10;m++){
-		     opt[i][j][k][l][m]=0;
+		     for (int n=0;n<10;n++){
+		     opt[i][j][k][l][m][n]=0;
+		     }
 		   }
 		 }
 	     }
@@ -238,11 +240,12 @@ void analysisClass::Loop()
 
      /////arrays of thresholds to be tested 
 
-     double ele1pTvec[10] = {55,60,65,70,75,80,85,90,95,100};
-     double ele2pTvec[10] = {15,20,25,30,35,40,45,50,55,60};
-     double jet1pTvec[10] = {30,35,40,45,50,55,60,65,70,75};
-     double jet2pTvec[10] = {30,35,40,45,50,55,60,65,70,75};
-     double MeeLowvec[10] = {90,95,100,105,110,115,120,125,130,135};
+     double ele1pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
+     double ele2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
+     double jet1pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
+     double jet2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
+     double MeeLowvec[10] = {50,60,70,80,90,100,110,120,130,140};
+     double sTvec[10]     = {100,150,200,250,300,350,400,450,500,550};
 
      ////get Jet Energy Factor from cut file (for systematic error estimate)
      float PtScale = getPreCutValue1("EnergyFactor");
@@ -255,14 +258,16 @@ void analysisClass::Loop()
      //     cout << jet1pT << "\t" << jet2pT << endl;
 
      TLorentzVector v_ee, ele1, ele2;
-     ele1.SetPtEtaPhiM(elePt[pair_1_ele_idx],
-  		   eleEta[pair_1_ele_idx],
-  		   elePhi[pair_1_ele_idx],0);
-     ele2.SetPtEtaPhiM(elePt[pair_2_ele_idx],
-  		   eleEta[pair_2_ele_idx],
-  		   elePhi[pair_2_ele_idx],0);
+     ele1.SetPtEtaPhiM(elePt[First_Pair_ele_idx],
+  		   eleEta[First_Pair_ele_idx],
+  		   elePhi[First_Pair_ele_idx],0);
+     ele2.SetPtEtaPhiM(elePt[Sec_Pair_ele_idx],
+  		   eleEta[Sec_Pair_ele_idx],
+  		   elePhi[Sec_Pair_ele_idx],0);
      v_ee = ele1 + ele2;
      double Mee = v_ee.M();
+
+     double sT = elePt[First_Pair_ele_idx] + elePt[Sec_Pair_ele_idx] + caloJetIC5Pt[First_Pair_jet_idx] + caloJetIC5Pt[Sec_Pair_jet_idx];
      
 
      ///increment array value if this event passes
@@ -276,7 +281,9 @@ void analysisClass::Loop()
 		   if (jet2pT>jet2pTvec[l]){
 		     for (int m=0;m<10;m++){
 		       if (Mee>MeeLowvec[m]){
-			 ++opt[i][j][k][l][m];
+			 for (int n=0;n<10;n++){
+			   ++opt[i][j][k][l][m][n];
+			 }
 		       }
 		     }
 		   }
@@ -298,8 +305,10 @@ void analysisClass::Loop()
 	     for (int k=0;k<10;k++){
 		 for (int l=0;l<10;l++){
 		     for (int m=0;m<10;m++){
-		       int bin = (10000*i)+(1000*j)+(100*k)+(10*l)+m+1; 
-		       h_Nevent->SetBinContent(bin,opt[i][j][k][l][m]);
+			 for (int n=0;n<10;n++){
+			   int bin = (100000*i)+(10000*j)+(1000*k)+(100*l)+(10*m)+n+1; 
+			   h_Nevent->SetBinContent(bin,opt[i][j][k][l][m][n]);
+			 }
 		     }
 		 }
 	     }
