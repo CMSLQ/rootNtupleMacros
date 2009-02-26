@@ -54,6 +54,68 @@ void analysisClass::Loop()
 	 }
      }
 
+     /////arrays of thresholds to be tested 
+
+     double ele1pTvec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double ele1pTlow = getPreCutValue1("OptEle1Pt");
+     double ele1pThigh = getPreCutValue2("OptEle1Pt");
+     double ele1pTsteps = getPreCutValue3("OptEle1Pt");
+     for (int step=0;step<10;step++){
+      double tmp=ele1pTlow + (step*ele1pTsteps);
+      if (tmp>=ele1pThigh)tmp=ele1pThigh;
+      ele1pTvec[step]=tmp;
+     }
+
+     double ele2pTvec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double ele2pTlow = getPreCutValue1("OptEle2Pt");
+     double ele2pThigh = getPreCutValue2("OptEle2Pt");
+     double ele2pTsteps = getPreCutValue3("OptEle2Pt");
+     for (int step=0;step<10;step++){
+      double tmp=ele2pTlow + (step*ele2pTsteps);
+      if (tmp>=ele2pThigh)tmp=ele2pThigh;
+      ele2pTvec[step]=tmp;
+     }
+
+     double jet1pTvec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double jet1pTlow = getPreCutValue1("OptJet1Pt");
+     double jet1pThigh = getPreCutValue2("OptJet1Pt");
+     double jet1pTsteps = getPreCutValue3("OptJet1Pt");
+     for (int step=0;step<10;step++){
+      double tmp=jet1pTlow + (step*jet1pTsteps);
+      if (tmp>=jet1pThigh)tmp=jet1pThigh;
+      jet1pTvec[step]=tmp;
+     }
+
+     double jet2pTvec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double jet2pTlow = getPreCutValue1("OptJet2Pt");
+     double jet2pThigh = getPreCutValue2("OptJet2Pt");
+     double jet2pTsteps = getPreCutValue3("OptJet2Pt");
+     for (int step=0;step<10;step++){
+      double tmp=jet2pTlow + (step*jet2pTsteps);
+      if (tmp>=jet2pThigh)tmp=jet2pThigh;
+      jet2pTvec[step]=tmp;
+     }
+
+     double MeeLowvec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double MeeLowlow = getPreCutValue1("OptMeeLow");
+     double MeeLowhigh = getPreCutValue2("OptMeeLow");
+     double MeeLowsteps = getPreCutValue3("OptMeeLow");
+     for (int step=0;step<10;step++){
+      double tmp=MeeLowlow + (step*MeeLowsteps);
+      if (tmp>=MeeLowhigh)tmp=MeeLowhigh;
+      MeeLowvec[step]=tmp;
+     }
+
+     double sTvec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double sTlow = getPreCutValue1("OptSt");
+     double sThigh = getPreCutValue2("OptSt");
+     double sTsteps = getPreCutValue3("OptSt");
+     for (int step=0;step<10;step++){
+      double tmp=sTlow + (step*sTsteps);
+      if (tmp>=sThigh)tmp=sThigh;
+      sTvec[step]=tmp;
+     }
+
    Long64_t nentries = fChain->GetEntriesFast();
    std::cout << "analysisClass::Loop(): nentries = " << nentries << std::endl;   
 
@@ -238,14 +300,31 @@ void analysisClass::Loop()
      Sec_Pair_ele_idx = pair_2_ele_idx;
      Sec_Pair_jet_idx = pair_2_jet_idx;
 
-     /////arrays of thresholds to be tested 
+//      for (int i=0;i<10;i++) 
+//        cout << ele1pTvec[i] << "\t" ;
+//      cout << endl;
+//      for (int i=0;i<10;i++) 
+//        cout << ele2pTvec[i] << "\t" ;
+//      cout << endl;
+//      for (int i=0;i<10;i++) 
+//        cout << jet1pTvec[i] << "\t" ;
+//      cout << endl;
+//      for (int i=0;i<10;i++) 
+//        cout << jet2pTvec[i] << "\t" ;
+//      cout << endl;
+//      for (int i=0;i<10;i++) 
+//        cout << MeeLowvec[i] << "\t" ;
+//      cout << endl;
+//      for (int i=0;i<10;i++) 
+//        cout << sTvec[i] << "\t" ;
+//      cout << endl;
 
-     double ele1pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
-     double ele2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
-     double jet1pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
-     double jet2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
-     double MeeLowvec[10] = {50,60,70,80,90,100,110,120,130,140};
-     double sTvec[10]     = {100,150,200,250,300,350,400,450,500,550};
+
+//      double ele2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
+//      double jet1pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
+//      double jet2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
+//      double MeeLowvec[10] = {50,60,70,80,90,100,110,120,130,140};
+//      double sTvec[10]     = {100,150,200,250,300,350,400,450,500,550};
 
      ////get Jet Energy Factor from cut file (for systematic error estimate)
      float PtScale = getPreCutValue1("EnergyFactor");
@@ -282,6 +361,7 @@ void analysisClass::Loop()
 		     for (int m=0;m<10;m++){
 		       if (Mee>MeeLowvec[m]){
 			 for (int n=0;n<10;n++){
+			   if (sT>sTvec[n])
 			   ++opt[i][j][k][l][m][n];
 			 }
 		       }

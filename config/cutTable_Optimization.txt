@@ -33,6 +33,12 @@ ISO_EcalIso_bar			6 	   0.01			-		-		-1
 ISO_EcalIso_end			6 	   0.01			-		-		-1
 ISO_HcalIso_bar			4 	   0.005		-		-		-1
 ISO_HcalIso_end			4 	   0.005		-		-		-1
+OptEle1Pt			20	   110			10		-		-1
+OptEle2Pt			20	   110			10		-		-1
+OptJet1Pt			20	   110			10		-		-1
+OptJet2Pt			20	   110			10		-		-1
+OptMeeLow			50	   140			10		-		-1
+OptSt				100	   550			50		-		-1
 #
 #
 #--------------------------------- Cuts (level 0,1,2,3 ... n) below --------------------------------------------
