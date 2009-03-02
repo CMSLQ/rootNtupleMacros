@@ -34,7 +34,6 @@ void analysisClass::Loop()
    TH1F *h_Nevent = new TH1F ("Nevent","N events passing",1000000,0,1000000);
    h_Nevent->Sumw2();
 
-
    /////////initialize variables
 
    ////initialize optimization multi-dimensional array
@@ -124,7 +123,7 @@ void analysisClass::Loop()
    ////// these lines may need to be updated.                                 /////    
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-   //for (Long64_t jentry=0; jentry<1;jentry++) {
+   //for (Long64_t jentry=0; jentry<100;jentry++) {
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -286,6 +285,9 @@ void analysisClass::Loop()
      ///////////////////////////  OPTIMIZATION CODE  /////////////////////////////////////////
      /////////////////////////////////////////////////////////////////////////////////////////
 
+     ////get Jet Energy Factor from cut file (for systematic error estimate)
+     float PtScale = getPreCutValue1("EnergyFactor");
+
      //// indecies of the electrons and jets, paired according to selection algorithm
 
      int First_Pair_ele_idx = 99;
@@ -320,15 +322,7 @@ void analysisClass::Loop()
 //      cout << endl;
 
 
-//      double ele2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
-//      double jet1pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
-//      double jet2pTvec[10] = {20,30,40,50,60,70,80,90,100,110};
-//      double MeeLowvec[10] = {50,60,70,80,90,100,110,120,130,140};
-//      double sTvec[10]     = {100,150,200,250,300,350,400,450,500,550};
-
-     ////get Jet Energy Factor from cut file (for systematic error estimate)
-     float PtScale = getPreCutValue1("EnergyFactor");
-
+   if (TwoEles&&TwoJets){
      ////get object values just once
      double ele1pT = elePt[First_Pair_ele_idx];
      double ele2pT = elePt[Sec_Pair_ele_idx];
@@ -375,7 +369,20 @@ void analysisClass::Loop()
        }
      }
 
-     ////////////////////// User's code ends here ///////////////////////
+   } // end if TwoEles and TwoJets
+    //////////////////////////Fill cut histograms///////////////
+   resetCuts();
+   
+   if( v_idx_ele_ID_ISO.size() >= 1 )   fillVariableWithValue( "pT1stEle", elePt[First_Pair_ele_idx] );
+   if( v_idx_ele_ID_ISO.size() >= 2 )   fillVariableWithValue( "pT2ndEle", elePt[Sec_Pair_ele_idx] );
+   if( v_idx_jet_final.size() >= 1 )  fillVariableWithValue( "pT1stJet", PtScale * caloJetIC5Pt[First_Pair_jet_idx] );
+   if( v_idx_jet_final.size() >= 2 )  fillVariableWithValue( "pT2ndJet", PtScale * caloJetIC5Pt[Sec_Pair_jet_idx] );
+
+   // Evaluate cuts (but do not apply them)
+   evaluateCuts();
+
+
+    ////////////////////// User's code ends here ///////////////////////
 
    } // End loop over events
 
@@ -397,6 +404,7 @@ void analysisClass::Loop()
 
    //////////write histos 
    h_Nevent->Write();
+
 
    std::cout << "analysisClass::Loop() ends" <<std::endl;   
 }
