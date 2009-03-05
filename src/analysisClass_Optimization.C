@@ -31,21 +31,23 @@ void analysisClass::Loop()
    
    //////////book histos here
 
-   TH1F *h_Nevent = new TH1F ("Nevent","N events passing",1000000,0,1000000);
+   TH1F *h_Nevent = new TH1F ("Nevent","N events passing",10000000,0,10000000);
    h_Nevent->Sumw2();
 
    /////////initialize variables
 
    ////initialize optimization multi-dimensional array
-   int opt[10][10][10][10][10][10];
+   int opt[10][10][10][10][10][5][5];
 
      for (int i=0;i<10;i++){
 	 for (int j=0;j<10;j++){
 	     for (int k=0;k<10;k++){
 		 for (int l=0;l<10;l++){
 		   for (int m=0;m<10;m++){
-		     for (int n=0;n<10;n++){
-		     opt[i][j][k][l][m][n]=0;
+		     for (int n=0;n<5;n++){
+		       for (int p=0;p<5;p++){
+			 opt[i][j][k][l][m][n][p]=0;
+		       }
 		     }
 		   }
 		 }
@@ -75,6 +77,16 @@ void analysisClass::Loop()
       ele2pTvec[step]=tmp;
      }
 
+     double eleEtavec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double eleEtalow = getPreCutValue1("OptEleEta");
+     double eleEtahigh = getPreCutValue2("OptEleEta");
+     double eleEtasteps = getPreCutValue3("OptEleEta");
+     for (int step=0;step<10;step++){
+      double tmp=eleEtalow + (step*eleEtasteps);
+      if (tmp>=eleEtahigh)tmp=eleEtahigh;
+      eleEtavec[step]=tmp;
+     }
+
      double jet1pTvec[10] = {0,0,0,0,0,0,0,0,0,0};
      double jet1pTlow = getPreCutValue1("OptJet1Pt");
      double jet1pThigh = getPreCutValue2("OptJet1Pt");
@@ -95,14 +107,14 @@ void analysisClass::Loop()
       jet2pTvec[step]=tmp;
      }
 
-     double MeeLowvec[10] = {0,0,0,0,0,0,0,0,0,0};
-     double MeeLowlow = getPreCutValue1("OptMeeLow");
-     double MeeLowhigh = getPreCutValue2("OptMeeLow");
-     double MeeLowsteps = getPreCutValue3("OptMeeLow");
+     double jetEtavec[10] = {0,0,0,0,0,0,0,0,0,0};
+     double jetEtalow = getPreCutValue1("OptJetEta");
+     double jetEtahigh = getPreCutValue2("OptJetEta");
+     double jetEtasteps = getPreCutValue3("OptJetEta");
      for (int step=0;step<10;step++){
-      double tmp=MeeLowlow + (step*MeeLowsteps);
-      if (tmp>=MeeLowhigh)tmp=MeeLowhigh;
-      MeeLowvec[step]=tmp;
+      double tmp=jetEtalow + (step*jetEtasteps);
+      if (tmp>=jetEtahigh)tmp=jetEtahigh;
+      jetEtavec[step]=tmp;
      }
 
      double sTvec[10] = {0,0,0,0,0,0,0,0,0,0};
@@ -328,6 +340,8 @@ void analysisClass::Loop()
      double ele2pT = elePt[Sec_Pair_ele_idx];
      double jet1pT = PtScale * caloJetIC5Pt[First_Pair_jet_idx];
      double jet2pT = PtScale * caloJetIC5Pt[Sec_Pair_jet_idx];
+     double electronEta = max(fabs(eleEta[First_Pair_ele_idx]),fabs(eleEta[Sec_Pair_ele_idx]));
+     double jetEta = max(fabs(caloJetIC5Eta[First_Pair_jet_idx]),fabs(caloJetIC5Eta[Sec_Pair_jet_idx]));
      //     cout << jet1pT << "\t" << jet2pT << endl;
 
      TLorentzVector v_ee, ele1, ele2;
@@ -339,6 +353,7 @@ void analysisClass::Loop()
   		   elePhi[Sec_Pair_ele_idx],0);
      v_ee = ele1 + ele2;
      double Mee = v_ee.M();
+     if (Mee<100) continue;
 
      double sT = elePt[First_Pair_ele_idx] + elePt[Sec_Pair_ele_idx] + caloJetIC5Pt[First_Pair_jet_idx] + caloJetIC5Pt[Sec_Pair_jet_idx];
      
@@ -353,10 +368,15 @@ void analysisClass::Loop()
 		 for (int l=0;l<10;l++){
 		   if (jet2pT>jet2pTvec[l]){
 		     for (int m=0;m<10;m++){
-		       if (Mee>MeeLowvec[m]){
-			 for (int n=0;n<10;n++){
-			   if (sT>sTvec[n])
-			   ++opt[i][j][k][l][m][n];
+		       if (sT>sTvec[m]){
+			 for (int n=0;n<5;n++){
+			   if (electronEta<eleEtavec[n]){
+			     for (int p=0;p<5;p++){
+			       if (jetEta<jetEtavec[p]){
+				 ++opt[i][j][k][l][m][n][p];
+			       }
+			     }
+			   }
 			 }
 		       }
 		     }
@@ -392,9 +412,12 @@ void analysisClass::Loop()
 	     for (int k=0;k<10;k++){
 		 for (int l=0;l<10;l++){
 		     for (int m=0;m<10;m++){
-			 for (int n=0;n<10;n++){
-			   int bin = (100000*i)+(10000*j)+(1000*k)+(100*l)+(10*m)+n+1; 
-			   h_Nevent->SetBinContent(bin,opt[i][j][k][l][m][n]);
+			 for (int n=0;n<5;n++){
+			     for (int p=0;p<5;p++){
+			       int bin = (1000000*i)+(100000*j)+(10000*k)+(1000*l)+(100*m)+(10*n)+p+1; 
+			       //cout << "Bin: " << bin << "\t" << "Opt: " << opt[i][j][k][l][m][n][p] << endl;
+			       h_Nevent->SetBinContent(bin,opt[i][j][k][l][m][n][p]);
+			     }
 			 }
 		     }
 		 }
