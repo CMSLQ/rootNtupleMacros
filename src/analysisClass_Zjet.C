@@ -34,10 +34,10 @@ void analysisClass::Loop()
 
    //Combinations
    TH1F *h_Mej = new TH1F ("Mej","Mej",150,0,300);  h_Mej->Sumw2();
-   TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",150,0,300);  h_Mej->Sumw2();
-   TH1F *h_Mej_outside = new TH1F ("Mej_outside","Mej_outside",150,0,300);  h_Mej->Sumw2();
+   TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",200,0,400);  h_Mej_inside->Sumw2();
+   TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,400);  h_Mej_above->Sumw2();
    TH1F *h_Mee = new TH1F ("Mee","Mee",150,0,300);  h_Mee->Sumw2();
-   TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",150,0,300,150,0,300);
+   TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",45,50,140,200,0,400);
 
    /////////initialize variables
 
@@ -348,13 +348,13 @@ void analysisClass::Loop()
        {
 	 if (diff_11_22<diff_12_21) 
 	   {
-	     h_Mej_outside->Fill(M11);
-	     h_Mej_outside->Fill(M22);
+	     h_Mej_above->Fill(M11);
+	     h_Mej_above->Fill(M22);
 	   }
 	 else 
 	   {
-	     h_Mej_outside->Fill(M12);
-	     h_Mej_outside->Fill(M21);
+	     h_Mej_above->Fill(M12);
+	     h_Mej_above->Fill(M21);
 	   }
        }
      
@@ -366,7 +366,7 @@ void analysisClass::Loop()
    h_Mee->Write();
    h_Mej->Write();
    h_Mej_inside->Write();
-   h_Mej_outside->Write();
+   h_Mej_above->Write();
    h_Mee_Mej->Write();
 
    std::cout << "analysisClass::Loop() ends" <<std::endl;   
