@@ -67,7 +67,7 @@ Pt1stJet_DIS	      50	   +inf			-		-		1	100 0 1000
 Pt2ndJet_DIS	      50	   +inf			-		-		1	100 0 1000
 Eta1stJet_DIS	      -2.5	   2.5			-		-		1	100 -5 5	   
 Eta2ndJet_DIS	      -2.5	   2.5			-		-		1	100 -5 5	   
-sT		      340	   +inf			-		-		1	200 0 2000                   
+sT		      340	   +inf			-		-		4	200 0 2000                   
 Mee_control	      80	   100	                -		-               2       200 0 2000
 Mee		      100	   +inf	                -		-               3       200 0 2000
 MejMax		      -inf	   +inf			-		-		1	200 0 2000
