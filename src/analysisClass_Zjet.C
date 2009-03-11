@@ -34,10 +34,12 @@ void analysisClass::Loop()
 
    //Combinations
    TH1F *h_Mej = new TH1F ("Mej","Mej",150,0,300);  h_Mej->Sumw2();
-   TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",200,0,400);  h_Mej_inside->Sumw2();
-   TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,400);  h_Mej_above->Sumw2();
+   TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",200,0,800);  h_Mej_inside->Sumw2();
+   TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,800);  h_Mej_above->Sumw2();
+   TH1F *h_pTee_gen_inside = new TH1F ("pTee_gen_inside","pTee_gen_inside",200,0,800);  h_pTee_gen_inside->Sumw2();
+   TH1F *h_pTee_gen_above = new TH1F ("pTee_gen_above","pTee_gen_above",200,0,800);  h_pTee_gen_above->Sumw2();
    TH1F *h_Mee = new TH1F ("Mee","Mee",150,0,300);  h_Mee->Sumw2();
-   TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",45,50,140,200,0,400);
+   TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",100,0,400,200,0,800);
 
    /////////initialize variables
 
@@ -303,6 +305,29 @@ void analysisClass::Loop()
 
        }
 
+     ///Gen Level quatities
+     double pTee = -999;
+     int pdgId_Mom = 23; //Z Boson
+     TLorentzVector genEle1, genEle2, Z_vec;
+     bool foundFirstEle = false;
+     for (int igen=0; igen<GenParticleCount; igen++){
+       if ((abs(GenParticlePdgId[igen]==11))&&
+	   (GenParticlePdgId[GenParticleMotherIndex[igen]]==pdgId_Mom)){
+	 if (!foundFirstEle)
+	   genEle1.SetPtEtaPhiM(GenParticlePt[igen],
+				GenParticleEta[igen],
+				GenParticlePhi[igen],0);
+	 else genEle2.SetPtEtaPhiM(GenParticlePt[igen],
+				GenParticleEta[igen],
+				GenParticlePhi[igen],0);
+
+	 foundFirstEle = true;
+       }
+     }
+     Z_vec = genEle1 + genEle2;
+     pTee = Z_vec.Pt();
+     fillVariableWithValue("pTee_gen",pTee);
+
      //--------------------------------------------------
 
      // Evaluate cuts (but do not apply them)
@@ -342,6 +367,7 @@ void analysisClass::Loop()
 	     h_Mej_inside->Fill(M12);
 	     h_Mej_inside->Fill(M21);
 	   }
+	 h_pTee_gen_inside->Fill(pTee);
        }
      
      if( (passedCut("1"))&&(passedCut("3")) )
@@ -356,6 +382,7 @@ void analysisClass::Loop()
 	     h_Mej_above->Fill(M12);
 	     h_Mej_above->Fill(M21);
 	   }
+	 h_pTee_gen_above->Fill(pTee);
        }
      
      ////////////////////// User's code ends here ///////////////////////
@@ -367,6 +394,8 @@ void analysisClass::Loop()
    h_Mej->Write();
    h_Mej_inside->Write();
    h_Mej_above->Write();
+   h_pTee_gen_inside->Write();
+   h_pTee_gen_above->Write();
    h_Mee_Mej->Write();
 
    std::cout << "analysisClass::Loop() ends" <<std::endl;   
