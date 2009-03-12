@@ -39,7 +39,7 @@ ISO_EcalIso_bar	      6 	   0.01			-		-		-1
 ISO_EcalIso_end	      6 	   0.01			-		-		-1
 ISO_HcalIso_bar	      4 	   0.005		-		-		-1
 ISO_HcalIso_end	      4 	   0.005		-		-		-1
-eleEta_bar	      1.422	   -			-		-		-1
+eleEta_bar	      1.442	   -			-		-		-1
 eleEta_end	      1.560	   2.5			-		-		-1
 #####
 ### GlobalChi2 and TrkIso not used in the code for now
@@ -101,15 +101,15 @@ Pt2ndEMuID		  30		   +inf			-		-		2	100 0 1000
 Pt2ndEMuISO		  30		   +inf			-		-		3	100 0 1000
 Pt2ndEMuDIS		  30		   +inf			-		-		4	100 0 1000
 Pt2ndEMuIDISO_DIS	  -1		   +inf			-		-		0	100 0 1000
-Eta1stEMuIDISO_DIS	  -inf		   2.5			-		-		1	100 -5 5	   
-Eta2ndEMuIDISO_DIS	  -inf		   2.5			-		-		1	100 -5 5	   
+Eta1stEMuIDISO_DIS	  -2.5		   2.5			-		-		1	100 -5 5	   
+Eta2ndEMuIDISO_DIS	  -2.5		   2.5			-		-		1	100 -5 5	   
 nJet_noCut		  -1		   +inf			-		-		0	16 -0.5 15.5
 nJet_PtPreCut		  1		   +inf			-		-		0	16 -0.5 15.5
 nJet_PtPreCut_DIS	  1		   +inf			-		-		4	16 -0.5 15.5
 Pt1stJet_DIS		  50		   +inf			-		-		4	100 0 1000
 Pt2ndJet_DIS		  50		   +inf			-		-		4	100 0 1000
-Eta1stJet_DIS		  -inf		   2.5			-		-		4	100 -5 5	   
-Eta2ndJet_DIS		  -inf		   2.5			-		-		4	100 -5 5	   
+Eta1stJet_DIS		  -3.0		   3.0			-		-		4	100 -5 5	   
+Eta2ndJet_DIS		  -3.0		   3.0			-		-		4	100 -5 5	   
 invMass_emu		  100		   +inf	                -		-               5       200 0 2000
 sT			  340		   +inf			-		-		5	200 0 2000                   
 MljMax			  -inf		   +inf			-		-		5	200 0 2000
