@@ -38,7 +38,15 @@ void analysisClass::Loop()
    TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,800);  h_Mej_above->Sumw2();
    TH1F *h_pTee_gen_inside = new TH1F ("pTee_gen_inside","pTee_gen_inside",200,0,800);  h_pTee_gen_inside->Sumw2();
    TH1F *h_pTee_gen_above = new TH1F ("pTee_gen_above","pTee_gen_above",200,0,800);  h_pTee_gen_above->Sumw2();
-   TH1F *h_Mee = new TH1F ("Mee","Mee",150,0,300);  h_Mee->Sumw2();
+   TH1F *h_pTjet1_inside = new TH1F ("pTjet1_inside","pTjet1_inside",200,0,800);  h_pTjet1_inside->Sumw2();
+   TH1F *h_pTjet1_above = new TH1F ("pTjet1_above","pTjet1_above",200,0,800);  h_pTjet1_above->Sumw2();
+   TH1F *h_pTele1_inside = new TH1F ("pTele1_inside","pTele1_inside",200,0,800);  h_pTele1_inside->Sumw2();
+   TH1F *h_pTele1_above = new TH1F ("pTele1_above","pTele1_above",200,0,800);  h_pTele1_above->Sumw2();
+   TH1F *h_pTquark1_inside = new TH1F ("pTquark1_inside","pTquark1_inside",200,0,800);  h_pTquark1_inside->Sumw2();
+   TH1F *h_pTquark1_above = new TH1F ("pTquark1_above","pTquark1_above",200,0,800);  h_pTquark1_above->Sumw2();
+   TH1F *h_pTgenele1_inside = new TH1F ("pTgenele1_inside","pTgenele1_inside",200,0,800);  h_pTgenele1_inside->Sumw2();
+   TH1F *h_pTgenele1_above = new TH1F ("pTgenele1_above","pTgenele1_above",200,0,800);  h_pTgenele1_above->Sumw2();
+   TH1F *h_Mee = new TH1F ("Mee","Mee",500,0,1000);  h_Mee->Sumw2();
    TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",100,0,400,200,0,800);
 
    /////////initialize variables
@@ -194,7 +202,7 @@ void analysisClass::Loop()
 	 
 	 if ( minDeltaR > deltaR_minCut )  v_idx_jet_final.push_back(ijet);
 
-       }     
+       }  
 
      // Set the evaluation of the cuts to false and clear the variable values and filled status
      resetCuts();
@@ -224,6 +232,21 @@ void analysisClass::Loop()
 	 fillVariableWithValue( "Eta2ndJet_DIS", caloJetIC5Eta[v_idx_jet_final[1]] );
        }
 
+
+     //Check jet cleaning
+     for(int ijet=0;ijet<v_idx_jet_final.size();ijet++)
+       {
+	 TVector3 clean_jet_vec;
+	 float check_minDeltaR=9999;
+	 clean_jet_vec.SetPtEtaPhi(caloJetIC5Pt[v_idx_jet_final[ijet]],caloJetIC5Eta[v_idx_jet_final[ijet]],caloJetIC5Phi[v_idx_jet_final[ijet]]);
+	 for (int i=0; i < v_idx_ele_final.size(); i++){
+	   TVector3 ele_vec;
+	   ele_vec.SetPtEtaPhi(elePt[v_idx_ele_final[i]],eleEta[v_idx_ele_final[i]],elePhi[v_idx_ele_final[i]]);
+	   double distance = clean_jet_vec.DeltaR(ele_vec);
+	   if (distance<check_minDeltaR) check_minDeltaR=distance;
+ 	 }
+	 fillVariableWithValue("DeltaR_ele_jet",check_minDeltaR);
+       }   
 
      //## define "2ele" and "2jets" booleans
      bool TwoEles=false;
@@ -309,11 +332,12 @@ void analysisClass::Loop()
      double pTee = -999;
      int pdgId_Mom = 23; //Z Boson
      TLorentzVector genEle1, genEle2, Z_vec;
-     bool foundFirstEle = false;
+     int N_Z_Ele=0;
+     int idx_q_high=99;
      for (int igen=0; igen<GenParticleCount; igen++){
-       if ((abs(GenParticlePdgId[igen]==11))&&
+       if ((abs(GenParticlePdgId[igen])==11)&&
 	   (GenParticlePdgId[GenParticleMotherIndex[igen]]==pdgId_Mom)){
-	 if (!foundFirstEle)
+	 if (N_Z_Ele==0)
 	   genEle1.SetPtEtaPhiM(GenParticlePt[igen],
 				GenParticleEta[igen],
 				GenParticlePhi[igen],0);
@@ -321,11 +345,16 @@ void analysisClass::Loop()
 				GenParticleEta[igen],
 				GenParticlePhi[igen],0);
 
-	 foundFirstEle = true;
+	 N_Z_Ele++;
+       }
+       if ((abs(GenParticlePdgId[igen])==3)||(GenParticlePdgId[igen])==21){
+	 if (GenParticlePt[igen]>GenParticlePt[idx_q_high]) idx_q_high=igen;
        }
      }
-     Z_vec = genEle1 + genEle2;
-     pTee = Z_vec.Pt();
+     if (N_Z_Ele>1){
+       Z_vec = genEle1 + genEle2;
+       pTee = Z_vec.Pt();
+     }
      fillVariableWithValue("pTee_gen",pTee);
 
      //--------------------------------------------------
@@ -368,7 +397,11 @@ void analysisClass::Loop()
 	     h_Mej_inside->Fill(M21);
 	   }
 	 h_pTee_gen_inside->Fill(pTee);
-       }
+	 if( v_idx_jet_final.size() >= 1 ) h_pTjet1_inside->Fill(caloJetIC5Pt[v_idx_jet_final[0]]);
+	 if( v_idx_ele_final.size() >= 1 ) h_pTele1_inside->Fill(elePt[v_idx_ele_final[0]]);
+	 if (N_Z_Ele>1) h_pTgenele1_inside->Fill(genEle1.Pt());
+	 if (idx_q_high!=99) h_pTquark1_inside->Fill(GenParticlePt[idx_q_high]);
+        }
      
      if( (passedCut("1"))&&(passedCut("3")) )
        {
@@ -383,6 +416,10 @@ void analysisClass::Loop()
 	     h_Mej_above->Fill(M21);
 	   }
 	 h_pTee_gen_above->Fill(pTee);
+	 if( v_idx_jet_final.size() >= 1 ) h_pTjet1_above->Fill(caloJetIC5Pt[v_idx_jet_final[0]]);
+	 if( v_idx_ele_final.size() >= 1 ) h_pTele1_above->Fill(elePt[v_idx_ele_final[0]]);
+	 if (N_Z_Ele>1) h_pTgenele1_above->Fill(genEle1.Pt());
+	 if (idx_q_high!=99) h_pTquark1_above->Fill(GenParticlePt[idx_q_high]);
        }
      
      ////////////////////// User's code ends here ///////////////////////
@@ -396,6 +433,14 @@ void analysisClass::Loop()
    h_Mej_above->Write();
    h_pTee_gen_inside->Write();
    h_pTee_gen_above->Write();
+   h_pTjet1_inside->Write();
+   h_pTjet1_above->Write();
+   h_pTele1_inside->Write();
+   h_pTele1_above->Write();
+   h_pTquark1_inside->Write();
+   h_pTquark1_above->Write();
+   h_pTgenele1_inside->Write();
+   h_pTgenele1_above->Write();
    h_Mee_Mej->Write();
 
    std::cout << "analysisClass::Loop() ends" <<std::endl;   
