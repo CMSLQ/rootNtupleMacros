@@ -37,7 +37,7 @@ ISO_EcalIso_bar	      6 	   0.01			-		-		-1
 ISO_EcalIso_end	      6 	   0.01			-		-		-1
 ISO_HcalIso_bar	      4 	   0.005		-		-		-1
 ISO_HcalIso_end	      4 	   0.005		-		-		-1
-eleEta_bar	      1.422	   -			-		-		-1
+eleEta_bar	      1.442	   -			-		-		-1
 eleEta_end	      1.560	   2.5			-		-		-1
 #
 #
