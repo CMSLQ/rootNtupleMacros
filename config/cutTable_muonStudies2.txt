@@ -13,10 +13,10 @@
 #
 #VariableName	      value1	   value2		value3		value4		level
 #------------	      ------------ -------------	------------	-------------	-----
-# W_PID=24 , LQ_PID=42
+# W_PID=24 , LQ_PID=42 , Z_PID=23
 muonPID		      13	   -			-		-		-1
-motherPID	      42	   -			-		-		-1
-#motherPID	      24	   -			-		-		-1
+#motherPID	      42	   -			-		-		-1
+motherPID	      23	   -			-		-		-1
 coneSizeMCmatchCut    0.07	   -			-		-		-1
 #####
 ### GlobalChi2 and TrkIso not used in the code for now
@@ -32,7 +32,7 @@ ID_muonTrkHits_end    7		   -			-		-		-1
 ISO_muonTrkIso_end    10.0	   -			-		-		-1
 muonEta_end	      1.2	   2.4			-		-		-1
 muonPtCut	      10	   -			-		-		-1      
-muonEtaCut	      2.6	   -			-		-		-1
+muonEtaCut	      2.5	   -			-		-		-1
 genPartPtCut	      40	   -			-		-		-1
 #
 #
