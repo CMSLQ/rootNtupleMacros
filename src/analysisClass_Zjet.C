@@ -34,8 +34,11 @@ void analysisClass::Loop()
 
    //Combinations
    TH1F *h_Mej = new TH1F ("Mej","Mej",150,0,300);  h_Mej->Sumw2();
+   TH1F *h_Mej_gen = new TH1F ("Mej_gen","Mej_gen",150,0,300);  h_Mej_gen->Sumw2();
    TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",200,0,800);  h_Mej_inside->Sumw2();
    TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,800);  h_Mej_above->Sumw2();
+   TH1F *h_Mej_inside_gen = new TH1F ("Mej_inside_gen","Mej_inside_gen",200,0,800);  h_Mej_inside_gen->Sumw2();
+   TH1F *h_Mej_above_gen = new TH1F ("Mej_above_gen","Mej_above_gen",200,0,800);  h_Mej_above_gen->Sumw2();
    TH1F *h_pTee_gen_inside = new TH1F ("pTee_gen_inside","pTee_gen_inside",200,0,800);  h_pTee_gen_inside->Sumw2();
    TH1F *h_pTee_gen_above = new TH1F ("pTee_gen_above","pTee_gen_above",200,0,800);  h_pTee_gen_above->Sumw2();
    TH1F *h_pTjet1_inside = new TH1F ("pTjet1_inside","pTjet1_inside",200,0,800);  h_pTjet1_inside->Sumw2();
@@ -47,6 +50,8 @@ void analysisClass::Loop()
    TH1F *h_pTgenele1_inside = new TH1F ("pTgenele1_inside","pTgenele1_inside",200,0,800);  h_pTgenele1_inside->Sumw2();
    TH1F *h_pTgenele1_above = new TH1F ("pTgenele1_above","pTgenele1_above",200,0,800);  h_pTgenele1_above->Sumw2();
    TH1F *h_Mee = new TH1F ("Mee","Mee",500,0,1000);  h_Mee->Sumw2();
+   TH1F *h_Mee_inside = new TH1F ("Mee_inside","Mee_inside",500,0,1000);  h_Mee_inside->Sumw2();
+   TH1F *h_Mee_above = new TH1F ("Mee_above","Mee_above",500,0,1000);  h_Mee_above->Sumw2();
    TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",100,0,400,200,0,800);
 
    /////////initialize variables
@@ -59,6 +64,7 @@ void analysisClass::Loop()
    ////// these lines may need to be updated.                                 /////    
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
+   //for (Long64_t jentry=0; jentry<10;jentry++) {
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -77,16 +83,16 @@ void analysisClass::Loop()
 	 PassTrig=1;
 
      /////To print out list of trigger names:
-     //      int results_index=0;
-     //      string tmp="";
-     //      for (int itrig=0;itrig<hltNamesLen;itrig++){
-     //        if (HLTNames[itrig]==':') {
-     // 	 cout << tmp << "   " << HLTResults[results_index] << endl;
-     // 	 tmp.clear(); //reset temporary string of HLT name
-     // 	 results_index++; //move to next HLT result
-     //        }
-     //        else tmp.push_back(HLTNames[itrig]) ;  //build up HLT name until ":" is reached, indicating end of name
-     //      }
+//           int results_index=0;
+//           string tmp="";
+//           for (int itrig=0;itrig<hltNamesLen;itrig++){
+//             if (HLTNames[itrig]==':') {
+//      	 cout << tmp << "   " << HLTResults[results_index] << endl;
+//      	 tmp.clear(); //reset temporary string of HLT name
+//      	 results_index++; //move to next HLT result
+//             }
+//             else tmp.push_back(HLTNames[itrig]) ;  //build up HLT name until ":" is reached, indicating end of name
+//           }
 
      //cout << "Electrons" << endl;
 
@@ -189,6 +195,10 @@ void analysisClass::Loop()
 
 	 v_idx_jet.push_back(ijet);
 
+	 //EMF cut to clear some electrons
+	 float EMF_minCut = getPreCutValue1("jet_EMF");
+	 if (caloJetIC5EMF[ijet]>EMF_minCut) continue;
+
 	 //Disambiguation of electrons from jets
 	 float minDeltaR=9999;
 	 TVector3 jet_vec;
@@ -266,7 +276,7 @@ void analysisClass::Loop()
        }
 
      //## Mej "old" algorithm
-     double M11, M12, M21, M22, Mee = -999;
+     double M11=-1, M12=-1, M21=-1, M22=-1, Mee = -999;
      double diff_11_22, diff_12_21;
      if ( (TwoEles) && (TwoJets) ) 
        {
@@ -306,7 +316,7 @@ void analysisClass::Loop()
 		 fillVariableWithValue("MejMax", M11);	       
 		 fillVariableWithValue("MejMin", M22);
 	       }
-	     else
+	     else 
 	       {
 		 fillVariableWithValue("MejMax", M22);	       
 		 fillVariableWithValue("MejMin", M11);
@@ -319,7 +329,7 @@ void analysisClass::Loop()
 		 fillVariableWithValue("MejMax", M12);	       
 		 fillVariableWithValue("MejMin", M21);
 	       }
-	     else
+	     else 
 	       {
 		 fillVariableWithValue("MejMax", M21);	       
 		 fillVariableWithValue("MejMin", M12);
@@ -334,16 +344,27 @@ void analysisClass::Loop()
      TLorentzVector genEle1, genEle2, Z_vec;
      int N_Z_Ele=0;
      int idx_q_high=99;
+     int idx_e_1=99, idx_e_2=99;
      for (int igen=0; igen<GenParticleCount; igen++){
+       if (GenParticlePdgId[igen]==pdgId_Mom){
+	 fillVariableWithValue("pT_Z",GenParticlePt[igen]);
+	 double Z_mass = sqrt((GenParticleE[igen]*GenParticleE[igen])-(GenParticleP[igen]*GenParticleP[igen]));
+	 fillVariableWithValue("M_Z",Z_mass);
+       }
        if ((abs(GenParticlePdgId[igen])==11)&&
 	   (GenParticlePdgId[GenParticleMotherIndex[igen]]==pdgId_Mom)){
-	 if (N_Z_Ele==0)
+	 if (N_Z_Ele==0){
 	   genEle1.SetPtEtaPhiM(GenParticlePt[igen],
 				GenParticleEta[igen],
 				GenParticlePhi[igen],0);
-	 else genEle2.SetPtEtaPhiM(GenParticlePt[igen],
+	   idx_e_1=igen;
+	 }
+	 else {
+	   genEle2.SetPtEtaPhiM(GenParticlePt[igen],
 				GenParticleEta[igen],
 				GenParticlePhi[igen],0);
+	   idx_e_2=igen;
+	 }
 
 	 N_Z_Ele++;
        }
@@ -357,6 +378,58 @@ void analysisClass::Loop()
      }
      fillVariableWithValue("pTee_gen",pTee);
 
+
+     //////Get GenJets and combine with e_1 and e_2
+     int idx_genJet1=99, idx_genJet2=99, N_genJet=0;
+     for (int igenJet=0; igenJet<genJetCount; igenJet++){
+       if (N_genJet>=2) break;
+	 float minDeltaR=9999;
+	 TVector3 gen_jet_vec;
+	 gen_jet_vec.SetPtEtaPhi(genJetPt[igenJet],genJetEta[igenJet],genJetPhi[igenJet]);
+	 for (int i=0; i<GenParticleCount; i++){
+	   if (abs(GenParticlePdgId[i])==11){
+	     TVector3 gen_ele_vec;
+	     gen_ele_vec.SetPtEtaPhi(GenParticlePt[i],GenParticleEta[i],GenParticlePhi[i]);
+	     double distance = gen_jet_vec.DeltaR(gen_ele_vec);
+	     if (distance<minDeltaR) minDeltaR=distance;
+	   }//if electron
+	 }// for all gen particles
+	 if (minDeltaR > deltaR_minCut){
+	   if (N_genJet==0) idx_genJet1=igenJet;
+	   else idx_genJet2=igenJet;
+	   N_genJet++;
+	 } // if minDeltaR larger
+     }//for all gen Jets
+
+     TLorentzVector genJet1, genJet2;
+     double M11_gen = -1, M12_gen = -1, M21_gen = -1, M22_gen = -1;
+     double diff_11_22_gen, diff_12_21_gen;
+     if ((N_genJet==2)&&(N_Z_Ele>=2)){
+       genJet1.SetPtEtaPhiM(genJetPt[idx_genJet1],genJetEta[idx_genJet1],genJetPhi[idx_genJet1],0);
+       genJet2.SetPtEtaPhiM(genJetPt[idx_genJet2],genJetEta[idx_genJet2],genJetPhi[idx_genJet2],0);
+       TLorentzVector jet1ele1_gen, jet1ele2_gen, jet2ele1_gen, jet2ele2_gen;
+       jet1ele1_gen= genEle1+genJet1;
+       jet1ele2_gen= genEle2+genJet1;
+       jet2ele1_gen= genEle1+genJet2;
+       jet2ele2_gen= genEle2+genJet2;
+       M11_gen = jet1ele1_gen.M();
+       M12_gen = jet1ele2_gen.M();
+       M21_gen = jet2ele1_gen.M();
+       M22_gen = jet2ele2_gen.M();
+       diff_11_22_gen=fabs(M11_gen-M22_gen);
+       diff_12_21_gen=fabs(M12_gen-M21_gen);
+	 if (diff_11_22_gen<diff_12_21_gen) 
+	   {
+	     h_Mej_gen->Fill(M11_gen);
+	     h_Mej_gen->Fill(M22_gen);
+	   }
+	 else 
+	   {
+	     h_Mej_gen->Fill(M21_gen);
+	     h_Mej_gen->Fill(M12_gen);
+	   }
+
+     }
      //--------------------------------------------------
 
      // Evaluate cuts (but do not apply them)
@@ -396,7 +469,18 @@ void analysisClass::Loop()
 	     h_Mej_inside->Fill(M12);
 	     h_Mej_inside->Fill(M21);
 	   }
+	 if (diff_11_22_gen<diff_12_21_gen) 
+	   {
+	     h_Mej_inside_gen->Fill(M11_gen);
+	     h_Mej_inside_gen->Fill(M22_gen);
+	   }
+	 else 
+	   {
+	     h_Mej_inside_gen->Fill(M12_gen);
+	     h_Mej_inside_gen->Fill(M21_gen);
+	   }
 	 h_pTee_gen_inside->Fill(pTee);
+	 h_Mee_inside->Fill(Mee);
 	 if( v_idx_jet_final.size() >= 1 ) h_pTjet1_inside->Fill(caloJetIC5Pt[v_idx_jet_final[0]]);
 	 if( v_idx_ele_final.size() >= 1 ) h_pTele1_inside->Fill(elePt[v_idx_ele_final[0]]);
 	 if (N_Z_Ele>1) h_pTgenele1_inside->Fill(genEle1.Pt());
@@ -415,7 +499,18 @@ void analysisClass::Loop()
 	     h_Mej_above->Fill(M12);
 	     h_Mej_above->Fill(M21);
 	   }
+	 if (diff_11_22_gen<diff_12_21_gen) 
+	   {
+	     h_Mej_above_gen->Fill(M11_gen);
+	     h_Mej_above_gen->Fill(M22_gen);
+	   }
+	 else 
+	   {
+	     h_Mej_above_gen->Fill(M12_gen);
+	     h_Mej_above_gen->Fill(M21_gen);
+	   }
 	 h_pTee_gen_above->Fill(pTee);
+	 h_Mee_above->Fill(Mee);
 	 if( v_idx_jet_final.size() >= 1 ) h_pTjet1_above->Fill(caloJetIC5Pt[v_idx_jet_final[0]]);
 	 if( v_idx_ele_final.size() >= 1 ) h_pTele1_above->Fill(elePt[v_idx_ele_final[0]]);
 	 if (N_Z_Ele>1) h_pTgenele1_above->Fill(genEle1.Pt());
@@ -428,9 +523,14 @@ void analysisClass::Loop()
 
    //////////write histos 
    h_Mee->Write();
+   h_Mee_inside->Write();
+   h_Mee_above->Write();
    h_Mej->Write();
    h_Mej_inside->Write();
    h_Mej_above->Write();
+   h_Mej_gen->Write();
+   h_Mej_inside_gen->Write();
+   h_Mej_above_gen->Write();
    h_pTee_gen_inside->Write();
    h_pTee_gen_above->Write();
    h_pTjet1_inside->Write();
