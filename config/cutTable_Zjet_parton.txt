@@ -1,0 +1,80 @@
+#
+#############################     Example of file with list of cuts
+#
+#
+#------------------------ Preliminary cut variables and values (cut level -1) here -----------------------------
+# This first list of variable names and values are used to pass configurable values to the user code associated 
+# to a variable name.
+# The user can retrieve the values associated to a variable name via a provided function call
+# [e.g. getPreCutValue1("eleFidRegion") and similarly for value2, value3 and value4 ]
+# The idea is that the user can use these values to define the list of objects (electrons, jets, etc.) used in 
+# analysis. No cut is automatically evaluated on these variables and the cut level must be equal to -1. 
+# Variable names must be unique.
+#
+#VariableName	      value1	   value2		value3		value4		level
+#------------	      ------------ -------------	------------	-------------	-----
+jet_ele_DeltaRcut     0.5	   -			-		-		-1
+#
+#
+#--------------------------------- Cuts (level 0,1,2,3 ... n) below --------------------------------------------
+# The cut variable names, cut boundaries and histogram binnings are provided here by the user.
+# In the event loop of the analysisClass_template.C, the user have to fill each variable with its value using
+# a provided function call [ e.g. fillVariableWithValue("nEleFinal", number_of_electrons) ]
+# The variable names in the user code has to match the names provided here.
+# Variable names must be unique.
+# The cut will be declared "passed" if
+#    ( minValue1 < VariableName <= maxValue1 ) 
+# in case only the first range (minValue1, maxValue1) is provided, 
+# otherwise the cut will be declared "passed" if
+#    ( minValue1 < VariableName <= maxValue1 )  OR  ( minValue2 < VariableName <= maxValue2 )
+# in case even the second range (minValue2, maxValue2) is provided.
+# The level of the cut (0,1,2 ... n) is provided by the user and can be used in the code to easily determine if
+# groups of same-level cuts have passed or failed.
+#
+#VariableName	      minValue1(<) maxValue1(>=)	minValue2(<)	maxValue2(>=)	level	histoNbinsMinMax
+#------------	      ------------ -------------	------------	-------------	-----	----------------
+M_Z		      -inf	   +inf	                -		-               2       300 0 600
+pTele1_gen	      30	   +inf			-		-		1	100 0 500
+pTele2_gen	      30	   +inf			-		-		1	100 0 500
+pTq1_gen	      50	   +inf			-		-		1	100 0 500
+pTq2_gen	      50	   +inf			-		-		1	100 0 500
+eta_ele1_gen	      -2.5	   +2.5			-		-		1	100 -5.0 5.0
+eta_ele2_gen	      -2.5	   +2.5			-		-		1	100 -5.0 5.0
+eta_q1_gen	      -3.0	   +3.0			-		-		1	100 -5.0 5.0
+eta_q2_gen	      -3.0	   +3.0			-		-		1	100 -5.0 5.0
+pTZ_gen		      -inf	   +inf			-		-		1	100 0 500   
+pTqq_gen	      -inf	   +inf			-		-		1	100 0 500   
+STee_gen	      -inf	   +inf			-		-		1	100 0 500   
+STqq_gen	      -inf	   +inf			-		-		1	100 0 500   
+sT_low		      340	   +inf			-		-		3	200 0 1000                   
+sT		      250	   +inf			-		-		3	200 0 1000                   
+pTele1_gen_inside     -inf	   +inf			-		-		1	100 0 500
+pTele2_gen_inside     -inf	   +inf			-		-		1	100 0 500
+pTq1_gen_inside	      -inf	   +inf			-		-		1	100 0 500
+pTq2_gen_inside	      -inf	   +inf			-		-		1	100 0 500
+eta_ele1_gen_inside   -inf 	   +inf			-		-		1	100 -5.0 5.0
+eta_ele2_gen_inside   -inf 	   +inf			-		-		1	100 -5.0 5.0
+eta_q1_gen_inside     -inf 	   +inf			-		-		1	100 -5.0 5.0
+eta_q2_gen_inside     -inf 	   +inf			-		-		1	100 -5.0 5.0
+pTZ_gen_inside	      -inf 	   +inf			-		-		1	100 0 500   
+pTqq_gen_inside	      -inf 	   +inf			-		-		1	100 0 500   
+STee_gen_inside	      -inf 	   +inf			-		-		1	100 0 500   
+STqq_gen_inside	      -inf 	   +inf			-		-		1	100 0 500   
+M_Z_inside	      -inf 	   +inf	                -		-               1       300 0 600
+sT_low_inside	      -inf 	   +inf			-		-		1	200 0 1000                   
+sT_inside	      -inf 	   +inf			-		-		1	200 0 1000                   
+pTele1_gen_above     -inf	   +inf			-		-		1	100 0 500
+pTele2_gen_above     -inf	   +inf			-		-		1	100 0 500
+pTq1_gen_above       -inf	   +inf			-		-		1	100 0 500
+pTq2_gen_above       -inf	   +inf			-		-		1	100 0 500
+eta_ele1_gen_above   -inf 	   +inf			-		-		1	100 -5.0 5.0
+eta_ele2_gen_above   -inf 	   +inf			-		-		1	100 -5.0 5.0
+eta_q1_gen_above     -inf 	   +inf			-		-		1	100 -5.0 5.0
+eta_q2_gen_above     -inf 	   +inf			-		-		1	100 -5.0 5.0
+pTZ_gen_above	      -inf 	   +inf			-		-		1	100 0 500   
+pTqq_gen_above      -inf 	   +inf			-		-		1	100 0 500   
+STee_gen_above      -inf 	   +inf			-		-		1	100 0 500   
+STqq_gen_above      -inf 	   +inf			-		-		1	100 0 500   
+M_Z_above	      -inf 	   +inf	                -		-               1       300 0 600
+sT_low_above	      -inf 	   +inf			-		-		1	200 0 1000                   
+sT_above	      -inf 	   +inf			-		-		1	200 0 1000                   
