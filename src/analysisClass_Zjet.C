@@ -497,44 +497,44 @@ void analysisClass::Loop()
      if( (passedCut("1"))&&(passedCut("2")) )
        {
 	 ///////Dump of event info
-	 cout << endl;
-	 cout << "Event #: " << jentry << endl;
-	 cout << "GenEle1: pt=" << GenParticlePt[idx_e_1] << "\t" << 
-	   "eta=" << GenParticleEta[idx_e_1] << "\t" << 
-	   "phi=" << GenParticlePhi[idx_e_1] << "\t" << endl;
-	 cout << "GenEle2: pt=" << GenParticlePt[idx_e_2] << "\t" << 
-	   "eta=" << GenParticleEta[idx_e_2] << "\t" << 
-	   "phi=" << GenParticlePhi[idx_e_2] << "\t" << endl;
-	 cout << endl;
-	 cout << "GenJet1: pt=" << genJetPt[idx_genJet1] << "\t" << 
-	   "eta=" << genJetEta[idx_genJet1] << "\t" << 
-	   "phi=" << genJetPhi[idx_genJet1] << "\t" << 
-	   "EMF=" << genJetEMF[idx_genJet1] << endl;
-	 cout << "GenJet2: pt=" << genJetPt[idx_genJet2] << "\t" << 
-	   "eta=" << genJetEta[idx_genJet2] << "\t" << 
-	   "phi=" << genJetPhi[idx_genJet2] << "\t" <<
-	   "EMF=" << genJetEMF[idx_genJet1] << endl;
-	 cout << endl;
-	 cout << "RecoEle1: pt=" << elePt[v_idx_ele_final[0]] << "\t" << 
-	   "eta=" << eleEta[v_idx_ele_final[0]] << "\t" << 
-	   "phi=" << elePhi[v_idx_ele_final[0]] << "\t" << 
-	   "index= " << v_idx_ele_final[0] << endl;
-	 cout << "RecoEle2: pt=" << elePt[v_idx_ele_final[1]] << "\t" << 
-	   "eta=" << eleEta[v_idx_ele_final[1]] << "\t" << 
-	   "phi=" << elePhi[v_idx_ele_final[1]] << "\t" << 
-	   "index= " << v_idx_ele_final[1] << endl;
-	 cout << endl;
-	 cout << "RecoJet1: pt=" << caloJetIC5Pt[v_idx_jet_final[0]] << "\t" << 
-	   "eta=" << caloJetIC5Eta[v_idx_jet_final[0]] << "\t" << 
-	   "phi=" << caloJetIC5Phi[v_idx_jet_final[0]] << "\t" << 
-	   "EMF=" << caloJetIC5EMF[v_idx_jet_final[0]] << "\t" << endl;
-	 cout << "RecoJet2: pt=" << caloJetIC5Pt[v_idx_jet_final[1]] << "\t" << 
-	   "eta=" << caloJetIC5Eta[v_idx_jet_final[1]] << "\t" << 
-	   "phi=" << caloJetIC5Phi[v_idx_jet_final[1]] << "\t" << 
-	   "EMF=" << caloJetIC5EMF[v_idx_jet_final[1]] << "\t" << endl;
-	 cout << endl;
-	 cout << "M11:  " << M11 << "  M12:  " << M12 << "  M21:  " << M21 << "  M22:  " << M22 << endl;
-	 cout << "M_Z: " << Z_vec.M() << "Mee_reco: " << Mee << endl;
+// 	 cout << endl;
+// 	 cout << "Event #: " << jentry << endl;
+// 	 cout << "GenEle1: pt=" << GenParticlePt[idx_e_1] << "\t" << 
+// 	   "eta=" << GenParticleEta[idx_e_1] << "\t" << 
+// 	   "phi=" << GenParticlePhi[idx_e_1] << "\t" << endl;
+// 	 cout << "GenEle2: pt=" << GenParticlePt[idx_e_2] << "\t" << 
+// 	   "eta=" << GenParticleEta[idx_e_2] << "\t" << 
+// 	   "phi=" << GenParticlePhi[idx_e_2] << "\t" << endl;
+// 	 cout << endl;
+// 	 cout << "GenJet1: pt=" << genJetPt[idx_genJet1] << "\t" << 
+// 	   "eta=" << genJetEta[idx_genJet1] << "\t" << 
+// 	   "phi=" << genJetPhi[idx_genJet1] << "\t" << 
+// 	   "EMF=" << genJetEMF[idx_genJet1] << endl;
+// 	 cout << "GenJet2: pt=" << genJetPt[idx_genJet2] << "\t" << 
+// 	   "eta=" << genJetEta[idx_genJet2] << "\t" << 
+// 	   "phi=" << genJetPhi[idx_genJet2] << "\t" <<
+// 	   "EMF=" << genJetEMF[idx_genJet1] << endl;
+// 	 cout << endl;
+// 	 cout << "RecoEle1: pt=" << elePt[v_idx_ele_final[0]] << "\t" << 
+// 	   "eta=" << eleEta[v_idx_ele_final[0]] << "\t" << 
+// 	   "phi=" << elePhi[v_idx_ele_final[0]] << "\t" << 
+// 	   "index= " << v_idx_ele_final[0] << endl;
+// 	 cout << "RecoEle2: pt=" << elePt[v_idx_ele_final[1]] << "\t" << 
+// 	   "eta=" << eleEta[v_idx_ele_final[1]] << "\t" << 
+// 	   "phi=" << elePhi[v_idx_ele_final[1]] << "\t" << 
+// 	   "index= " << v_idx_ele_final[1] << endl;
+// 	 cout << endl;
+// 	 cout << "RecoJet1: pt=" << caloJetIC5Pt[v_idx_jet_final[0]] << "\t" << 
+// 	   "eta=" << caloJetIC5Eta[v_idx_jet_final[0]] << "\t" << 
+// 	   "phi=" << caloJetIC5Phi[v_idx_jet_final[0]] << "\t" << 
+// 	   "EMF=" << caloJetIC5EMF[v_idx_jet_final[0]] << "\t" << endl;
+// 	 cout << "RecoJet2: pt=" << caloJetIC5Pt[v_idx_jet_final[1]] << "\t" << 
+// 	   "eta=" << caloJetIC5Eta[v_idx_jet_final[1]] << "\t" << 
+// 	   "phi=" << caloJetIC5Phi[v_idx_jet_final[1]] << "\t" << 
+// 	   "EMF=" << caloJetIC5EMF[v_idx_jet_final[1]] << "\t" << endl;
+// 	 cout << endl;
+// 	 cout << "M11:  " << M11 << "  M12:  " << M12 << "  M21:  " << M21 << "  M22:  " << M22 << endl;
+// 	 cout << "M_Z: " << Z_vec.M() << "Mee_reco: " << Mee << endl;
 
 	 if (diff_11_22<diff_12_21) 
 	   {
@@ -576,7 +576,7 @@ void analysisClass::Loop()
 	 if (idx_q_high!=99) h_pTquark1_inside->Fill(GenParticlePt[idx_q_high]);
         }
      
-     if( (passedCut("1"))&&(!passedCut("2")) )
+     if( (passedCut("1"))&&(passedCut("3")) )
        {
 	 if (diff_11_22<diff_12_21) 
 	   {
