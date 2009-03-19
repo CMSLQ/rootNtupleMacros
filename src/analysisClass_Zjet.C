@@ -34,7 +34,7 @@ void analysisClass::Loop()
 
    //Combinations
    TH1F *h_Meq_gen = new TH1F ("Meq_gen","Meq_gen",150,0,300);  h_Meq_gen->Sumw2();
-   TH1F *h_Mej = new TH1F ("Mej","Mej",150,0,300);  h_Mej->Sumw2();
+   TH1F *h_Mej = new TH1F ("Mej","Mej",200,0,800);  h_Mej->Sumw2();
    TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",200,0,800);  h_Mej_inside->Sumw2();
    TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,800);  h_Mej_above->Sumw2();
    TH1F *h_Mej_wrong = new TH1F ("Mej_wrong","Mej_wrong",150,0,300);  h_Mej_wrong->Sumw2();
@@ -74,7 +74,7 @@ void analysisClass::Loop()
    ////// these lines may need to be updated.                                 /////    
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-   //for (Long64_t jentry=0; jentry<1000;jentry++) {
+   //for (Long64_t jentry=0; jentry<10;jentry++) {
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -382,15 +382,15 @@ void analysisClass::Loop()
        if (GenParticlePdgId[igen]==pdgId_Mom){
 	 fillVariableWithValue("pT_Z",GenParticlePt[igen]);
 	 double Z_mass = sqrt((GenParticleE[igen]*GenParticleE[igen])-(GenParticleP[igen]*GenParticleP[igen]));
-	 fillVariableWithValue("M_Z",Z_mass);
        }
-       if ((abs(GenParticlePdgId[igen])==11)&&
-	   (GenParticlePdgId[GenParticleMotherIndex[igen]]==pdgId_Mom)){
-	 if (N_Z_Ele==0){
-	   genEle1.SetPtEtaPhiM(GenParticlePt[igen],
+       if (abs(GenParticlePdgId[igen])==11)
+	 {
+	   //cout << GenParticlePdgId[GenParticleMotherIndex[igen]] << endl;
+	   if (N_Z_Ele==0){
+	     genEle1.SetPtEtaPhiM(GenParticlePt[igen],
 				GenParticleEta[igen],
 				GenParticlePhi[igen],0);
-	   idx_e_1=igen;
+	     idx_e_1=igen;
 	 }
 	 else {
 	   genEle2.SetPtEtaPhiM(GenParticlePt[igen],
@@ -408,6 +408,7 @@ void analysisClass::Loop()
      if (N_Z_Ele>1){
        Z_vec = genEle1 + genEle2;
        pTee = Z_vec.Pt();
+       fillVariableWithValue("M_ee_gen",Z_vec.M());
      }
      fillVariableWithValue("pT_Z",pTee);
 

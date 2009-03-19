@@ -60,7 +60,7 @@ eleEta_end	      1.560	   2.5			-		-		-1
 #VariableName	      minValue1(<) maxValue1(>=)	minValue2(<)	maxValue2(>=)	level	histoNbinsMinMax
 #------------	      ------------ -------------	------------	-------------	-----	----------------
 HLT		      -1	   +inf			-		-		1	2 -0.5 1.5
-Pt1stEleIDISO	      85	   +inf			-		-		1	100 0 1000
+Pt1stEleIDISO	      30	   +inf			-		-		1	100 0 1000
 Pt2ndEleIDISO	      30	   +inf			-		-		1	100 0 1000
 Eta1stEleIDISO	      -2.5	   2.5			-		-		1	100 -5 5	   
 Eta2ndEleIDISO	      -2.5	   2.5			-		-		1	100 -5 5	   
@@ -69,11 +69,10 @@ Pt2ndJet_DIS	      50	   +inf			-		-		1	100 0 1000
 Eta1stJet_DIS	      -3.0	   3.0			-		-		1	100 -5 5	   
 Eta2ndJet_DIS	      -3.0	   3.0			-		-		1	100 -5 5	   
 DeltaR_ele_jet	      0.0	   +inf			-		-		1	100 0 5.0
-pTee_gen	      -inf	   +inf			-		-		1	100 0 500   
 pT_Z		      -inf	   +inf			-		-		1	100 0 500   
-M_Z		      -inf	   +inf			-		-		1	100 0 500   
+M_ee_gen	      -inf	   +inf			-		-		1	250 0 500   
 sT		      340	   +inf			-		-		1	200 0 2000                   
-Mee_control	      80	   100	                -		-               2       200 0 2000
-Mee		      100	   +inf	                -		-               3       200 0 2000
+Mee_control	      80	   100	                -		-               2       250 0 500
+Mee		      100	   +inf	                -		-               3       250 0 500
 MejMax		      -inf	   +inf			-		-		1	200 0 2000
 MejMin                -inf	   +inf			-		-		1	200 0 2000
