@@ -33,12 +33,15 @@ void analysisClass::Loop()
    //////////book histos here
 
    //Combinations
+   TH1F *h_Meq_gen = new TH1F ("Meq_gen","Meq_gen",150,0,300);  h_Meq_gen->Sumw2();
    TH1F *h_Mej = new TH1F ("Mej","Mej",150,0,300);  h_Mej->Sumw2();
-   TH1F *h_Mej_gen = new TH1F ("Mej_gen","Mej_gen",150,0,300);  h_Mej_gen->Sumw2();
    TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",200,0,800);  h_Mej_inside->Sumw2();
    TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,800);  h_Mej_above->Sumw2();
-   TH1F *h_Mej_inside_gen = new TH1F ("Mej_inside_gen","Mej_inside_gen",200,0,800);  h_Mej_inside_gen->Sumw2();
-   TH1F *h_Mej_above_gen = new TH1F ("Mej_above_gen","Mej_above_gen",200,0,800);  h_Mej_above_gen->Sumw2();
+   TH1F *h_Mej_wrong = new TH1F ("Mej_wrong","Mej_wrong",150,0,300);  h_Mej_wrong->Sumw2();
+   TH1F *h_Mej_wrong_inside = new TH1F ("Mej_wrong_inside","Mej_wrong_inside",200,0,800);  h_Mej_wrong_inside->Sumw2();
+   TH1F *h_Mej_wrong_above = new TH1F ("Mej_wrong_above","Mej_wrong_above",200,0,800);  h_Mej_wrong_above->Sumw2();
+   TH1F *h_Meq_inside_gen = new TH1F ("Meq_inside_gen","Meq_inside_gen",200,0,800);  h_Meq_inside_gen->Sumw2();
+   TH1F *h_Meq_above_gen = new TH1F ("Meq_above_gen","Meq_above_gen",200,0,800);  h_Meq_above_gen->Sumw2();
    TH1F *h_pTee_gen_inside = new TH1F ("pTee_gen_inside","pTee_gen_inside",200,0,800);  h_pTee_gen_inside->Sumw2();
    TH1F *h_pTee_gen_above = new TH1F ("pTee_gen_above","pTee_gen_above",200,0,800);  h_pTee_gen_above->Sumw2();
    TH1F *h_pTjet1_inside = new TH1F ("pTjet1_inside","pTjet1_inside",200,0,800);  h_pTjet1_inside->Sumw2();
@@ -53,6 +56,13 @@ void analysisClass::Loop()
    TH1F *h_Mee_inside = new TH1F ("Mee_inside","Mee_inside",500,0,1000);  h_Mee_inside->Sumw2();
    TH1F *h_Mee_above = new TH1F ("Mee_above","Mee_above",500,0,1000);  h_Mee_above->Sumw2();
    TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",100,0,400,200,0,800);
+   TH2F *h_Mee_Mej_inside = new TH2F ("Mee_Mej_inside","Mee_Mej_inside",100,0,400,200,0,800);
+   TH2F *h_Mee_Mej_above = new TH2F ("Mee_Mej_above","Mee_Mej_above",100,0,400,200,0,800);
+   TH2F *h_EMF_Mej_inside = new TH2F ("EMF_Mej_inside","EMF_Mej_inside",110,0,1.1,200,0,800);
+   TH2F *h_EMF_Mej_above = new TH2F ("EMF_Mej_above","EMF_Mej_above",110,0,1.1,200,0,800);
+
+   TH1F *h_dR_recoEle_genEle = new TH1F ("dR_recoEle_genEle","dR_recoEle_genEle",100,0,0.002);
+   TH1F *h_N_recoEle_noMatch = new TH1F ("N_recoEle_noMatch","N_recoEle_noMatch",5,-0.5,4.5);
 
    /////////initialize variables
 
@@ -64,7 +74,7 @@ void analysisClass::Loop()
    ////// these lines may need to be updated.                                 /////    
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-   //for (Long64_t jentry=0; jentry<10;jentry++) {
+   //for (Long64_t jentry=0; jentry<1000;jentry++) {
      Long64_t ientry = LoadTree(jentry);
      if (ientry < 0) break;
      nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -175,7 +185,30 @@ void analysisClass::Loop()
 	 
 	 if ( (pass_ID) && (pass_ISO) ) v_idx_ele_final.push_back(iele);
 
-       } //loop over electrons     
+       } //loop over electrons    
+
+     //Check to see if these match up with gen electrons
+     int N_ele_unmatched=0;
+     for (int i=0; i<v_idx_ele_final.size(); i++){
+       double minDeltaR_genEle=99;
+       int idx_closest_genEle=99;
+       TVector3 this_ele;
+       this_ele.SetPtEtaPhi(elePt[v_idx_ele_final[i]],eleEta[v_idx_ele_final[i]],elePhi[v_idx_ele_final[i]]);
+       for (int igen=0; igen<GenParticleCount; igen++){
+	 if (GenParticlePt[igen]==0) continue;
+	 if (abs(GenParticlePdgId[igen])!=11) continue;
+	 TVector3 this_genEle;
+	 this_genEle.SetPtEtaPhi(GenParticlePt[igen],GenParticleEta[igen],GenParticlePhi[igen]);
+	 float distance = this_ele.DeltaR(this_genEle);
+	 if (minDeltaR_genEle>distance){
+	   minDeltaR_genEle=distance;
+	   idx_closest_genEle=igen;
+	 }
+       }// for GenParticles
+       h_dR_recoEle_genEle->Fill(minDeltaR_genEle);
+       if (minDeltaR_genEle==99) N_ele_unmatched++;
+     }
+     h_N_recoEle_noMatch->Fill(N_ele_unmatched);
 
      //cout << "Jets" << endl;
 
@@ -196,8 +229,8 @@ void analysisClass::Loop()
 	 v_idx_jet.push_back(ijet);
 
 	 //EMF cut to clear some electrons
-	 float EMF_minCut = getPreCutValue1("jet_EMF");
-	 if (caloJetIC5EMF[ijet]>EMF_minCut) continue;
+// 	 float EMF_minCut = getPreCutValue1("jet_EMF");
+// 	 if (caloJetIC5EMF[ijet]>EMF_minCut) continue;
 
 	 //Disambiguation of electrons from jets
 	 float minDeltaR=9999;
@@ -376,7 +409,7 @@ void analysisClass::Loop()
        Z_vec = genEle1 + genEle2;
        pTee = Z_vec.Pt();
      }
-     fillVariableWithValue("pTee_gen",pTee);
+     fillVariableWithValue("pT_Z",pTee);
 
 
      //////Get GenJets and combine with e_1 and e_2
@@ -420,13 +453,13 @@ void analysisClass::Loop()
        diff_12_21_gen=fabs(M12_gen-M21_gen);
 	 if (diff_11_22_gen<diff_12_21_gen) 
 	   {
-	     h_Mej_gen->Fill(M11_gen);
-	     h_Mej_gen->Fill(M22_gen);
+	     h_Meq_gen->Fill(M11_gen);
+	     h_Meq_gen->Fill(M22_gen);
 	   }
 	 else 
 	   {
-	     h_Mej_gen->Fill(M21_gen);
-	     h_Mej_gen->Fill(M12_gen);
+	     h_Meq_gen->Fill(M21_gen);
+	     h_Meq_gen->Fill(M12_gen);
 	   }
 
      }
@@ -443,6 +476,8 @@ void analysisClass::Loop()
 	   {
 	     h_Mej->Fill(M11);
 	     h_Mej->Fill(M22);
+	     h_Mej_wrong->Fill(M12);
+	     h_Mej_wrong->Fill(M21);
 	     h_Mee_Mej->Fill(Mee,M11);
 	     h_Mee_Mej->Fill(Mee,M22);
 	   }
@@ -450,6 +485,8 @@ void analysisClass::Loop()
 	   {
 	     h_Mej->Fill(M12);
 	     h_Mej->Fill(M21);
+	     h_Mej_wrong->Fill(M11);
+	     h_Mej_wrong->Fill(M22);
 	     h_Mee_Mej->Fill(Mee,M12);
 	     h_Mee_Mej->Fill(Mee,M21);
 
@@ -459,25 +496,77 @@ void analysisClass::Loop()
      
      if( (passedCut("1"))&&(passedCut("2")) )
        {
+	 ///////Dump of event info
+	 cout << endl;
+	 cout << "Event #: " << jentry << endl;
+	 cout << "GenEle1: pt=" << GenParticlePt[idx_e_1] << "\t" << 
+	   "eta=" << GenParticleEta[idx_e_1] << "\t" << 
+	   "phi=" << GenParticlePhi[idx_e_1] << "\t" << endl;
+	 cout << "GenEle2: pt=" << GenParticlePt[idx_e_2] << "\t" << 
+	   "eta=" << GenParticleEta[idx_e_2] << "\t" << 
+	   "phi=" << GenParticlePhi[idx_e_2] << "\t" << endl;
+	 cout << endl;
+	 cout << "GenJet1: pt=" << genJetPt[idx_genJet1] << "\t" << 
+	   "eta=" << genJetEta[idx_genJet1] << "\t" << 
+	   "phi=" << genJetPhi[idx_genJet1] << "\t" << 
+	   "EMF=" << genJetEMF[idx_genJet1] << endl;
+	 cout << "GenJet2: pt=" << genJetPt[idx_genJet2] << "\t" << 
+	   "eta=" << genJetEta[idx_genJet2] << "\t" << 
+	   "phi=" << genJetPhi[idx_genJet2] << "\t" <<
+	   "EMF=" << genJetEMF[idx_genJet1] << endl;
+	 cout << endl;
+	 cout << "RecoEle1: pt=" << elePt[v_idx_ele_final[0]] << "\t" << 
+	   "eta=" << eleEta[v_idx_ele_final[0]] << "\t" << 
+	   "phi=" << elePhi[v_idx_ele_final[0]] << "\t" << 
+	   "index= " << v_idx_ele_final[0] << endl;
+	 cout << "RecoEle2: pt=" << elePt[v_idx_ele_final[1]] << "\t" << 
+	   "eta=" << eleEta[v_idx_ele_final[1]] << "\t" << 
+	   "phi=" << elePhi[v_idx_ele_final[1]] << "\t" << 
+	   "index= " << v_idx_ele_final[1] << endl;
+	 cout << endl;
+	 cout << "RecoJet1: pt=" << caloJetIC5Pt[v_idx_jet_final[0]] << "\t" << 
+	   "eta=" << caloJetIC5Eta[v_idx_jet_final[0]] << "\t" << 
+	   "phi=" << caloJetIC5Phi[v_idx_jet_final[0]] << "\t" << 
+	   "EMF=" << caloJetIC5EMF[v_idx_jet_final[0]] << "\t" << endl;
+	 cout << "RecoJet2: pt=" << caloJetIC5Pt[v_idx_jet_final[1]] << "\t" << 
+	   "eta=" << caloJetIC5Eta[v_idx_jet_final[1]] << "\t" << 
+	   "phi=" << caloJetIC5Phi[v_idx_jet_final[1]] << "\t" << 
+	   "EMF=" << caloJetIC5EMF[v_idx_jet_final[1]] << "\t" << endl;
+	 cout << endl;
+	 cout << "M11:  " << M11 << "  M12:  " << M12 << "  M21:  " << M21 << "  M22:  " << M22 << endl;
+	 cout << "M_Z: " << Z_vec.M() << "Mee_reco: " << Mee << endl;
+
 	 if (diff_11_22<diff_12_21) 
 	   {
 	     h_Mej_inside->Fill(M11);
 	     h_Mej_inside->Fill(M22);
+	     h_Mej_wrong_inside->Fill(M12);
+	     h_Mej_wrong_inside->Fill(M21);
+	     h_Mee_Mej_inside->Fill(Mee,M11);
+	     h_Mee_Mej_inside->Fill(Mee,M22);
+	     h_EMF_Mej_inside->Fill(caloJetIC5EMF[v_idx_jet_final[0]],M11);
+	     h_EMF_Mej_inside->Fill(caloJetIC5EMF[v_idx_jet_final[1]],M22);
 	   }
 	 else 
 	   {
 	     h_Mej_inside->Fill(M12);
 	     h_Mej_inside->Fill(M21);
+	     h_Mej_wrong_inside->Fill(M11);
+	     h_Mej_wrong_inside->Fill(M22);
+	     h_Mee_Mej_inside->Fill(Mee,M12);
+	     h_Mee_Mej_inside->Fill(Mee,M21);
+	     h_EMF_Mej_inside->Fill(caloJetIC5EMF[v_idx_jet_final[0]],M12);
+	     h_EMF_Mej_inside->Fill(caloJetIC5EMF[v_idx_jet_final[1]],M21);
 	   }
 	 if (diff_11_22_gen<diff_12_21_gen) 
 	   {
-	     h_Mej_inside_gen->Fill(M11_gen);
-	     h_Mej_inside_gen->Fill(M22_gen);
+	     h_Meq_inside_gen->Fill(M11_gen);
+	     h_Meq_inside_gen->Fill(M22_gen);
 	   }
 	 else 
 	   {
-	     h_Mej_inside_gen->Fill(M12_gen);
-	     h_Mej_inside_gen->Fill(M21_gen);
+	     h_Meq_inside_gen->Fill(M12_gen);
+	     h_Meq_inside_gen->Fill(M21_gen);
 	   }
 	 h_pTee_gen_inside->Fill(pTee);
 	 h_Mee_inside->Fill(Mee);
@@ -487,27 +576,39 @@ void analysisClass::Loop()
 	 if (idx_q_high!=99) h_pTquark1_inside->Fill(GenParticlePt[idx_q_high]);
         }
      
-     if( (passedCut("1"))&&(passedCut("3")) )
+     if( (passedCut("1"))&&(!passedCut("2")) )
        {
 	 if (diff_11_22<diff_12_21) 
 	   {
 	     h_Mej_above->Fill(M11);
 	     h_Mej_above->Fill(M22);
+	     h_Mej_wrong_above->Fill(M12);
+	     h_Mej_wrong_above->Fill(M21);
+	     h_Mee_Mej_above->Fill(Mee,M11);
+	     h_Mee_Mej_above->Fill(Mee,M22);
+	     h_EMF_Mej_above->Fill(caloJetIC5EMF[v_idx_jet_final[0]],M11);
+	     h_EMF_Mej_above->Fill(caloJetIC5EMF[v_idx_jet_final[1]],M22);
 	   }
 	 else 
 	   {
 	     h_Mej_above->Fill(M12);
 	     h_Mej_above->Fill(M21);
+	     h_Mej_wrong_above->Fill(M11);
+	     h_Mej_wrong_above->Fill(M22);
+	     h_Mee_Mej_above->Fill(Mee,M12);
+	     h_Mee_Mej_above->Fill(Mee,M21);
+	     h_EMF_Mej_inside->Fill(caloJetIC5EMF[v_idx_jet_final[0]],M12);
+	     h_EMF_Mej_inside->Fill(caloJetIC5EMF[v_idx_jet_final[1]],M21);
 	   }
 	 if (diff_11_22_gen<diff_12_21_gen) 
 	   {
-	     h_Mej_above_gen->Fill(M11_gen);
-	     h_Mej_above_gen->Fill(M22_gen);
+	     h_Meq_above_gen->Fill(M11_gen);
+	     h_Meq_above_gen->Fill(M22_gen);
 	   }
 	 else 
 	   {
-	     h_Mej_above_gen->Fill(M12_gen);
-	     h_Mej_above_gen->Fill(M21_gen);
+	     h_Meq_above_gen->Fill(M12_gen);
+	     h_Meq_above_gen->Fill(M21_gen);
 	   }
 	 h_pTee_gen_above->Fill(pTee);
 	 h_Mee_above->Fill(Mee);
@@ -528,9 +629,12 @@ void analysisClass::Loop()
    h_Mej->Write();
    h_Mej_inside->Write();
    h_Mej_above->Write();
-   h_Mej_gen->Write();
-   h_Mej_inside_gen->Write();
-   h_Mej_above_gen->Write();
+   h_Mej_wrong->Write();
+   h_Mej_wrong_inside->Write();
+   h_Mej_wrong_above->Write();
+   h_Meq_gen->Write();
+   h_Meq_inside_gen->Write();
+   h_Meq_above_gen->Write();
    h_pTee_gen_inside->Write();
    h_pTee_gen_above->Write();
    h_pTjet1_inside->Write();
@@ -542,6 +646,12 @@ void analysisClass::Loop()
    h_pTgenele1_inside->Write();
    h_pTgenele1_above->Write();
    h_Mee_Mej->Write();
+   h_Mee_Mej_inside->Write();
+   h_Mee_Mej_above->Write();
+   h_EMF_Mej_inside->Write();
+   h_EMF_Mej_above->Write();
+   h_dR_recoEle_genEle->Write();
+   h_N_recoEle_noMatch->Write();
 
    std::cout << "analysisClass::Loop() ends" <<std::endl;   
 }
