@@ -101,6 +101,8 @@ Pt2ndEMuID		  30		   +inf			-		-		2	100 0 1000
 Pt2ndEMuISO		  30		   +inf			-		-		3	100 0 1000
 Pt2ndEMuDIS		  30		   +inf			-		-		4	100 0 1000
 Pt2ndEMuIDISO_DIS	  -1		   +inf			-		-		0	100 0 1000
+Pt1stEleIDISO_DIS	  -1		   +inf			-		-		0	100 0 1000
+Pt1stMuIDISO_DIS	  -1		   +inf			-		-		0	100 0 1000
 Eta1stEMuIDISO_DIS	  -2.5		   2.5			-		-		1	100 -5 5	   
 Eta2ndEMuIDISO_DIS	  -2.5		   2.5			-		-		1	100 -5 5	   
 nJet_noCut		  -1		   +inf			-		-		0	16 -0.5 15.5

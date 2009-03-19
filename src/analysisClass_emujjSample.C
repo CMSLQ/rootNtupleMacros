@@ -410,6 +410,9 @@ void analysisClass::Loop()
 	     fillVariableWithValue( "Eta1stEMuIDISO_DIS", eleEta[v_idx_ele_final[0]] );
 	     fillVariableWithValue( "Eta2ndEMuIDISO_DIS", muonEta[v_idx_muon_final[0]] );
 	   }
+
+	 fillVariableWithValue( "Pt1stEleIDISO_DIS", elePt[v_idx_ele_final[0]] );
+	 fillVariableWithValue( "Pt1stMuIDISO_DIS", muonPt[v_idx_muon_final[0]] );
        }
 
      //cout << "1st Jet" << endl;
