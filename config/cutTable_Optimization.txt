@@ -13,7 +13,8 @@
 #
 #VariableName		        value1		value2		value3		value4		level
 #------------			------------	-------------	------------	-------------	-----
-EnergyFactor			1.0		-		-		-		-1
+JetEnergyFactor			1.0		-		-		-		-1
+ElecEnergyFactor		1.0		-		-		-		-1
 FirstTrigBit			51	   -			-		-		-1
 SecondTrigBit			52	   -			-		-		-1
 #EM80=51, EM200=52, HLTPhoton15=67, HLTPhoton25=68, HLT1EMHightEtb=40, HLT1EMVeryHightEt=41 
@@ -33,13 +34,13 @@ ISO_EcalIso_bar			6 	   0.01			-		-		-1
 ISO_EcalIso_end			6 	   0.01			-		-		-1
 ISO_HcalIso_bar			4 	   0.005		-		-		-1
 ISO_HcalIso_end			4 	   0.005		-		-		-1
-OptEle1Pt			30	   120			10		-		-1
-OptEle2Pt			30	   120			10		-		-1
-OptEleEta			1.3        2.5			0.3		-		-1
-OptJet1Pt			50	   140			10		-		-1
-OptJet2Pt			50	   140			10		-		-1
-OptJetEta			1.0        3.5			0.5		-		-1
-OptSt				300	   500			20		-		-1
+OptEle1Pt			30	   30			10		-		-1
+OptEle2Pt			30	   30			10		-		-1
+OptEleEta			2.5        2.5			0.3		-		-1
+OptJet1Pt			50	   50			10		-		-1
+OptJet2Pt			50	   50			10		-		-1
+OptJetEta			3.0        3.0			0.5		-		-1
+OptSt				200	   380			20		-		-1
 #
 #--------------------------------- Cuts (level 0,1,2,3 ... n) below --------------------------------------------
 # The cut variable names, cut boundaries and histogram binnings are provided here by the user.

@@ -298,7 +298,8 @@ void analysisClass::Loop()
      /////////////////////////////////////////////////////////////////////////////////////////
 
      ////get Jet Energy Factor from cut file (for systematic error estimate)
-     float PtScale = getPreCutValue1("EnergyFactor");
+     float PtScale = getPreCutValue1("JetEnergyFactor");
+     float ElecPtScale = getPreCutValue1("ElecEnergyFactor");
 
      //// indecies of the electrons and jets, paired according to selection algorithm
 
@@ -336,8 +337,8 @@ void analysisClass::Loop()
 
    if (TwoEles&&TwoJets){
      ////get object values just once
-     double ele1pT = elePt[First_Pair_ele_idx];
-     double ele2pT = elePt[Sec_Pair_ele_idx];
+     double ele1pT = ElecPtScale * elePt[First_Pair_ele_idx];
+     double ele2pT = ElecPtScale * elePt[Sec_Pair_ele_idx];
      double jet1pT = PtScale * caloJetIC5Pt[First_Pair_jet_idx];
      double jet2pT = PtScale * caloJetIC5Pt[Sec_Pair_jet_idx];
      double electronEta = max(fabs(eleEta[First_Pair_ele_idx]),fabs(eleEta[Sec_Pair_ele_idx]));
@@ -345,18 +346,17 @@ void analysisClass::Loop()
      //     cout << jet1pT << "\t" << jet2pT << endl;
 
      TLorentzVector v_ee, ele1, ele2;
-     ele1.SetPtEtaPhiM(elePt[First_Pair_ele_idx],
+     ele1.SetPtEtaPhiM(ElecPtScale * elePt[First_Pair_ele_idx],
   		   eleEta[First_Pair_ele_idx],
   		   elePhi[First_Pair_ele_idx],0);
-     ele2.SetPtEtaPhiM(elePt[Sec_Pair_ele_idx],
+     ele2.SetPtEtaPhiM(ElecPtScale * elePt[Sec_Pair_ele_idx],
   		   eleEta[Sec_Pair_ele_idx],
   		   elePhi[Sec_Pair_ele_idx],0);
      v_ee = ele1 + ele2;
      double Mee = v_ee.M();
      if (Mee<100) continue;
 
-     double sT = elePt[First_Pair_ele_idx] + elePt[Sec_Pair_ele_idx] + caloJetIC5Pt[First_Pair_jet_idx] + caloJetIC5Pt[Sec_Pair_jet_idx];
-     
+     double sT = ele1pT + ele2pT + jet1pT + jet2pT;
 
      ///increment array value if this event passes
      for (int i=0;i<10;i++){
