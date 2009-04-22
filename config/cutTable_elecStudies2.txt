@@ -15,8 +15,8 @@
 #------------	      ------------ -------------	------------	-------------	-----
 # W_PID=24 , LQ_PID=42 , Z_PID=23
 electronPID	      11	   -			-		-		-1
-#motherPID	      42	   -			-		-		-1
-motherPID	      23	   -			-		-		-1
+motherPID	      42	   -			-		-		-1
+#motherPID	      23	   -			-		-		-1
 coneSizeMCmatchCut    0.07	   -			-		-		-1
 ID_HoE_bar	      0.05	   -			-		-		-1	
 ID_HoE_end	      0.1	   -			-		-		-1	
@@ -39,9 +39,9 @@ eleClass_bar	      41	   -			-		-		-1
 eleClass_end	      100	   -			-		-		-1
 eleEta_bar	      1.442	   -			-		-		-1
 eleEta_end	      1.560	   2.5			-		-		-1
-elePtCut	      10	   -			-		-		-1
+elePtCut	      30	   -			-		-		-1
 eleEtaCut	      2.5	   -			-		-		-1
-genPartPtCut	      40	   -			-		-		-1
+genPartPtCut	      30	   -			-		-		-1
 #
 #
 #--------------------------------- Cuts (level 0,1,2,3 ... n) below --------------------------------------------
