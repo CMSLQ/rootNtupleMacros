@@ -31,131 +31,218 @@ void analysisClass::Loop()
    
   //////////book histos here
 
-  TH1F *h_ele_E = new TH1F ("ele_E","ele_E",100,0,1000);
-  TH1F *h_ele_Pt  = new TH1F ("ele_Pt","ele_Pt",100,0,1000);
-  TH1F *h_ele_Phi  = new TH1F ("ele_Phi","ele_Phi",71,-3.55,3.55);
-  TH1F *h_ele_Eta  = new TH1F ("ele_Eta","ele_Eta",121,-6.05,6.05);
-  TH1F *h_ele_CaloEnergy  = new TH1F ("ele_CaloEnergy","ele_CaloEnergy",100,0,1000);
+  TH1F *h_ele_E = new TH1F ("ele_E","ele_E",400,0,4000); 
+  h_ele_E->Sumw2();
+  TH1F *h_ele_Pt  = new TH1F ("ele_Pt","ele_Pt",400,0,4000); 
+  h_ele_Pt->Sumw2();
+  TH1F *h_ele_Phi  = new TH1F ("ele_Phi","ele_Phi",71,-3.55,3.55); 
+  h_ele_Phi->Sumw2();
+  TH1F *h_ele_Eta  = new TH1F ("ele_Eta","ele_Eta",201,-10.05,10.05); 
+  h_ele_Eta->Sumw2();
+  TH1F *h_ele_CaloEnergy  = new TH1F ("ele_CaloEnergy","ele_CaloEnergy",400,0,4000); 
+  h_ele_CaloEnergy->Sumw2();
 
-  TH1F *h_N_ele_matched = new TH1F ("N_ele_matched","N_ele_matched",5,-0.5,4.5);
-  TH1F *h_ele_E_matched = new TH1F ("ele_E_matched","ele_E_matched",100,0,1000);
-  TH1F *h_ele_Pt_matched  = new TH1F ("ele_Pt_matched","ele_Pt_matched",100,0,1000);
-  TH1F *h_ele_Phi_matched  = new TH1F ("ele_Phi_matched","ele_Phi_matched",71,-3.55,3.55);
-  TH1F *h_ele_Eta_matched  = new TH1F ("ele_Eta_matched","ele_Eta_matched",121,-6.05,6.05);
-  TH1F *h_ele_CaloEnergy_matched  = new TH1F ("ele_CaloEnergy_matched","ele_CaloEnergy_matched",100,0,1000);
+  TH1F *h_N_ele_matched = new TH1F ("N_ele_matched","N_ele_matched",5,-0.5,4.5); 
+  h_N_ele_matched->Sumw2();
+  TH1F *h_ele_E_matched = new TH1F ("ele_E_matched","ele_E_matched",400,0,4000); 
+  h_ele_E_matched->Sumw2();
+  TH1F *h_ele_Pt_matched  = new TH1F ("ele_Pt_matched","ele_Pt_matched",400,0,4000); 
+  h_ele_Pt_matched->Sumw2();
+  TH1F *h_ele_Phi_matched  = new TH1F ("ele_Phi_matched","ele_Phi_matched",71,-3.55,3.55); 
+  h_ele_Phi_matched->Sumw2();
+  TH1F *h_ele_Eta_matched  = new TH1F ("ele_Eta_matched","ele_Eta_matched",201,-10.05,10.05); 
+  h_ele_Eta_matched->Sumw2();
+  TH1F *h_ele_CaloEnergy_matched  = new TH1F ("ele_CaloEnergy_matched","ele_CaloEnergy_matched",400,0,4000); 
+  h_ele_CaloEnergy_matched->Sumw2();
 
-  TH1F *h_ele_E_ID_ISO = new TH1F ("ele_E_ID_ISO","ele_E_ID_ISO",100,0,1000);
-  TH1F *h_ele_Pt_ID_ISO  = new TH1F ("ele_Pt_ID_ISO","ele_Pt_ID_ISO",100,0,1000);
-  TH1F *h_ele_Phi_ID_ISO  = new TH1F ("ele_Phi_ID_ISO","ele_Phi_ID_ISO",71,-3.55,3.55);
-  TH1F *h_ele_Eta_ID_ISO  = new TH1F ("ele_Eta_ID_ISO","ele_Eta_ID_ISO",121,-6.05,6.05);
-  TH1F *h_ele_CaloEnergy_ID_ISO  = new TH1F ("ele_CaloEnergy_ID_ISO","ele_CaloEnergy_ID_ISO",100,0,1000);
+  TH1F *h_ele_E_ID_ISO = new TH1F ("ele_E_ID_ISO","ele_E_ID_ISO",400,0,4000); 
+  h_ele_E_ID_ISO->Sumw2();
+  TH1F *h_ele_Pt_ID_ISO  = new TH1F ("ele_Pt_ID_ISO","ele_Pt_ID_ISO",400,0,4000); 
+  h_ele_Pt_ID_ISO->Sumw2();
+  TH1F *h_ele_Phi_ID_ISO  = new TH1F ("ele_Phi_ID_ISO","ele_Phi_ID_ISO",71,-3.55,3.55); 
+  h_ele_Phi_ID_ISO->Sumw2();
+  TH1F *h_ele_Eta_ID_ISO  = new TH1F ("ele_Eta_ID_ISO","ele_Eta_ID_ISO",201,-10.05,10.05); 
+  h_ele_Eta_ID_ISO->Sumw2();
+  TH1F *h_ele_CaloEnergy_ID_ISO  = new TH1F ("ele_CaloEnergy_ID_ISO","ele_CaloEnergy_ID_ISO",400,0,4000); 
+  h_ele_CaloEnergy_ID_ISO->Sumw2();
 
-  TH1F *h_N_ele_Gen = new TH1F ("N_ele_Gen","N_ele_Gen",5,-0.5,4.5);
-  TH1F *h_ele_Pt_Gen  = new TH1F ("ele_Pt_Gen","ele_Pt_Gen",100,0,1000);
-  TH1F *h_ele_Pt_Gen_etaCut  = new TH1F ("ele_Pt_Gen_etaCut","ele_Pt_Gen_etaCut",100,0,1000);
-  TH1F *h_ele_Pt_Gen_matched  = new TH1F ("ele_Pt_Gen_matched","ele_Pt_Gen_matched",100,0,1000);
-  TH1F *h_ele_Pt_Gen_matched_ID  = new TH1F ("ele_Pt_Gen_matched_ID","ele_Pt_Gen_matched_ID",100,0,1000);
-  TH1F *h_ele_Pt_Gen_matched_ID_ISO = new TH1F ("ele_Pt_Gen_matched_ID_ISO","ele_Pt_Gen_matched_ID_ISO",100,0,1000);
-  TH1F *h_ele_Eta_Gen  = new TH1F ("ele_Eta_Gen","ele_Eta_Gen",121,-6.05,6.05);
-  TH1F *h_ele_Eta_Gen_lowPt  = new TH1F ("ele_Eta_Gen_lowPt","ele_Eta_Gen_lowPt",121,-6.05,6.05);
-  TH1F *h_ele_Eta_Gen_etaCut  = new TH1F ("ele_Eta_Gen_etaCut","ele_Eta_Gen_etaCut",121,-6.05,6.05);
-  TH1F *h_ele_Eta_Gen_matched  = new TH1F ("ele_Eta_Gen_matched","ele_Eta_Gen_matched",121,-6.05,6.05);
-  TH1F *h_ele_Eta_Gen_matched_lowPt  = new TH1F ("ele_Eta_Gen_matched_lowPt","ele_Eta_Gen_matched_lowPt",121,-6.05,6.05);
-  TH1F *h_ele_Eta_Gen_matched_ID  = new TH1F ("ele_Eta_Gen_matched_ID","ele_Eta_Gen_matched_ID",121,-6.05,6.05);
-  TH1F *h_ele_Eta_Gen_matched_ID_ISO  = new TH1F ("ele_Eta_Gen_matched_ID_ISO","ele_Eta_Gen_matched_ID_ISO",121,-6.05,6.05);
-  TH2F *h_ele_Eta_Pt_Gen = new TH2F ("ele_Eta_Pt_Gen","ele_Eta_Pt_Gen",100,0,1000,121,-6.05,6.05);
+  TH1F *h_N_ele_Gen = new TH1F ("N_ele_Gen","N_ele_Gen",5,-0.5,4.5); 
+  h_N_ele_Gen->Sumw2();
+  TH1F *h_ele_Pt_Gen  = new TH1F ("ele_Pt_Gen","ele_Pt_Gen",400,0,4000); 
+  h_ele_Pt_Gen->Sumw2();
+  TH1F *h_ele_Pt_Gen_etaCut  = new TH1F ("ele_Pt_Gen_etaCut","ele_Pt_Gen_etaCut",400,0,4000); 
+  h_ele_Pt_Gen_etaCut->Sumw2();
+  TH1F *h_ele_Pt_Gen_matched  = new TH1F ("ele_Pt_Gen_matched","ele_Pt_Gen_matched",400,0,4000); 
+  h_ele_Pt_Gen_matched->Sumw2();
+  TH1F *h_ele_Pt_Gen_matched_ID  = new TH1F ("ele_Pt_Gen_matched_ID","ele_Pt_Gen_matched_ID",400,0,4000); 
+  h_ele_Pt_Gen_matched_ID->Sumw2();
+  TH1F *h_ele_Pt_Gen_matched_ID_ISO = new TH1F ("ele_Pt_Gen_matched_ID_ISO","ele_Pt_Gen_matched_ID_ISO",400,0,4000); 
+  h_ele_Pt_Gen_matched_ID_ISO->Sumw2();
+  TH1F *h_ele_Eta_Gen  = new TH1F ("ele_Eta_Gen","ele_Eta_Gen",201,-10.05,10.05); 
+  h_ele_Eta_Gen->Sumw2();
+  TH1F *h_ele_Eta_Gen_lowPt  = new TH1F ("ele_Eta_Gen_lowPt","ele_Eta_Gen_lowPt",201,-10.05,10.05); 
+  h_ele_Eta_Gen_lowPt->Sumw2();
+  TH1F *h_ele_Eta_Gen_etaCut  = new TH1F ("ele_Eta_Gen_etaCut","ele_Eta_Gen_etaCut",201,-10.05,10.05); 
+  h_ele_Eta_Gen_etaCut->Sumw2();
+  TH1F *h_ele_Eta_Gen_matched  = new TH1F ("ele_Eta_Gen_matched","ele_Eta_Gen_matched",201,-10.05,10.05); 
+  h_ele_Eta_Gen_matched->Sumw2();
+  TH1F *h_ele_Eta_Gen_matched_lowPt  = new TH1F ("ele_Eta_Gen_matched_lowPt","ele_Eta_Gen_matched_lowPt",201,-10.05,10.05); 
+  h_ele_Eta_Gen_matched_lowPt->Sumw2();
+  TH1F *h_ele_Eta_Gen_matched_ID  = new TH1F ("ele_Eta_Gen_matched_ID","ele_Eta_Gen_matched_ID",201,-10.05,10.05); 
+  h_ele_Eta_Gen_matched_ID->Sumw2();
+  TH1F *h_ele_Eta_Gen_matched_ID_ISO  = new TH1F ("ele_Eta_Gen_matched_ID_ISO","ele_Eta_Gen_matched_ID_ISO",201,-10.05,10.05); 
+  h_ele_Eta_Gen_matched_ID_ISO->Sumw2();
+  TH2F *h_ele_Eta_Pt_Gen = new TH2F ("ele_Eta_Pt_Gen","ele_Eta_Pt_Gen",400,0,4000,201,-10.05,10.05);
 
 
   //extra stdies
-  TH1F *h_ele_Pt_Gen_matched_ID_ISO_1 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_1","ele_Pt_Gen_matched_ID_ISO_1",100,0,1000);
-  TH1F *h_ele_Pt_Gen_matched_ID_ISO_2 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_2","ele_Pt_Gen_matched_ID_ISO_2",100,0,1000);
-  TH1F *h_ele_Pt_Gen_matched_ID_ISO_3 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_3","ele_Pt_Gen_matched_ID_ISO_3",100,0,1000);
-  TH1F *h_ele_Pt_Gen_matched_ID_ISO_4 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_4","ele_Pt_Gen_matched_ID_ISO_4",100,0,1000);
+  TH1F *h_ele_Pt_Gen_matched_ID_ISO_1 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_1","ele_Pt_Gen_matched_ID_ISO_1",400,0,4000); 
+  h_ele_Pt_Gen_matched_ID_ISO_1->Sumw2();
+  TH1F *h_ele_Pt_Gen_matched_ID_ISO_2 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_2","ele_Pt_Gen_matched_ID_ISO_2",400,0,4000); 
+  h_ele_Pt_Gen_matched_ID_ISO_2->Sumw2();
+  TH1F *h_ele_Pt_Gen_matched_ID_ISO_3 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_3","ele_Pt_Gen_matched_ID_ISO_3",400,0,4000); 
+  h_ele_Pt_Gen_matched_ID_ISO_3->Sumw2();
+  TH1F *h_ele_Pt_Gen_matched_ID_ISO_4 = new TH1F ("ele_Pt_Gen_matched_ID_ISO_4","ele_Pt_Gen_matched_ID_ISO_4",400,0,4000); 
+  h_ele_Pt_Gen_matched_ID_ISO_4->Sumw2();
 
 
-  TH1F *h_DeltaR_Gen_Reco = new TH1F("DeltaR_Gen_Reco","DeltaR_Gen_Reco",100,0,0.2);
-  TH1F *h_DeltaR_Gen_2ndReco = new TH1F("DeltaR_Gen_2ndReco","DeltaR_Gen_2ndReco",200,0,1.0);
+  TH1F *h_DeltaR_Gen_Reco = new TH1F("DeltaR_Gen_Reco","DeltaR_Gen_Reco",500,0,10.); 
+  h_DeltaR_Gen_Reco->Sumw2();
+  TH1F *h_DeltaR_Gen_2ndReco = new TH1F("DeltaR_Gen_2ndReco","DeltaR_Gen_2ndReco",500,0,10.); 
+  h_DeltaR_Gen_2ndReco->Sumw2();
 
-  TH1F *h_N_ele_Pre = new TH1F ("N_ele_Pre","N_ele_Pre",11,-0.5,10.5);
-  TH1F *h_N_ele_Post_ID = new TH1F ("N_ele_Post_ID","N_ele_Post_ID",11,-0.5,10.5);
-  TH1F *h_N_ele_Post_ID_ISO = new TH1F ("N_ele_Post_ID_ISO","N_ele_Post_ID_ISO",11,-0.5,10.5);
+  TH1F *h_N_ele_Pre = new TH1F ("N_ele_Pre","N_ele_Pre",11,-0.5,10.5); 
+  h_N_ele_Pre->Sumw2();
+  TH1F *h_N_ele_Post_ID = new TH1F ("N_ele_Post_ID","N_ele_Post_ID",11,-0.5,10.5); 
+  h_N_ele_Post_ID->Sumw2();
+  TH1F *h_N_ele_Post_ID_ISO = new TH1F ("N_ele_Post_ID_ISO","N_ele_Post_ID_ISO",11,-0.5,10.5); 
+  h_N_ele_Post_ID_ISO->Sumw2();
 
-  TH1F *h_Energy_Res = new TH1F ("Energy_Res","Energy_Res",150,0,1.5);
-  TH1F *h_Energy_Res_barrel = new TH1F ("Energy_Res_barrel","Energy_Res_barrel",150,0,1.5);
-  TH1F *h_Energy_Res_endcap = new TH1F ("Energy_Res_endcap","Energy_Res_endcap",150,0,1.5);
+  TH1F *h_Energy_Res = new TH1F ("Energy_Res","Energy_Res",150,0,1.5); 
+  h_Energy_Res->Sumw2();
+  TH1F *h_Energy_Res_barrel = new TH1F ("Energy_Res_barrel","Energy_Res_barrel",150,0,1.5); 
+  h_Energy_Res_barrel->Sumw2();
+  TH1F *h_Energy_Res_endcap = new TH1F ("Energy_Res_endcap","Energy_Res_endcap",150,0,1.5); 
+  h_Energy_Res_endcap->Sumw2();
 
   //////matched
-  TH1F *h_eleHoE_barrel_matched = new TH1F("eleHoE_barrel_matched","eleHoE_barrel_matched",100,0,0.1);
-  TH1F *h_eleSigmaEE_barrel_matched = new TH1F("eleSigmaEE_barrel_matched","eleSigmaEE_barrel_matched",100,0,0.05);
-  TH1F *h_eleDeltaPhiTrkSC_barrel_matched = new TH1F("eleDeltaPhiTrkSC_barrel_matched","eleDeltaPhiTrkSC_barrel_matched",300,-0.15,0.15);
-  TH1F *h_eleDeltaEtaTrkSC_barrel_matched = new TH1F("eleDeltaEtaTrkSC_barrel_matched","eleDeltaEtaTrkSC_barrel_matched",200,-0.02,0.02);
-  TH1F *h_eleClassif_barrel_matched = new TH1F("eleClassif_barrel_matched","eleClassif_barrel_matched",200,0,200);
+  TH1F *h_eleHoE_barrel_matched = new TH1F("eleHoE_barrel_matched","eleHoE_barrel_matched",100,0,0.1); 
+  h_eleHoE_barrel_matched->Sumw2();
+  TH1F *h_eleSigmaEE_barrel_matched = new TH1F("eleSigmaEE_barrel_matched","eleSigmaEE_barrel_matched",400,0,0.2); 
+  h_eleSigmaEE_barrel_matched->Sumw2();
+  TH1F *h_eleDeltaPhiTrkSC_barrel_matched = new TH1F("eleDeltaPhiTrkSC_barrel_matched","eleDeltaPhiTrkSC_barrel_matched",1000,-0.2,0.2); 
+  h_eleDeltaPhiTrkSC_barrel_matched->Sumw2();
+  TH1F *h_eleDeltaEtaTrkSC_barrel_matched = new TH1F("eleDeltaEtaTrkSC_barrel_matched","eleDeltaEtaTrkSC_barrel_matched",1000,-0.2,0.2); 
+  h_eleDeltaEtaTrkSC_barrel_matched->Sumw2();
+  TH1F *h_eleClassif_barrel_matched = new TH1F("eleClassif_barrel_matched","eleClassif_barrel_matched",201,-0.5,200.5); 
+  h_eleClassif_barrel_matched->Sumw2();
 
-  TH1F *h_eleNumTrkIso_barrel_matched = new TH1F("eleNumTrkIso_barrel_matched","eleNumTrkIso_barrel_matched",11,-0.5,10.5);
-  TH1F *h_eleTrkIso_barrel_matched = new TH1F("eleTrkIso_barrel_matched","eleTrkIso_barrel_matched",26,-0.5,26.5);
-  TH1F *h_eleEcalRecHitIso_barrel_matched = new TH1F("eleEcalRecHitIso_barrel_matched","eleEcalRecHitIso_barrel_matched",401,-0.5,400.5);
-  TH1F *h_eleHcalRecHitIso_barrel_matched = new TH1F("eleHcalRecHitIso_barrel_matched","eleHcalRecHitIso_barrel_matched",401,-0.5,400.5);
+  TH1F *h_eleNumTrkIso_barrel_matched = new TH1F("eleNumTrkIso_barrel_matched","eleNumTrkIso_barrel_matched",101,-0.5,100.5); 
+  h_eleNumTrkIso_barrel_matched->Sumw2();
+  TH1F *h_eleTrkIso_barrel_matched = new TH1F("eleTrkIso_barrel_matched","eleTrkIso_barrel_matched",1006,-5.5,1000.5); 
+  h_eleTrkIso_barrel_matched->Sumw2();
+  TH1F *h_eleEcalRecHitIso_barrel_matched = new TH1F("eleEcalRecHitIso_barrel_matched","eleEcalRecHitIso_barrel_matched",1006,-5.5,1000.5); 
+  h_eleEcalRecHitIso_barrel_matched->Sumw2();
+  TH1F *h_eleHcalRecHitIso_barrel_matched = new TH1F("eleHcalRecHitIso_barrel_matched","eleHcalRecHitIso_barrel_matched",1006,-5.5,1000.5); 
+  h_eleHcalRecHitIso_barrel_matched->Sumw2();
 
   //extra
   TH2F *h_eleEcalRecHitIso_barrel_matched_vs_pt 
-    = new TH2F("eleEcalRecHitIso_barrel_matched_vs_pt","eleEcalRecHitIso_barrel_matched_vs_pt",401,-0.5,400.5, 1000, 0, 1000);
+    = new TH2F("eleEcalRecHitIso_barrel_matched_vs_pt","eleEcalRecHitIso_barrel_matched_vs_pt",1006,-5.5,1000.5, 1000, 0, 1000);
   TH2F *h_eleHcalRecHitIso_barrel_matched_vs_pt 
-    = new TH2F("eleHcalRecHitIso_barrel_matched_vs_pt","eleHcalRecHitIso_barrel_matched_vs_pt",401,-0.5,400.5, 1000, 0, 1000);
+    = new TH2F("eleHcalRecHitIso_barrel_matched_vs_pt","eleHcalRecHitIso_barrel_matched_vs_pt",1006,-5.5,1000.5, 1000, 0, 1000);
   
 
-  TH1F *h_eleHoE_endcap_matched = new TH1F("eleHoE_endcap_matched","eleHoE_endcap_matched",150,0,0.15);
-  TH1F *h_eleSigmaEE_endcap_matched = new TH1F("eleSigmaEE_endcap_matched","eleSigmaEE_endcap_matched",100,0,0.05);
-  TH1F *h_eleDeltaPhiTrkSC_endcap_matched = new TH1F("eleDeltaPhiTrkSC_endcap_matched","eleDeltaPhiTrkSC_endcap_matched",300,-0.15,0.15);
-  TH1F *h_eleDeltaEtaTrkSC_endcap_matched = new TH1F("eleDeltaEtaTrkSC_endcap_matched","eleDeltaEtaTrkSC_endcap_matched",200,-0.02,0.02);
-  TH1F *h_eleClassif_endcap_matched = new TH1F("eleClassif_endcap_matched","eleClassif_endcap_matched",200,0,200);
+  TH1F *h_eleHoE_endcap_matched = new TH1F("eleHoE_endcap_matched","eleHoE_endcap_matched",100,0,0.1); 
+  h_eleHoE_endcap_matched->Sumw2();
+  TH1F *h_eleSigmaEE_endcap_matched = new TH1F("eleSigmaEE_endcap_matched","eleSigmaEE_endcap_matched",400,0,0.2); 
+  h_eleSigmaEE_endcap_matched->Sumw2();
+  TH1F *h_eleDeltaPhiTrkSC_endcap_matched = new TH1F("eleDeltaPhiTrkSC_endcap_matched","eleDeltaPhiTrkSC_endcap_matched",1000,-0.2,0.2); 
+  h_eleDeltaPhiTrkSC_endcap_matched->Sumw2();
+  TH1F *h_eleDeltaEtaTrkSC_endcap_matched = new TH1F("eleDeltaEtaTrkSC_endcap_matched","eleDeltaEtaTrkSC_endcap_matched",1000,-0.2,0.2); 
+  h_eleDeltaEtaTrkSC_endcap_matched->Sumw2();
+  TH1F *h_eleClassif_endcap_matched = new TH1F("eleClassif_endcap_matched","eleClassif_endcap_matched",201,-0.5,200.5); 
+  h_eleClassif_endcap_matched->Sumw2();
 
-  TH1F *h_eleNumTrkIso_endcap_matched = new TH1F("eleNumTrkIso_endcap_matched","eleNumTrkIso_endcap_matched",11,-0.5,10.5);
-  TH1F *h_eleTrkIso_endcap_matched = new TH1F("eleTrkIso_endcap_matched","eleTrkIso_endcap_matched",26,-0.5,25.5);
-  TH1F *h_eleEcalRecHitIso_endcap_matched = new TH1F("eleEcalRecHitIso_endcap_matched","eleEcalRecHitIso_endcap_matched",401,-0.5,400.5);
-  TH1F *h_eleHcalRecHitIso_endcap_matched = new TH1F("eleHcalRecHitIso_endcap_matched","eleHcalRecHitIso_endcap_matched",401,-0.5,400.5);
+  TH1F *h_eleNumTrkIso_endcap_matched = new TH1F("eleNumTrkIso_endcap_matched","eleNumTrkIso_endcap_matched",101,-0.5,100.5); 
+  h_eleNumTrkIso_endcap_matched->Sumw2();
+  TH1F *h_eleTrkIso_endcap_matched = new TH1F("eleTrkIso_endcap_matched","eleTrkIso_endcap_matched",1006,-5.5,1000.5); 
+  h_eleTrkIso_endcap_matched->Sumw2();
+  TH1F *h_eleEcalRecHitIso_endcap_matched = new TH1F("eleEcalRecHitIso_endcap_matched","eleEcalRecHitIso_endcap_matched",1006,-5.5,1000.5); 
+  h_eleEcalRecHitIso_endcap_matched->Sumw2();
+  TH1F *h_eleHcalRecHitIso_endcap_matched = new TH1F("eleHcalRecHitIso_endcap_matched","eleHcalRecHitIso_endcap_matched",1006,-5.5,1000.5); 
+  h_eleHcalRecHitIso_endcap_matched->Sumw2();
 
   //extra
   TH2F *h_eleEcalRecHitIso_endcap_matched_vs_pt 
-    = new TH2F("eleEcalRecHitIso_endcap_matched_vs_pt","eleEcalRecHitIso_endcap_matched_vs_pt",401,-0.5,400.5, 1000, 0, 1000);
+    = new TH2F("eleEcalRecHitIso_endcap_matched_vs_pt","eleEcalRecHitIso_endcap_matched_vs_pt",1006,-5.5,1000.5, 1000, 0, 1000);
   TH2F *h_eleHcalRecHitIso_endcap_matched_vs_pt 
-    = new TH2F("eleHcalRecHitIso_endcap_matched_vs_pt","eleHcalRecHitIso_endcap_matched_vs_pt",401,-0.5,400.5, 1000, 0, 1000);
+    = new TH2F("eleHcalRecHitIso_endcap_matched_vs_pt","eleHcalRecHitIso_endcap_matched_vs_pt",1006,-5.5,1000.5, 1000, 0, 1000);
 
 
   ////////unmatched
-  TH1F *h_eleHoE_barrel_unmatched = new TH1F("eleHoE_barrel_unmatched","eleHoE_barrel_unmatched",100,0,0.1);
-  TH1F *h_eleSigmaEE_barrel_unmatched = new TH1F("eleSigmaEE_barrel_unmatched","eleSigmaEE_barrel_unmatched",100,0,0.05);
-  TH1F *h_eleDeltaPhiTrkSC_barrel_unmatched = new TH1F("eleDeltaPhiTrkSC_barrel_unmatched","eleDeltaPhiTrkSC_barrel_unmatched",300,-0.15,0.15);
-  TH1F *h_eleDeltaEtaTrkSC_barrel_unmatched = new TH1F("eleDeltaEtaTrkSC_barrel_unmatched","eleDeltaEtaTrkSC_barrel_unmatched",200,-0.02,0.02);
-  TH1F *h_eleClassif_barrel_unmatched = new TH1F("eleClassif_barrel_unmatched","eleClassif_barrel_unmatched",200,0,200);
+  TH1F *h_eleHoE_barrel_unmatched = new TH1F("eleHoE_barrel_unmatched","eleHoE_barrel_unmatched",100,0,0.1); 
+  h_eleHoE_barrel_unmatched->Sumw2();
+  TH1F *h_eleSigmaEE_barrel_unmatched = new TH1F("eleSigmaEE_barrel_unmatched","eleSigmaEE_barrel_unmatched",400,0,0.2); 
+  h_eleSigmaEE_barrel_unmatched->Sumw2();
+  TH1F *h_eleDeltaPhiTrkSC_barrel_unmatched = new TH1F("eleDeltaPhiTrkSC_barrel_unmatched","eleDeltaPhiTrkSC_barrel_unmatched",1000,-0.2,0.2); 
+  h_eleDeltaPhiTrkSC_barrel_unmatched->Sumw2();
+  TH1F *h_eleDeltaEtaTrkSC_barrel_unmatched = new TH1F("eleDeltaEtaTrkSC_barrel_unmatched","eleDeltaEtaTrkSC_barrel_unmatched",1000,-0.2,0.2); 
+  h_eleDeltaEtaTrkSC_barrel_unmatched->Sumw2();
+  TH1F *h_eleClassif_barrel_unmatched = new TH1F("eleClassif_barrel_unmatched","eleClassif_barrel_unmatched",201,-0.5,200.5); 
+  h_eleClassif_barrel_unmatched->Sumw2();
 
-  TH1F *h_eleNumTrkIso_barrel_unmatched = new TH1F("eleNumTrkIso_barrel_unmatched","eleNumTrkIso_barrel_unmatched",11,-0.5,10.5);
-  TH1F *h_eleTrkIso_barrel_unmatched = new TH1F("eleTrkIso_barrel_unmatched","eleTrkIso_barrel_unmatched",26,-0.5,25.5);
-  TH1F *h_eleEcalRecHitIso_barrel_unmatched = new TH1F("eleEcalRecHitIso_barrel_unmatched","eleEcalRecHitIso_barrel_unmatched",21,-0.5,20.5);
-  TH1F *h_eleHcalRecHitIso_barrel_unmatched = new TH1F("eleHcalRecHitIso_barrel_unmatched","eleHcalRecHitIso_barrel_unmatched",21,-0.5,20.5);
+  TH1F *h_eleNumTrkIso_barrel_unmatched = new TH1F("eleNumTrkIso_barrel_unmatched","eleNumTrkIso_barrel_unmatched",101,-0.5,100.5); 
+  h_eleNumTrkIso_barrel_unmatched->Sumw2();
+  TH1F *h_eleTrkIso_barrel_unmatched = new TH1F("eleTrkIso_barrel_unmatched","eleTrkIso_barrel_unmatched",1006,-5.5,1000.5); 
+  h_eleTrkIso_barrel_unmatched->Sumw2();
+  TH1F *h_eleEcalRecHitIso_barrel_unmatched = new TH1F("eleEcalRecHitIso_barrel_unmatched","eleEcalRecHitIso_barrel_unmatched",1006,-5.5,1000.5); 
+  h_eleEcalRecHitIso_barrel_unmatched->Sumw2();
+  TH1F *h_eleHcalRecHitIso_barrel_unmatched = new TH1F("eleHcalRecHitIso_barrel_unmatched","eleHcalRecHitIso_barrel_unmatched",1006,-5.5,1000.5); 
+  h_eleHcalRecHitIso_barrel_unmatched->Sumw2();
 
-  TH1F *h_eleHoE_endcap_unmatched = new TH1F("eleHoE_endcap_unmatched","eleHoE_endcap_unmatched",150,0,0.15);
-  TH1F *h_eleSigmaEE_endcap_unmatched = new TH1F("eleSigmaEE_endcap_unmatched","eleSigmaEE_endcap_unmatched",100,0,0.05);
-  TH1F *h_eleDeltaPhiTrkSC_endcap_unmatched = new TH1F("eleDeltaPhiTrkSC_endcap_unmatched","eleDeltaPhiTrkSC_endcap_unmatched",300,-0.15,0.15);
-  TH1F *h_eleDeltaEtaTrkSC_endcap_unmatched = new TH1F("eleDeltaEtaTrkSC_endcap_unmatched","eleDeltaEtaTrkSC_endcap_unmatched",200,-0.02,0.02);
-  TH1F *h_eleClassif_endcap_unmatched = new TH1F("eleClassif_endcap_unmatched","eleClassif_endcap_unmatched",200,0,200);
+  TH1F *h_eleHoE_endcap_unmatched = new TH1F("eleHoE_endcap_unmatched","eleHoE_endcap_unmatched",100,0,0.1); 
+  h_eleHoE_endcap_unmatched->Sumw2();
+  TH1F *h_eleSigmaEE_endcap_unmatched = new TH1F("eleSigmaEE_endcap_unmatched","eleSigmaEE_endcap_unmatched",400,0,0.2); 
+  h_eleSigmaEE_endcap_unmatched->Sumw2();
+  TH1F *h_eleDeltaPhiTrkSC_endcap_unmatched = new TH1F("eleDeltaPhiTrkSC_endcap_unmatched","eleDeltaPhiTrkSC_endcap_unmatched",1000,-0.2,0.2); 
+  h_eleDeltaPhiTrkSC_endcap_unmatched->Sumw2();
+  TH1F *h_eleDeltaEtaTrkSC_endcap_unmatched = new TH1F("eleDeltaEtaTrkSC_endcap_unmatched","eleDeltaEtaTrkSC_endcap_unmatched",1000,-0.2,0.2); 
+  h_eleDeltaEtaTrkSC_endcap_unmatched->Sumw2();
+  TH1F *h_eleClassif_endcap_unmatched = new TH1F("eleClassif_endcap_unmatched","eleClassif_endcap_unmatched",201,-0.5,200.5); 
+  h_eleClassif_endcap_unmatched->Sumw2();
 
-  TH1F *h_eleNumTrkIso_endcap_unmatched = new TH1F("eleNumTrkIso_endcap_unmatched","eleNumTrkIso_endcap_unmatched",11,-0.5,10.5);
-  TH1F *h_eleTrkIso_endcap_unmatched = new TH1F("eleTrkIso_endcap_unmatched","eleTrkIso_endcap_unmatched",26,-0.5,25.5);
-  TH1F *h_eleEcalRecHitIso_endcap_unmatched = new TH1F("eleEcalRecHitIso_endcap_unmatched","eleEcalRecHitIso_endcap_unmatched",21,-0.5,20.5);
-  TH1F *h_eleHcalRecHitIso_endcap_unmatched = new TH1F("eleHcalRecHitIso_endcap_unmatched","eleHcalRecHitIso_endcap_unmatched",21,-0.5,20.5);
+  TH1F *h_eleNumTrkIso_endcap_unmatched = new TH1F("eleNumTrkIso_endcap_unmatched","eleNumTrkIso_endcap_unmatched",101,-0.5,100.5); 
+  h_eleNumTrkIso_endcap_unmatched->Sumw2();
+  TH1F *h_eleTrkIso_endcap_unmatched = new TH1F("eleTrkIso_endcap_unmatched","eleTrkIso_endcap_unmatched",1006,-5.5,1000.5); 
+  h_eleTrkIso_endcap_unmatched->Sumw2();
+  TH1F *h_eleEcalRecHitIso_endcap_unmatched = new TH1F("eleEcalRecHitIso_endcap_unmatched","eleEcalRecHitIso_endcap_unmatched",1006,-5.5,1000.5); 
+  h_eleEcalRecHitIso_endcap_unmatched->Sumw2();
+  TH1F *h_eleHcalRecHitIso_endcap_unmatched = new TH1F("eleHcalRecHitIso_endcap_unmatched","eleHcalRecHitIso_endcap_unmatched",1006,-5.5,1000.5); 
+  h_eleHcalRecHitIso_endcap_unmatched->Sumw2();
 
-  TH1F *h_eleEff_Pt = new TH1F ("eleEff_Pt","eleEff_Pt",100,0,1000);
-  TH1F *h_eleEff_Eta = new TH1F ("eleEff_Eta","eleEff_Eta",121,-6.05,6.05);
-  TH1F *h_eleEff_Pt_ID = new TH1F ("eleEff_Pt_ID","eleEff_Pt_ID",100,0,1000);
-  TH1F *h_eleEff_Eta_ID = new TH1F ("eleEff_Eta_ID","eleEff_Eta_ID",121,-6.05,6.05);
-  TH1F *h_eleEff_Pt_ID_ISO = new TH1F ("eleEff_Pt_ID_ISO","eleEff_Pt_ID_ISO",100,0,1000);
-  TH1F *h_eleEff_Eta_ID_ISO = new TH1F ("eleEff_Eta_ID_ISO","eleEff_Eta_ID_ISO",121,-6.05,6.05);
+  TH1F *h_eleEff_Pt = new TH1F ("eleEff_Pt","eleEff_Pt",400,0,4000); 
+  h_eleEff_Pt->Sumw2();
+  TH1F *h_eleEff_Eta = new TH1F ("eleEff_Eta","eleEff_Eta",201,-10.05,10.05); 
+  h_eleEff_Eta->Sumw2();
+  TH1F *h_eleEff_Pt_ID = new TH1F ("eleEff_Pt_ID","eleEff_Pt_ID",400,0,4000); 
+  h_eleEff_Pt_ID->Sumw2();
+  TH1F *h_eleEff_Eta_ID = new TH1F ("eleEff_Eta_ID","eleEff_Eta_ID",201,-10.05,10.05); 
+  h_eleEff_Eta_ID->Sumw2();
+  TH1F *h_eleEff_Pt_ID_ISO = new TH1F ("eleEff_Pt_ID_ISO","eleEff_Pt_ID_ISO",400,0,4000); 
+  h_eleEff_Pt_ID_ISO->Sumw2();
+  TH1F *h_eleEff_Eta_ID_ISO = new TH1F ("eleEff_Eta_ID_ISO","eleEff_Eta_ID_ISO",201,-10.05,10.05); 
+  h_eleEff_Eta_ID_ISO->Sumw2();
 
   //extra
-  TH1F *h_eleEff_Pt_ID_ISO_1 = new TH1F ("eleEff_Pt_ID_ISO_1","eleEff_Pt_ID_ISO_1",100,0,1000);
-  TH1F *h_eleEff_Pt_ID_ISO_2 = new TH1F ("eleEff_Pt_ID_ISO_2","eleEff_Pt_ID_ISO_2",100,0,1000);
-  TH1F *h_eleEff_Pt_ID_ISO_3 = new TH1F ("eleEff_Pt_ID_ISO_3","eleEff_Pt_ID_ISO_3",100,0,1000);
-  TH1F *h_eleEff_Pt_ID_ISO_4 = new TH1F ("eleEff_Pt_ID_ISO_4","eleEff_Pt_ID_ISO_4",100,0,1000);
+  TH1F *h_eleEff_Pt_ID_ISO_1 = new TH1F ("eleEff_Pt_ID_ISO_1","eleEff_Pt_ID_ISO_1",400,0,4000); 
+  h_eleEff_Pt_ID_ISO_1->Sumw2();
+  TH1F *h_eleEff_Pt_ID_ISO_2 = new TH1F ("eleEff_Pt_ID_ISO_2","eleEff_Pt_ID_ISO_2",400,0,4000); 
+  h_eleEff_Pt_ID_ISO_2->Sumw2();
+  TH1F *h_eleEff_Pt_ID_ISO_3 = new TH1F ("eleEff_Pt_ID_ISO_3","eleEff_Pt_ID_ISO_3",400,0,4000); 
+  h_eleEff_Pt_ID_ISO_3->Sumw2();
+  TH1F *h_eleEff_Pt_ID_ISO_4 = new TH1F ("eleEff_Pt_ID_ISO_4","eleEff_Pt_ID_ISO_4",400,0,4000); 
+  h_eleEff_Pt_ID_ISO_4->Sumw2();
 
   //getPreCutValue1("");
    
@@ -246,13 +333,18 @@ void analysisClass::Loop()
 	    
 	    //if (from_LQ_idx[0]==99) from_LQ_idx[0]=igen;
 	    //else from_LQ_idx[1]=igen;
-	    
+
 	    if (fabs(GenParticleEta[igen])<eleEta_cut){
 	      h_ele_Pt_Gen_etaCut->Fill(GenParticlePt[igen]);
 	      h_ele_Eta_Gen_etaCut->Fill(GenParticleEta[igen]);
 	    }
+
 	    if (GenParticlePt[igen]<genPartPt_cut)
 	      h_ele_Eta_Gen_lowPt->Fill(GenParticleEta[igen]);
+
+	    //skip events with gen particle with low pT or with high eta
+	    if (GenParticlePt[igen]<genPartPt_cut || fabs(GenParticleEta[igen])>eleEta_cut)
+	      continue;
 
 	    TVector3 elegen;
 	    elegen.SetPtEtaPhi(GenParticlePt[igen],
