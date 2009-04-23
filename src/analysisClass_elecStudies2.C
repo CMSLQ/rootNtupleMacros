@@ -334,17 +334,15 @@ void analysisClass::Loop()
 	    //if (from_LQ_idx[0]==99) from_LQ_idx[0]=igen;
 	    //else from_LQ_idx[1]=igen;
 
-	    if (fabs(GenParticleEta[igen])<eleEta_cut){
-	      h_ele_Pt_Gen_etaCut->Fill(GenParticlePt[igen]);
-	      h_ele_Eta_Gen_etaCut->Fill(GenParticleEta[igen]);
-	    }
-
 	    if (GenParticlePt[igen]<genPartPt_cut)
 	      h_ele_Eta_Gen_lowPt->Fill(GenParticleEta[igen]);
 
 	    //skip events with gen particle with low pT or with high eta
 	    if (GenParticlePt[igen]<genPartPt_cut || fabs(GenParticleEta[igen])>eleEta_cut)
 	      continue;
+
+	    h_ele_Pt_Gen_etaCut->Fill(GenParticlePt[igen]);
+	    h_ele_Eta_Gen_etaCut->Fill(GenParticleEta[igen]);
 
 	    TVector3 elegen;
 	    elegen.SetPtEtaPhi(GenParticlePt[igen],
