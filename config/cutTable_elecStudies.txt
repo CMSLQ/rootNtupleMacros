@@ -34,7 +34,7 @@ ISO_EcalIso_bar	      6 	   0.01			-		-		-1
 ISO_EcalIso_end	      6 	   0.01			-		-		-1
 ISO_HcalIso_bar	      4 	   0.005		-		-		-1
 ISO_HcalIso_end	      4 	   0.005		-		-		-1
-eleClass_bar	      41	   -			-		-		-1
+eleClass_bar	      50	   -			-		-		-1
 ## check the cut: eleClass_bar ##
 eleClass_end	      100	   -			-		-		-1
 eleEta_bar	      1.442	   -			-		-		-1
