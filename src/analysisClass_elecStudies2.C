@@ -145,6 +145,10 @@ void analysisClass::Loop()
   h_eleEcalRecHitIso_barrel_matched->Sumw2();
   TH1F *h_eleHcalRecHitIso_barrel_matched = new TH1F("eleHcalRecHitIso_barrel_matched","eleHcalRecHitIso_barrel_matched",1006,-5.5,1000.5); 
   h_eleHcalRecHitIso_barrel_matched->Sumw2();
+  TH1F *h_eleReducedEcalIso_barrel_matched = new TH1F("eleReducedEcalIso_barrel_matched","eleReducedEcalIso_barrel_matched",1006,-5.5,1000.5); 
+  h_eleReducedEcalIso_barrel_matched->Sumw2();
+  TH1F *h_eleHcalTowerIso_barrel_matched = new TH1F("eleHcalTowerIso_barrel_matched","eleHcalTowerIso_barrel_matched",1006,-5.5,1000.5); 
+  h_eleHcalTowerIso_barrel_matched->Sumw2();
 
   //extra
   TH2F *h_eleEcalRecHitIso_barrel_matched_vs_pt 
@@ -172,6 +176,11 @@ void analysisClass::Loop()
   h_eleEcalRecHitIso_endcap_matched->Sumw2();
   TH1F *h_eleHcalRecHitIso_endcap_matched = new TH1F("eleHcalRecHitIso_endcap_matched","eleHcalRecHitIso_endcap_matched",1006,-5.5,1000.5); 
   h_eleHcalRecHitIso_endcap_matched->Sumw2();
+  TH1F *h_eleReducedEcalIso_endcap_matched = new TH1F("eleReducedEcalIso_endcap_matched","eleReducedEcalIso_endcap_matched",1006,-5.5,1000.5); 
+  h_eleReducedEcalIso_endcap_matched->Sumw2();
+  TH1F *h_eleHcalTowerIso_endcap_matched = new TH1F("eleHcalTowerIso_endcap_matched","eleHcalTowerIso_endcap_matched",1006,-5.5,1000.5); 
+  h_eleHcalTowerIso_endcap_matched->Sumw2();
+
 
   //extra
   TH2F *h_eleEcalRecHitIso_endcap_matched_vs_pt 
@@ -200,6 +209,11 @@ void analysisClass::Loop()
   h_eleEcalRecHitIso_barrel_unmatched->Sumw2();
   TH1F *h_eleHcalRecHitIso_barrel_unmatched = new TH1F("eleHcalRecHitIso_barrel_unmatched","eleHcalRecHitIso_barrel_unmatched",1006,-5.5,1000.5); 
   h_eleHcalRecHitIso_barrel_unmatched->Sumw2();
+  TH1F *h_eleReducedEcalIso_barrel_unmatched = new TH1F("eleReducedEcalIso_barrel_unmatched","eleReducedEcalIso_barrel_unmatched",1006,-5.5,1000.5); 
+  h_eleReducedEcalIso_barrel_unmatched->Sumw2();
+  TH1F *h_eleHcalTowerIso_barrel_unmatched = new TH1F("eleHcalTowerIso_barrel_unmatched","eleHcalTowerIso_barrel_unmatched",1006,-5.5,1000.5); 
+  h_eleHcalTowerIso_barrel_unmatched->Sumw2();
+
 
   TH1F *h_eleHoE_endcap_unmatched = new TH1F("eleHoE_endcap_unmatched","eleHoE_endcap_unmatched",100,0,0.1); 
   h_eleHoE_endcap_unmatched->Sumw2();
@@ -211,6 +225,11 @@ void analysisClass::Loop()
   h_eleDeltaEtaTrkSC_endcap_unmatched->Sumw2();
   TH1F *h_eleClassif_endcap_unmatched = new TH1F("eleClassif_endcap_unmatched","eleClassif_endcap_unmatched",201,-0.5,200.5); 
   h_eleClassif_endcap_unmatched->Sumw2();
+  TH1F *h_eleReducedEcalIso_endcap_unmatched = new TH1F("eleReducedEcalIso_endcap_unmatched","eleReducedEcalIso_endcap_unmatched",1006,-5.5,1000.5); 
+  h_eleReducedEcalIso_endcap_unmatched->Sumw2();
+  TH1F *h_eleHcalTowerIso_endcap_unmatched = new TH1F("eleHcalTowerIso_endcap_unmatched","eleHcalTowerIso_endcap_unmatched",1006,-5.5,1000.5); 
+  h_eleHcalTowerIso_endcap_unmatched->Sumw2();
+
 
   TH1F *h_eleNumTrkIso_endcap_unmatched = new TH1F("eleNumTrkIso_endcap_unmatched","eleNumTrkIso_endcap_unmatched",101,-0.5,100.5); 
   h_eleNumTrkIso_endcap_unmatched->Sumw2();
@@ -424,6 +443,8 @@ void analysisClass::Loop()
 		  h_eleTrkIso_barrel_matched->Fill(eleTrkIso[idx_minDeltaR]);
 		  h_eleEcalRecHitIso_barrel_matched->Fill(eleEcalRecHitIso[idx_minDeltaR]);
 		  h_eleHcalRecHitIso_barrel_matched->Fill(eleHcalRecHitIso[idx_minDeltaR]);
+		  h_eleReducedEcalIso_barrel_matched->Fill(eleReducedEcalIso[idx_minDeltaR]);
+		  h_eleHcalTowerIso_barrel_matched->Fill(eleHcalTowerIso[idx_minDeltaR]);
 		  h_Energy_Res_barrel->Fill(eleEnergy[idx_minDeltaR]/GenParticleE[igen]);
 		}
 		
@@ -437,6 +458,8 @@ void analysisClass::Loop()
 		  h_eleTrkIso_endcap_matched->Fill(eleTrkIso[idx_minDeltaR]);
 		  h_eleEcalRecHitIso_endcap_matched->Fill(eleEcalRecHitIso[idx_minDeltaR]);
 		  h_eleHcalRecHitIso_endcap_matched->Fill(eleHcalRecHitIso[idx_minDeltaR]);
+		  h_eleReducedEcalIso_endcap_matched->Fill(eleReducedEcalIso[idx_minDeltaR]);
+		  h_eleHcalTowerIso_endcap_matched->Fill(eleHcalTowerIso[idx_minDeltaR]);
 		  h_Energy_Res_endcap->Fill(eleEnergy[idx_minDeltaR]/GenParticleE[igen]);
 		}
 		
@@ -654,6 +677,8 @@ void analysisClass::Loop()
 	    h_eleTrkIso_barrel_unmatched->Fill(eleTrkIso[iele]);
 	    h_eleEcalRecHitIso_barrel_unmatched->Fill(eleEcalRecHitIso[iele]);
 	    h_eleHcalRecHitIso_barrel_unmatched->Fill(eleHcalRecHitIso[iele]);
+	    h_eleReducedEcalIso_barrel_unmatched->Fill(eleReducedEcalIso[iele]);
+	    h_eleHcalTowerIso_barrel_unmatched->Fill(eleHcalTowerIso[iele]);
 	  }
 	  
 	  if (InEndCap){
@@ -666,6 +691,8 @@ void analysisClass::Loop()
 	    h_eleTrkIso_endcap_unmatched->Fill(eleTrkIso[iele]);
 	    h_eleEcalRecHitIso_endcap_unmatched->Fill(eleEcalRecHitIso[iele]);
 	    h_eleHcalRecHitIso_endcap_unmatched->Fill(eleHcalRecHitIso[iele]);
+	    h_eleReducedEcalIso_endcap_unmatched->Fill(eleReducedEcalIso[iele]);
+	    h_eleHcalTowerIso_endcap_unmatched->Fill(eleHcalTowerIso[iele]);
 	  }
 	} // end else unmatched
       
@@ -738,6 +765,8 @@ void analysisClass::Loop()
   h_eleTrkIso_barrel_matched->Write();
   h_eleEcalRecHitIso_barrel_matched->Write();
   h_eleHcalRecHitIso_barrel_matched->Write();
+  h_eleReducedEcalIso_barrel_matched->Write(); 
+  h_eleHcalTowerIso_barrel_matched->Write(); 
 
   h_eleHoE_endcap_matched->Write();
   h_eleSigmaEE_endcap_matched->Write();
@@ -748,6 +777,8 @@ void analysisClass::Loop()
   h_eleTrkIso_endcap_matched->Write();
   h_eleEcalRecHitIso_endcap_matched->Write();
   h_eleHcalRecHitIso_endcap_matched->Write();
+  h_eleReducedEcalIso_endcap_matched->Write(); 
+  h_eleHcalTowerIso_endcap_matched->Write(); 
 
   ///unmathced
   h_eleHoE_barrel_unmatched->Write();
@@ -759,6 +790,9 @@ void analysisClass::Loop()
   h_eleTrkIso_barrel_unmatched->Write();
   h_eleEcalRecHitIso_barrel_unmatched->Write();
   h_eleHcalRecHitIso_barrel_unmatched->Write();
+  h_eleReducedEcalIso_barrel_unmatched->Write(); 
+  h_eleHcalTowerIso_barrel_unmatched->Write(); 
+
 
   h_eleHoE_endcap_unmatched->Write();
   h_eleSigmaEE_endcap_unmatched->Write();
@@ -769,6 +803,8 @@ void analysisClass::Loop()
   h_eleTrkIso_endcap_unmatched->Write();
   h_eleEcalRecHitIso_endcap_unmatched->Write();
   h_eleHcalRecHitIso_endcap_unmatched->Write();
+  h_eleReducedEcalIso_endcap_unmatched->Write(); 
+  h_eleHcalTowerIso_endcap_unmatched->Write(); 
 
   h_eleEff_Pt->Divide(h_ele_Pt_Gen_matched,h_ele_Pt_Gen,1,1);
   h_eleEff_Pt->Write();
