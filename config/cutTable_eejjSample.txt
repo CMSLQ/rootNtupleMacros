@@ -26,7 +26,7 @@ ID_deltaEta_bar       0.005	   -			-		-		-1
 ID_deltaEta_end	      0.007	   -			-		-		-1
 ID_deltaPhi_bar	      0.09	   -			-		-		-1
 ID_deltaPhi_end	      0.09	   -			-		-		-1
-ID_eleClass_bar	      41	   -			-		-		-1
+ID_eleClass_bar	      50	   -			-		-		-1
 ## check the cut: ID_eleClass_bar ##
 ID_eleClass_end	      100	   -			-		-		-1
 ISO_NumTrack_bar      4 	   -			-		-		-1
