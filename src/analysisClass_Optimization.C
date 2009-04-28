@@ -195,16 +195,26 @@ void analysisClass::Loop()
 	 if( (in_Endcap)&&((eleTrkIso[iele]) < getPreCutValue1("ISO_TrackIso_end")) )  pass_TrackIso=true;
 
 	 bool pass_EcalIso=false;
+	 bool pass_HcalIso=false;
+
 	 float ecal_iso_bar = getPreCutValue1("ISO_EcalIso_bar")+(getPreCutValue2("ISO_EcalIso_bar")*elePt[iele]);
 	 float ecal_iso_end = getPreCutValue1("ISO_EcalIso_end")+(getPreCutValue2("ISO_EcalIso_bar")*elePt[iele]);
-	 if( (in_Barrel)&&((eleEcalRecHitIso[iele]) < (ecal_iso_bar)) )  pass_EcalIso=true;
-	 if( (in_Endcap)&&((eleEcalRecHitIso[iele]) < (ecal_iso_end)) )  pass_EcalIso=true;
-
-	 bool pass_HcalIso=false;
 	 float hcal_iso_bar = getPreCutValue1("ISO_HcalIso_bar")+(getPreCutValue2("ISO_HcalIso_bar")*elePt[iele]);
 	 float hcal_iso_end = getPreCutValue1("ISO_HcalIso_end")+(getPreCutValue2("ISO_HcalIso_bar")*elePt[iele]);
-	 if( (in_Barrel)&&((eleHcalRecHitIso[iele]) < (hcal_iso_bar)) )  pass_HcalIso=true;
-	 if( (in_Endcap)&&((eleHcalRecHitIso[iele]) < (hcal_iso_end)) )  pass_HcalIso=true;
+
+	 if (eleEcalRecHitIso[iele]==-99){  //use AOD iso variables
+	   if( (in_Barrel)&&((eleReducedEcalIso[iele]) < (ecal_iso_bar)) )  pass_EcalIso=true;
+	   if( (in_Endcap)&&((eleReducedEcalIso[iele]) < (ecal_iso_end)) )  pass_EcalIso=true;
+
+	   if( (in_Barrel)&&((eleHcalTowerIso[iele]) < (hcal_iso_bar)) )  pass_HcalIso=true;
+	   if( (in_Endcap)&&((eleHcalTowerIso[iele]) < (hcal_iso_end)) )  pass_HcalIso=true;
+	 }
+	 else {
+	   if( (in_Barrel)&&((eleEcalRecHitIso[iele]) < (ecal_iso_bar)) )  pass_EcalIso=true;
+	   if( (in_Endcap)&&((eleEcalRecHitIso[iele]) < (ecal_iso_end)) )  pass_EcalIso=true;
+	   if( (in_Barrel)&&((eleHcalRecHitIso[iele]) < (hcal_iso_bar)) )  pass_HcalIso=true;
+	   if( (in_Endcap)&&((eleHcalRecHitIso[iele]) < (hcal_iso_end)) )  pass_HcalIso=true;
+	 }
 
 	 ///////For OLD RootTuples comment out Ecal and Hcal Iso above and add these lines in instead:
 // 	 bool pass_EcalIso=false;
