@@ -463,9 +463,9 @@ void analysisClass::Loop()
 	 ele.SetPtEtaPhiM(elePt[v_idx_ele_final[0]],
 			  eleEta[v_idx_ele_final[0]],
 			  elePhi[v_idx_ele_final[0]],0);
-	 muon.SetPtEtaPhiM(muonPt[v_idx_ele_final[0]],
-			   muonEta[v_idx_ele_final[0]],
-			   muonPhi[v_idx_ele_final[0]],0);
+	 muon.SetPtEtaPhiM(muonPt[v_idx_muon_final[0]],
+			   muonEta[v_idx_muon_final[0]],
+			   muonPhi[v_idx_muon_final[0]],0);
 	 v_emu = ele + muon;
 	 fillVariableWithValue( "invMass_emu", v_emu.M() ) ;
        }
