@@ -37,6 +37,12 @@ void analysisClass::Loop()
    TH1F *h_Mej = new TH1F ("Mej","Mej",200,0,800);  h_Mej->Sumw2();
    TH1F *h_Mej_inside = new TH1F ("Mej_inside","Mej_inside",200,0,800);  h_Mej_inside->Sumw2();
    TH1F *h_Mej_above = new TH1F ("Mej_above","Mej_above",200,0,800);  h_Mej_above->Sumw2();
+   TH1F *h_ST_inside = new TH1F ("ST_inside","ST_inside",200,0,2000);  h_ST_inside->Sumw2();
+   TH1F *h_ST_above = new TH1F ("ST_above","ST_above",200,0,2000);  h_ST_above->Sumw2();
+   TH1F *h_ST_Jets_inside = new TH1F ("ST_Jets_inside","ST_Jets_inside",100,0,1000);  h_ST_Jets_inside->Sumw2();
+   TH1F *h_ST_Jets_above = new TH1F ("ST_Jets_above","ST_Jets_above",100,0,1000);  h_ST_Jets_above->Sumw2();
+   TH1F *h_ST_Elecs_inside = new TH1F ("ST_Elecs_inside","ST_Elecs_inside",100,0,1000);  h_ST_Elecs_inside->Sumw2();
+   TH1F *h_ST_Elecs_above = new TH1F ("ST_Elecs_above","ST_Elecs_above",100,0,1000);  h_ST_Elecs_above->Sumw2();
    TH1F *h_Mej_wrong = new TH1F ("Mej_wrong","Mej_wrong",150,0,300);  h_Mej_wrong->Sumw2();
    TH1F *h_Mej_wrong_inside = new TH1F ("Mej_wrong_inside","Mej_wrong_inside",200,0,800);  h_Mej_wrong_inside->Sumw2();
    TH1F *h_Mej_wrong_above = new TH1F ("Mej_wrong_above","Mej_wrong_above",200,0,800);  h_Mej_wrong_above->Sumw2();
@@ -56,6 +62,7 @@ void analysisClass::Loop()
    TH1F *h_Mee_inside = new TH1F ("Mee_inside","Mee_inside",500,0,1000);  h_Mee_inside->Sumw2();
    TH1F *h_Mee_above = new TH1F ("Mee_above","Mee_above",500,0,1000);  h_Mee_above->Sumw2();
    TH2F *h_Mee_Mej = new TH2F ("Mee_Mej","Mee_Mej",100,0,400,200,0,800);
+   TH2F *h_Mee_ST = new TH2F ("Mee_ST","Mee_ST",100,0,400,200,0,2000);
    TH2F *h_Mee_Mej_inside = new TH2F ("Mee_Mej_inside","Mee_Mej_inside",100,0,400,200,0,800);
    TH2F *h_Mee_Mej_above = new TH2F ("Mee_Mej_above","Mee_Mej_above",100,0,400,200,0,800);
    TH2F *h_EMF_Mej_inside = new TH2F ("EMF_Mej_inside","EMF_Mej_inside",110,0,1.1,200,0,800);
@@ -167,15 +174,25 @@ void analysisClass::Loop()
 	 if( (in_Barrel)&&((eleTrkIso[iele]) < getPreCutValue1("ISO_TrackIso_bar")) )  pass_TrackIso=true;
 	 if( (in_Endcap)&&((eleTrkIso[iele]) < getPreCutValue1("ISO_TrackIso_end")) )  pass_TrackIso=true;
 	 bool pass_EcalIso=false;
+	 bool pass_HcalIso=false;
 	 float ecal_iso_bar = getPreCutValue1("ISO_EcalIso_bar")+(getPreCutValue2("ISO_EcalIso_bar")*elePt[iele]);
 	 float ecal_iso_end = getPreCutValue1("ISO_EcalIso_end")+(getPreCutValue2("ISO_EcalIso_bar")*elePt[iele]);
-	 if( (in_Barrel)&&((eleEcalRecHitIso[iele]) < (ecal_iso_bar)) )  pass_EcalIso=true;
-	 if( (in_Endcap)&&((eleEcalRecHitIso[iele]) < (ecal_iso_end)) )  pass_EcalIso=true;
-	 bool pass_HcalIso=false;
 	 float hcal_iso_bar = getPreCutValue1("ISO_HcalIso_bar")+(getPreCutValue2("ISO_HcalIso_bar")*elePt[iele]);
 	 float hcal_iso_end = getPreCutValue1("ISO_HcalIso_end")+(getPreCutValue2("ISO_HcalIso_bar")*elePt[iele]);
-	 if( (in_Barrel)&&((eleHcalRecHitIso[iele]) < (hcal_iso_bar)) )  pass_HcalIso=true;
-	 if( (in_Endcap)&&((eleHcalRecHitIso[iele]) < (hcal_iso_end)) )  pass_HcalIso=true;
+	 //check if using AOD variables or RECO variables
+	 if (eleEcalRecHitIso[iele]==-99){  //use AOD iso variables
+	   if( (in_Barrel)&&((eleReducedEcalIso[iele]) < (ecal_iso_bar)) )  pass_EcalIso=true;
+	   if( (in_Endcap)&&((eleReducedEcalIso[iele]) < (ecal_iso_end)) )  pass_EcalIso=true;
+
+	   if( (in_Barrel)&&((eleHcalTowerIso[iele]) < (hcal_iso_bar)) )  pass_HcalIso=true;
+	   if( (in_Endcap)&&((eleHcalTowerIso[iele]) < (hcal_iso_end)) )  pass_HcalIso=true;
+	 }
+	 else {
+	   if( (in_Barrel)&&((eleEcalRecHitIso[iele]) < (ecal_iso_bar)) )  pass_EcalIso=true;
+	   if( (in_Endcap)&&((eleEcalRecHitIso[iele]) < (ecal_iso_end)) )  pass_EcalIso=true;
+	   if( (in_Barrel)&&((eleHcalRecHitIso[iele]) < (hcal_iso_bar)) )  pass_HcalIso=true;
+	   if( (in_Endcap)&&((eleHcalRecHitIso[iele]) < (hcal_iso_end)) )  pass_HcalIso=true;
+	 }
 
 	 if ( (pass_NumTrack) && ( pass_TrackIso) && (pass_EcalIso) && (pass_HcalIso) ) 
 	   {
@@ -298,14 +315,26 @@ void analysisClass::Loop()
      if( v_idx_jet_final.size() >= 2 ) TwoJets = true;
 
      //## ST
+     double calc_ST=0;
+     double jet_ST=0;
+     double elec_ST=0;
      if ( (TwoEles) && (TwoJets) ) 
        {
-	 double calc_sT = 
+	 calc_ST = 
 	   elePt[v_idx_ele_final[0]]
 	   + elePt[v_idx_ele_final[1]]
 	   + caloJetIC5Pt[v_idx_jet_final[0]]
 	   + caloJetIC5Pt[v_idx_jet_final[1]];
-	 fillVariableWithValue("sT", calc_sT);
+	 fillVariableWithValue("sT", calc_ST);
+
+	 jet_ST = 
+	   caloJetIC5Pt[v_idx_jet_final[0]]
+	   + caloJetIC5Pt[v_idx_jet_final[1]];
+
+	 elec_ST = 
+	   elePt[v_idx_ele_final[0]]
+	   + elePt[v_idx_ele_final[1]];
+
        }
 
      //## Mej "old" algorithm
@@ -339,6 +368,7 @@ void analysisClass::Loop()
 	 Mee = ele1ele2.M();
 	 fillVariableWithValue("Mee_control",Mee);
 	 fillVariableWithValue("Mee",Mee);
+	 h_Mee_ST->Fill(Mee,calc_ST);
 	 //cout << "M11:  " << M11 << "  M12:  " << M12 << "  M21:  " << M21 << "  M22:  " << M22 << endl;
 	 diff_11_22=fabs(M11-M22);
 	 diff_12_21=fabs(M12-M21);
@@ -537,6 +567,8 @@ void analysisClass::Loop()
 // 	 cout << "M11:  " << M11 << "  M12:  " << M12 << "  M21:  " << M21 << "  M22:  " << M22 << endl;
 // 	 cout << "M_Z: " << Z_vec.M() << "Mee_reco: " << Mee << endl;
 
+	h_ST_inside->Fill(calc_ST);
+	if ( passedCut("4")){
 	 if (diff_11_22<diff_12_21) 
 	   {
 	     h_Mej_inside->Fill(M11);
@@ -571,14 +603,19 @@ void analysisClass::Loop()
 	   }
 	 h_pTee_gen_inside->Fill(pTee);
 	 h_Mee_inside->Fill(Mee);
+	 h_ST_Jets_inside->Fill(jet_ST);
+	 h_ST_Elecs_inside->Fill(elec_ST);
 	 if( v_idx_jet_final.size() >= 1 ) h_pTjet1_inside->Fill(caloJetIC5Pt[v_idx_jet_final[0]]);
 	 if( v_idx_ele_final.size() >= 1 ) h_pTele1_inside->Fill(elePt[v_idx_ele_final[0]]);
 	 if (N_Z_Ele>1) h_pTgenele1_inside->Fill(genEle1.Pt());
 	 if (idx_q_high!=99) h_pTquark1_inside->Fill(GenParticlePt[idx_q_high]);
         }
-     
+       }
+
      if( (passedCut("1"))&&(passedCut("3")) )
        {
+	h_ST_above->Fill(calc_ST);
+	if ( passedCut("4")){
 	 if (diff_11_22<diff_12_21) 
 	   {
 	     h_Mej_above->Fill(M11);
@@ -613,12 +650,14 @@ void analysisClass::Loop()
 	   }
 	 h_pTee_gen_above->Fill(pTee);
 	 h_Mee_above->Fill(Mee);
+	 h_ST_Jets_above->Fill(jet_ST);
+	 h_ST_Elecs_above->Fill(elec_ST);
 	 if( v_idx_jet_final.size() >= 1 ) h_pTjet1_above->Fill(caloJetIC5Pt[v_idx_jet_final[0]]);
 	 if( v_idx_ele_final.size() >= 1 ) h_pTele1_above->Fill(elePt[v_idx_ele_final[0]]);
 	 if (N_Z_Ele>1) h_pTgenele1_above->Fill(genEle1.Pt());
 	 if (idx_q_high!=99) h_pTquark1_above->Fill(GenParticlePt[idx_q_high]);
+	}
        }
-     
      ////////////////////// User's code ends here ///////////////////////
 
    } // End loop over events
@@ -630,6 +669,12 @@ void analysisClass::Loop()
    h_Mej->Write();
    h_Mej_inside->Write();
    h_Mej_above->Write();
+   h_ST_inside->Write();
+   h_ST_above->Write();
+   h_ST_Jets_inside->Write();
+   h_ST_Jets_above->Write();
+   h_ST_Elecs_inside->Write();
+   h_ST_Elecs_above->Write();
    h_Mej_wrong->Write();
    h_Mej_wrong_inside->Write();
    h_Mej_wrong_above->Write();
@@ -647,6 +692,7 @@ void analysisClass::Loop()
    h_pTgenele1_inside->Write();
    h_pTgenele1_above->Write();
    h_Mee_Mej->Write();
+   h_Mee_ST->Write();
    h_Mee_Mej_inside->Write();
    h_Mee_Mej_above->Write();
    h_EMF_Mej_inside->Write();
