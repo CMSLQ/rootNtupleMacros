@@ -1,0 +1,92 @@
+#
+#############################     Example of file with list of cuts
+#
+#
+#------------------------ Preliminary cut variables and values (cut level -1) here -----------------------------
+# This first list of variable names and values are used to pass configurable values to the user code associated 
+# to a variable name.
+# The user can retrieve the values associated to a variable name via a provided function call
+# [e.g. getPreCutValue1("eleFidRegion") and similarly for value2, value3 and value4 ]
+# The idea is that the user can use these values to define the list of objects (electrons, jets, etc.) used in 
+# analysis. No cut is automatically evaluated on these variables and the cut level must be equal to -1. 
+# Variable names must be unique.
+#
+#VariableName	      value1	   value2		value3		value4		level
+#------------	      ------------ -------------	------------	-------------	-----
+ele_PtPreCut	      30	   -			-		-		-1
+jet_PtPreCut	      50	   -			-		-		-1
+jet_EtaPreCut	      3		   -			-		-		-1
+jet_ele_DeltaRcut     0.5	   -			-		-		-1
+TriggerBits1	      51	   52			67		68		-1
+## EM80=51, EM200=52, HLTPhoton15=67, HLTPhoton25=68 (HLT1EMHightEtb=40, HLT1EMVeryHightEt=41 old??) ##
+ID_HoE_bar	      0.05	   -			-		-		-1	
+ID_HoE_end	      0.1	   -			-		-		-1	
+ID_sigEtaEta_bar      0.011	   -			-		-		-1
+ID_sigEtaEta_end      0.0275	   -			-		-		-1
+ID_deltaEta_bar       0.005	   -			-		-		-1
+ID_deltaEta_end	      0.007	   -			-		-		-1
+ID_deltaPhi_bar	      0.09	   -			-		-		-1
+ID_deltaPhi_end	      0.09	   -			-		-		-1
+ID_eleClass_bar	      50	   -			-		-		-1
+## check the cut: ID_eleClass_bar ##
+ID_eleClass_end	      100	   -			-		-		-1
+ISO_NumTrack_bar      4 	   -			-		-		-1
+ISO_NumTrack_end      4 	   -			-		-		-1
+ISO_TrackIso_bar      7.5 	   -			-		-		-1
+ISO_TrackIso_end      15 	   -			-		-		-1
+ISO_EcalIso_bar	      6 	   0.01			-		-		-1
+ISO_EcalIso_end	      6 	   0.01			-		-		-1
+ISO_HcalIso_bar	      4 	   0.005		-		-		-1
+ISO_HcalIso_end	      4 	   0.005		-		-		-1
+eleEta_bar	      1.442	   -			-		-		-1
+eleEta_end	      1.560	   2.5			-		-		-1
+#
+#
+#--------------------------------- Cuts (level 0,1,2,3 ... n) below --------------------------------------------
+# The cut variable names, cut boundaries and histogram binnings are provided here by the user.
+# In the event loop of the analysisClass_template.C, the user have to fill each variable with its value using
+# a provided function call [ e.g. fillVariableWithValue("nEleFinal", number_of_electrons) ]
+# The variable names in the user code has to match the names provided here.
+# Variable names must be unique.
+# The cut will be declared "passed" if
+#    ( minValue1 < VariableName <= maxValue1 ) 
+# in case only the first range (minValue1, maxValue1) is provided, 
+# otherwise the cut will be declared "passed" if
+#    ( minValue1 < VariableName <= maxValue1 )  OR  ( minValue2 < VariableName <= maxValue2 )
+# in case even the second range (minValue2, maxValue2) is provided.
+# The level of the cut (0,1,2 ... n) is provided by the user and can be used in the code to easily determine if
+# groups of same-level cuts have passed or failed.
+#
+#VariableName	      minValue1(<) maxValue1(>=)	minValue2(<)	maxValue2(>=)	level	histoNbinsMinMax
+#------------	      ------------ -------------	------------	-------------	-----	----------------
+nEle_PtPreCut	       1	   +inf			-		-		1	16 -0.5 15.5
+nEle_PtPreCut_IDISO    1	   +inf			-		-		0	16 -0.5 15.5
+nJet_PtEtaPreCut_DIS   1           +inf			-		-		4	16 -0.5 15.5
+## AtZ ##
+invMass_ee	      80	   100	                -		-               5       1000 0 2000
+#########
+## OffZ ##
+#invMass_ee	      100	   +inf	                -		-               5       1000 0 2000
+#######
+sTele		      -inf	   +inf			-		-		5	200 0 2000                   
+sTjets		      -inf	   +inf			-		-		5	200 0 2000                   
+sT0		      200	   +inf			-		-		5	200 0 2000                   
+sT1		      220	   +inf			-		-		5	200 0 2000                   
+sT2		      240	   +inf			-		-		5	200 0 2000                   
+sT3		      260	   +inf			-		-		5	200 0 2000                   
+sT4		      300	   +inf			-		-		5	200 0 2000                   
+invMass_jj	      -inf	   +inf	                -		-               5       200 0 2000
+beta_ee		      -inf	   +inf	                -		-               5       200 0 1
+beta_jj		      -inf	   +inf	                -		-               5       200 0 1
+sT5		      350	   +inf			-		-		5	200 0 2000                   
+sT6		      400	   +inf			-		-		5	200 0 2000                   
+sT7		      440	   +inf			-		-		5	200 0 2000                   
+sT8		      460	   +inf			-		-		5	200 0 2000                   
+sT9		      480	   +inf			-		-		5	200 0 2000                   
+sT10		      520	   +inf			-		-		5	200 0 2000                   
+sT11		      560	   +inf			-		-		5	200 0 2000                   
+sT12		      620	   +inf			-		-		5	200 0 2000                   
+sT13		      690	   +inf			-		-		5	200 0 2000                   
+sT14		      740	   +inf			-		-		5	200 0 2000                   
+MejMax		      -inf	   +inf			-		-		5	200 0 2000
+MejMin                -inf	   +inf			-		-		5	200 0 2000
